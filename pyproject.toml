@@ -14,8 +14,8 @@ authors = [
 ]
 keywords = ["seismology", "signal-processing", "spectrogram", "response-spectra", "earthquake"]
 classifiers = [
-  "Programming Language: Python :: 3",
-  "Programming Language: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
   "License :: Other/Proprietary License",
   "Operating System :: OS Independent",
   "Topic :: Scientific/Engineering",
@@ -31,7 +31,7 @@ dependencies = [
 
 [project.urls]
 Homepage = "https://nmorabowen.com"
-Repository = "https://github.com/nmorabowen/apeQuake/issues"
+Repository = "https://github.com/nmorabowen/apeQuake"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/apeQuake"]
