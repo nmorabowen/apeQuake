@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling>=1.18"]
+build-backend = "hatchling.build"
+
+[project]
+name = "apeQuake"
+version = "0.1.0"
+description = "Tools for multicomponent ground-motion: filtering, spectra, spectrograms, and SDOF response spectra."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Proprietary" }
+authors = [
+  { name = "Nicolas Mora Bowen", email = "nmorabowen@gmail.com" }
+]
+keywords = ["seismology", "signal-processing", "spectrogram", "response-spectra", "earthquake"]
+classifiers = [
+  "Programming Language: Python :: 3",
+  "Programming Language: Python :: 3 :: Only",
+  "License :: Other/Proprietary License",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering",
+]
+
+dependencies = [
+  "numpy>=1.23",
+  "pandas>=1.5",
+  "scipy>=1.10",
+  "matplotlib>=3.7",
+  "obspy>=1.4",
+]
+
+[project.urls]
+Homepage = "https://nmorabowen.com"
+Repository = "https://github.com/nmorabowen/apeQuake/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/apeQuake"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0",
+  "ruff>=0.5",
+  "black>=24.0",
+  "mypy>=1.7",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.mypy]
+python_version = "3.10"
+check_untyped_defs = true
+ignore_missing_imports = true
+strict_optional = true

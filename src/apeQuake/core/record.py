@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from ..spectrum.spectrum import Spectrum
     from ..spectrogram.spectrogram import Spectrogram
     from ..response_spectra import ResponseSpectra
+    from ..intensity_measures import IntensityMeasures
 
 
 class Record:
@@ -67,10 +68,12 @@ class Record:
         from ..spectrum import Spectrum
         from ..spectrogram import Spectrogram
         from ..response_spectra import ResponseSpectra
+        from ..intensity_measures import IntensityMeasures
         self.filter: FilterType = Filter(self)
         self.spectrum: Spectrum = Spectrum(self)
         self.spectrogram: Spectrogram = Spectrogram(self)
         self.response_spectra: ResponseSpectra = ResponseSpectra(self)
+        self.intensity_measures: IntensityMeasures = IntensityMeasures(self)
 
     # -------------------------------------------------------------- #
     # Initialization helpers
