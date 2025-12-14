@@ -185,51 +185,16 @@ class Spectrogram:
         self,
         *,
         component: ComponentName = "X",
-        # --- ObsPy spectrogram kwargs (common ones) ---
         wlen: float = 2.0,
         per_lap: float = 0.9,
         mult: float = 8.0,
         dbscale: bool = True,
         log: bool = True,
-        axes=None,
         cmap: str = "viridis",
         show: bool = True,
     ):
-        """
-        Quick spectrogram plot using ObsPy for cross-checking.
-
-        Parameters
-        ----------
-        component
-            Which component column ("X","Y","Z") to plot.
-        wlen
-            Window length in seconds (ObsPy uses seconds).
-        per_lap
-            Fractional overlap (0..1).
-        mult
-            Zero padding factor; higher = denser FFT interpolation (slower).
-        dbscale
-            Plot in dB.
-        log
-            Log-frequency axis.
-        axes
-            Existing matplotlib axes to plot into.
-        cmap
-            Colormap.
-        show
-            If True, call matplotlib show.
-
-        Returns
-        -------
-        fig, ax
-        """
-        try:
-            from obspy.imaging.spectrogram import spectrogram as obspy_spectrogram
-            import matplotlib.pyplot as plt
-        except Exception as e:
-            raise ImportError(
-                "ObsPy is required for plot_obspy(). Install with: pip install obspy"
-            ) from e
+        import matplotlib.pyplot as plt
+        from obspy.imaging.spectrogram import spectrogram as obspy_spectrogram
 
         rec = self.record
         if rec.dt is None:
@@ -238,35 +203,38 @@ class Spectrogram:
             raise ValueError(f"Component '{component}' not found in df_spectrogram columns.")
 
         data = self.df_spectrogram[component].to_numpy(dtype=float)
+
+        # sanitize
+        data = np.nan_to_num(data, nan=0.0, posinf=0.0, neginf=0.0)
+        if np.allclose(data, 0.0):
+            raise ValueError(
+                f"Component '{component}' is (near) all zeros after preprocessing; "
+                "ObsPy spectrogram would contain log10(0)."
+            )
+
         fs = 1.0 / rec.dt
 
-        if axes is None:
-            fig, ax = plt.subplots(figsize=(12, 4))
-        else:
-            ax = axes
-            fig = ax.figure
-
-        # ObsPy will draw into current axes if we set it active
+        fig, ax = plt.subplots(figsize=(12, 4))
         plt.sca(ax)
+
+        # If you keep dbscale=True, ObsPy does log10 internally and can still hit -inf
+        # for true zeros in the internal specgram. Safer: dbscale=False then let it plot linear.
         obspy_spectrogram(
             data,
             samp_rate=fs,
             wlen=wlen,
             per_lap=per_lap,
             mult=mult,
-            dbscale=dbscale,
+            dbscale=False,   # <-- important
             log=log,
             cmap=cmap,
-            show=False,  # we'll control show ourselves
+            show=False,
         )
-
-        ax.set_title(f"ObsPy spectrogram — component {component}")
+        ax.set_title(f"ObsPy spectrogram (safe, linear) — component {component}")
         ax.set_xlabel("Time (s)")
-        ax.set_ylabel("Frequency (Hz)" if not log else "Frequency (log Hz)")
-
+        ax.set_ylabel("Frequency (Hz)")
         if show:
             plt.show()
-
         return fig, ax
 
     def plot_spectrogram(
