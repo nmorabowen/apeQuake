@@ -1,59 +1,60 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Sequence
 import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-
 from ..core.types import ComponentName
 
-if TYPE_CHECKING:
-    from ..core.record import Record
-    from ..filters.filters import Filter as FilterType
-    from ..spectrum.spectrum import Spectrum
-    from ..spectrogram.spectrogram import Spectrogram
-    from ..response_spectra import ResponseSpectra
-    from ..intensity_measures import IntensityMeasures
 
 class PlotRecord:
     def __init__(self, record: "Record") -> None:
         self.record = record
 
+    def _select_components(self, components: Sequence[ComponentName] | None) -> list[ComponentName]:
+        df = self.record.df
+        if components is None:
+            comps = [c for c in ("X", "Y", "Z") if c in df.columns]
+        else:
+            comps = [c for c in components if c in df.columns]
+        if not comps:
+            avail = [c for c in ("X", "Y", "Z") if c in df.columns]
+            raise ValueError(f"No components to plot. Requested={components}, available={avail}.")
+        return comps
+
     def plot(
         self,
-        components: list[ComponentName] | None = None,
+        components: Sequence[ComponentName] | None = None,
         title: str | None = None,
         figsize: tuple[float, float] = (10, 6),
+        ax=None,
+        show: bool = True,
         **kwargs,
-    ) -> plt.Figure:
-        """
-        Plot the record components.
+    ) -> tuple[plt.Figure, plt.Axes]:
 
-        Parameters
-        ----------
-        components
-            List of components to plot. If None, plot all available components.
-        title
-            Title of the plot.
-        figsize
-            Size of the figure.
-        **kwargs
-            Additional keyword arguments passed to pandas DataFrame plot method.
+        df = self.record.df
+        if "time" not in df.columns:
+            raise ValueError("Record.df must contain a 'time' column.")
 
-        Returns
-        -------
-        plt.Figure
-            The matplotlib Figure object containing the plot.
-        """
-        df_to_plot = self.record.df[components] if components is not None else self.record.df
+        comps = self._select_components(components)
+        t = df["time"].to_numpy(float)
 
-        fig, ax = plt.subplots(figsize=figsize)
-        df_to_plot.plot(ax=ax, **kwargs)
+        if ax is None:
+            fig, ax = plt.subplots(figsize=figsize)
+        else:
+            fig = ax.figure
+
+        for c in comps:
+            ax.plot(t, df[c].to_numpy(float), label=c, **kwargs)
 
         ax.set_xlabel("Time (s)")
         ax.set_ylabel("Amplitude")
+        ax.grid(True, alpha=0.3)
+        ax.legend()
+
         if title:
             ax.set_title(title)
 
-        plt.tight_layout()
-        return fig
+        fig.tight_layout()
+        if show:
+            plt.show()
+
+        return fig, ax
