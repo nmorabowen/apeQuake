@@ -137,6 +137,118 @@ class PlotRecord:
 
         return fig, axes_list
 
-    def plot_record(self, **kw) -> tuple[plt.Figure, list[plt.Axes]]:
-        """Alias for plot(), keeps naming consistent with your other composites."""
-        return self.plot(**kw)
+    def plot_band_pass(
+        self,
+        *,
+        Tc_low_list: Sequence[float],
+        Tc_high_list: Sequence[float],
+        components: Sequence[ComponentName] | None = None,
+        title: str | None = None,
+        corners: int = 4,
+        zerophase: bool = True,
+        sharex: bool = True,
+        sharey: bool = True,
+        figsize: tuple[float, float] | None = None,
+        linewidth: float = 1.0,
+        linestyle: str = "-",
+        grid: bool = True,
+        show: bool = True,
+        **kwargs,
+    ) -> tuple[plt.Figure, list[list[plt.Axes]]]:
+        """
+        Grid plot: rows = components, columns = [Original] + each band-pass filter.
+
+        Returns
+        -------
+        (fig, axes) where axes is a 2D list: axes[row][col].
+        """
+        rec = self.record
+        df0 = rec.df
+        if "time" not in df0.columns:
+            raise ValueError("Record.df must contain a 'time' column.")
+
+        if len(Tc_low_list) != len(Tc_high_list):
+            raise ValueError("Tc_low_list and Tc_high_list must have the same length.")
+
+        comps = self._select_components(components, df=df0)
+        n_rows = len(comps)
+        n_cols = 1 + len(Tc_low_list)
+
+        if figsize is None:
+            figsize = (4.8 * n_cols, max(2.6 * n_rows, 3.2))
+
+        fig, ax = plt.subplots(
+            nrows=n_rows,
+            ncols=n_cols,
+            figsize=figsize,
+            sharex=sharex,
+            sharey=sharey,
+        )
+
+        # normalize ax to a 2D list
+        if n_rows == 1 and n_cols == 1:
+            axes = [[ax]]
+        elif n_rows == 1:
+            axes = [list(ax)]
+        elif n_cols == 1:
+            axes = [[a] for a in ax]
+        else:
+            axes = [list(row) for row in ax]
+
+        # ---- column 0: original ----
+        for i, c in enumerate(comps):
+            self.plot_component(
+                c,
+                ax=axes[i][0],
+                linewidth=linewidth,
+                linestyle=linestyle,
+                grid=grid,
+                **kwargs,
+            )
+            if i == 0:
+                axes[i][0].set_title("Original")
+
+        # ---- filtered columns ----
+        for j, (Tc_low, Tc_high) in enumerate(zip(Tc_low_list, Tc_high_list), start=1):
+            Tc_low = float(Tc_low)
+            Tc_high = float(Tc_high)
+            if Tc_low <= 0 or Tc_high <= 0:
+                raise ValueError("Tc_low and Tc_high must be > 0.")
+            if Tc_low >= Tc_high:
+                raise ValueError("Require Tc_low < Tc_high.")
+
+            df_f = rec.filter.band_pass(
+                df=df0,
+                Tc_low=Tc_low,
+                Tc_high=Tc_high,
+                corners=corners,
+                zerophase=zerophase,
+            )
+
+            # plot each component in its row
+            for i, c in enumerate(comps):
+                t = df_f["time"].to_numpy(float)
+                y = df_f[c].to_numpy(float)
+
+                axes[i][j].plot(t, y, linewidth=linewidth, linestyle=linestyle, **kwargs)
+                if grid:
+                    axes[i][j].grid(True, alpha=0.3)
+                axes[i][j].set_ylabel(c)  # keep row label consistent
+
+                if i == 0:
+                    axes[i][j].set_title(f"Band-pass\nTc={Tc_low:g}–{Tc_high:g} s")
+
+        # x-label only on bottom row
+        for j in range(n_cols):
+            axes[-1][j].set_xlabel("Time (s)")
+
+        if title:
+            fig.suptitle(title)
+            fig.tight_layout(rect=[0, 0, 1, 0.95])
+        else:
+            fig.tight_layout()
+
+        if show:
+            plt.show()
+
+        return fig, axes
