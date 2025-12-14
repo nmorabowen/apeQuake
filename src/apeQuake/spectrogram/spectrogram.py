@@ -1,173 +1,145 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Sequence, Callable
+from typing import TYPE_CHECKING, Sequence
 import numpy as np
 import pandas as pd
 import matplotlib.mlab as mlab
 
-from apeQuake.core.types import ComponentName
+from ..core.types import ComponentName
 
 if TYPE_CHECKING:
-    from apeQuake.core.record import Record
-
-FilterFunc = Callable[..., pd.DataFrame]
+    from ..core.record import Record
+    from ..filters.filters import Filter
 
 
 class Spectrogram:
-    """
-    Spectrogram composite:
-
-    - Attached to a Record.
-    - Optionally applies a pipeline of Record.filter.* steps before
-      computing time–frequency spectrograms.
-    - Retains your original style:
-        * contourf
-        * cmap='seismic' by default
-        * shared axes, fmin cutoff
-        * right-hand secondary axis in period
-        * colorbar on the right
-    """
-
     def __init__(self, record: "Record") -> None:
-        self._record = record
+        self.record = record
+        self.filter: "Filter" = record.filter
 
-        # List of (filter_function, params_dict) – applied in order
-        self._filter_steps: list[tuple[FilterFunc, dict]] = []
+        self.df_spectrogram: pd.DataFrame = record.df.copy()
 
-        # Stored spectrogram results
-        self.freqs: np.ndarray | None = None     # (nfreq,)
-        self.bins: np.ndarray | None = None      # (nbins,)
-        # component -> Pxx_dB array of shape (nfreq, nbins)
+        self.freqs: np.ndarray | None = None
+        self.bins: np.ndarray | None = None
         self.power: dict[ComponentName, np.ndarray] = {}
-        self._df_used: pd.DataFrame | None = None
 
-    # ---------------------------------------------------------- #
-    # Filter pipeline management
-    # ---------------------------------------------------------- #
+        self.applied_filters: list[str] = []
 
-    def add_filter(self, func: FilterFunc, **params) -> "Spectrogram":
-        """
-        Add a filter step to the spectrogram computation pipeline.
+    # ------------------------- DF lifecycle ------------------------- #
 
-        Example
-        -------
-        rec.spectrogram.add_filter(rec.filter.detrend, type="demean")
-        rec.spectrogram.add_filter(rec.filter.taper, max_percentage=0.05)
-        """
-        self._filter_steps.append((func, params))
+    def set_df(self, df: pd.DataFrame) -> "Spectrogram":
+        self.df_spectrogram = df.copy()
+        self._invalidate()
+        self.applied_filters = []
         return self
 
-    def clear_filters(self) -> None:
-        """Remove all registered filters for the spectrogram pipeline."""
-        self._filter_steps.clear()
+    def reset_df(self) -> "Spectrogram":
+        self.df_spectrogram = self.record.df.copy()
+        self._invalidate()
+        self.applied_filters = []
+        return self
 
-    def describe_filters(self) -> str:
-        """Human-readable description of the current pipeline."""
-        if not self._filter_steps:
-            return "(no filters)"
+    def _invalidate(self) -> None:
+        self.freqs = None
+        self.bins = None
+        self.power = {}
 
-        parts: list[str] = []
-        for func, params in self._filter_steps:
-            name = getattr(func, "__name__", "<fn>")
-            args = ", ".join(f"{k}={v!r}" for k, v in params.items())
-            parts.append(f"{name}({args})")
-        return " → ".join(parts)
+    def _log(self, s: str) -> None:
+        self.applied_filters.append(s)
 
-    def _apply_filters(self, df: pd.DataFrame) -> pd.DataFrame:
+    # ------------------------- wrappers ---------------------------- #
+
+    def apply_low_pass(self, Tc: float, *, corners: int = 4, zerophase: bool = True) -> "Spectrogram":
+        self.df_spectrogram = self.filter.low_pass(df=self.df_spectrogram, Tc=Tc, corners=corners, zerophase=zerophase)
+        self._invalidate()
+        self._log(f"low_pass(Tc={Tc}, corners={corners}, zerophase={zerophase})")
+        return self
+
+    def apply_high_pass(self, Tc: float, *, corners: int = 4, zerophase: bool = True) -> "Spectrogram":
+        self.df_spectrogram = self.filter.high_pass(df=self.df_spectrogram, Tc=Tc, corners=corners, zerophase=zerophase)
+        self._invalidate()
+        self._log(f"high_pass(Tc={Tc}, corners={corners}, zerophase={zerophase})")
+        return self
+
+    def apply_band_pass(self, Tc_low: float, Tc_high: float, *, corners: int = 4, zerophase: bool = True) -> "Spectrogram":
+        self.df_spectrogram = self.filter.band_pass(
+            df=self.df_spectrogram, Tc_low=Tc_low, Tc_high=Tc_high, corners=corners, zerophase=zerophase
+        )
+        self._invalidate()
+        self._log(f"band_pass(Tc_low={Tc_low}, Tc_high={Tc_high}, corners={corners}, zerophase={zerophase})")
+        return self
+
+    def apply_band_stop(self, Tc_low: float, Tc_high: float, *, corners: int = 4, zerophase: bool = True) -> "Spectrogram":
+        self.df_spectrogram = self.filter.band_stop(
+            df=self.df_spectrogram, Tc_low=Tc_low, Tc_high=Tc_high, corners=corners, zerophase=zerophase
+        )
+        self._invalidate()
+        self._log(f"band_stop(Tc_low={Tc_low}, Tc_high={Tc_high}, corners={corners}, zerophase={zerophase})")
+        return self
+
+    def apply_detrend(self, type: str = "demean") -> "Spectrogram":
+        self.df_spectrogram = self.filter.detrend(df=self.df_spectrogram, type=type)
+        self._invalidate()
+        self._log(f"detrend(type='{type}')")
+        return self
+
+    def apply_taper(self, max_percentage: float = 0.05, *, type: str = "cosine") -> "Spectrogram":
+        self.df_spectrogram = self.filter.taper(df=self.df_spectrogram, max_percentage=max_percentage, type=type)
+        self._invalidate()
+        self._log(f"taper(max_percentage={max_percentage}, type='{type}')")
+        return self
+
+    # --------------------- common/base preprocessing --------------------- #
+
+    def apply_base_filters(
+        self,
+        *,
+        detrend: bool = True,
+        demean: bool = True,
+        taper: float | None = 0.05,
+        band: tuple[float, float] | None = None,
+    ) -> "Spectrogram":
         """
-        Apply all registered filter steps to df.
+        Apply the 'standard' preprocessing in a single call.
 
-        Each func must be a Filter method with signature:
-            func(..., df=<DataFrame>) -> DataFrame
+        This MUTATES df_spectrogram (stateful) by calling the wrapper methods.
         """
-        out = df
-        for func, params in self._filter_steps:
-            out = func(df=out, **params)
-        return out
+        if band is not None:
+            Tc_low, Tc_high = band
+            self.apply_band_pass(Tc_low=Tc_low, Tc_high=Tc_high)
 
-    # ---------------------------------------------------------- #
-    # Core spectrogram computation
-    # ---------------------------------------------------------- #
+        if detrend:
+            self.apply_detrend(type="linear")
+
+        if demean:
+            self.apply_detrend(type="demean")
+
+        if taper is not None and taper > 0.0:
+            self.apply_taper(max_percentage=taper)
+
+        return self
+
+    # ------------------------- computation ---------------------------- #
 
     def compute(
         self,
-        df: pd.DataFrame | None = None,
         *,
-        use_filters: bool = True,
         components: Sequence[ComponentName] | None = None,
         NFFT: int = 256,
         noverlap: int = 128,
-        detrend: bool = True,
-        taper: float = 0.05,
-        band: tuple[float, float] | None = None,   # (Tc_low, Tc_high)
     ) -> None:
         """
         Compute spectrograms (power in dB) for the selected components.
 
-        Parameters
-        ----------
-        df : DataFrame or None
-            Base time series with 'time' and component columns.
-            If None, uses record.df.
-
-        use_filters : bool
-            If True, applies any filters added via add_filter() before
-            computing the spectrogram.
-
-        components : sequence or None
-            Which components to include. If None, use all components
-            present in both Record.components and df columns.
-
-        NFFT : int
-            FFT window size.
-
-        noverlap : int
-            Overlap between windows.
-
-        detrend : bool
-            If True, applies simple linear detrend + demean before mlab.specgram.
-
-        taper : float
-            Fraction of record (0–1) to taper at each end with a cosine taper.
-
-        band : (Tc_low, Tc_high) or None
-            Optional additional band-pass filter in period [s],
-            applied via `record.filter.band_pass(...)` on top of
-            any pipeline filters.
-
-        Side effects
-        ------------
-        - Sets self.freqs (Hz), self.bins (time), and self.power[comp]
-          as dB matrices of shape (nfreq, nbins).
+        IMPORTANT: This function does NOT apply filters. It uses the current
+        df_spectrogram as-is.
         """
-        from scipy.signal import detrend as sp_detrend
-
-        rec = self._record
-
+        rec = self.record
         if rec.dt is None:
             raise ValueError("Record.dt is None; cannot compute spectrogram.")
 
-        # Base df
-        if df is None:
-            df_work = rec.df.copy()
-        else:
-            df_work = df.copy()
+        df_work = self.df_spectrogram
 
-        # Apply the generic filter pipeline
-        if use_filters and self._filter_steps:
-            df_work = self._apply_filters(df_work)
-
-        # Optional (extra) band-pass here, in period space
-        if band is not None:
-            Tc_low, Tc_high = band
-            if hasattr(rec, "filter"):
-                df_work = rec.filter.band_pass(
-                    Tc_low=Tc_low,
-                    Tc_high=Tc_high,
-                    df=df_work,
-                )
-
-        # Which components
         if components is None:
             comps: list[ComponentName] = [
                 c for c in ("X", "Y", "Z")
@@ -177,13 +149,9 @@ class Spectrogram:
             comps = [c for c in components if c in df_work.columns]
 
         if not comps:
-            raise ValueError(
-                "No components to compute spectrogram for. "
-                "Check df and 'components' argument."
-            )
+            raise ValueError("No components to compute spectrogram for. Check df and 'components' argument.")
 
-        dt = rec.dt
-        fs = 1.0 / dt
+        fs = 1.0 / rec.dt
 
         freqs_global: np.ndarray | None = None
         bins_global: np.ndarray | None = None
@@ -192,42 +160,19 @@ class Spectrogram:
         for comp in comps:
             data = df_work[comp].to_numpy(dtype=float)
 
-            # Detrend (demean + linear)
-            if detrend:
-                data = sp_detrend(data, type="linear")
-                data = data - data.mean()
-
-            # Taper at both ends with a cosine taper
-            if taper and taper > 0.0:
-                n = len(data)
-                ntap = int(n * taper)
-                if ntap > 0:
-                    window = np.ones(n, dtype=float)
-                    # cosine ramp
-                    x = np.linspace(0.0, np.pi, ntap)
-                    ramp = 0.5 * (1.0 - np.cos(x))
-                    window[:ntap] = ramp
-                    window[-ntap:] = ramp[::-1]
-                    data = data * window
-
-            # Spectrogram via mlab
-            Pxx, freqs, bins = mlab.specgram(
+            Pxx, freqs, bins_ = mlab.specgram(
                 data,
                 NFFT=NFFT,
                 Fs=fs,
                 noverlap=noverlap,
             )
-
             Pxx_dB = 10.0 * np.log10(Pxx + 1e-12)
 
             if freqs_global is None:
                 freqs_global = freqs
-                bins_global = bins
+                bins_global = bins_
             else:
-                # Sanity check: same freq/time axes
-                if not np.allclose(freqs_global, freqs) or not np.allclose(
-                    bins_global, bins
-                ):
+                if not np.allclose(freqs_global, freqs) or not np.allclose(bins_global, bins_):
                     raise ValueError("Frequency or time axis mismatch between components.")
 
             power[comp] = Pxx_dB
@@ -235,84 +180,196 @@ class Spectrogram:
         self.freqs = freqs_global
         self.bins = bins_global
         self.power = power
-        self._df_used = df_work
 
-    # ---------------------------------------------------------- #
-    # Plotting
-    # ---------------------------------------------------------- #
-
-    def _ensure_computed(self) -> None:
-        if self.freqs is None or self.bins is None or not self.power:
-            self.compute()
-
-    def plot(
+    def plot_obspy(
         self,
         *,
-        components: Sequence[ComponentName] | None = None,
-        fmin: float = 0.1,
-        cmap: str = "seismic",
-        vmin: float | None = None,
-        vmax: float | None = None,
-        fig=None,
+        component: ComponentName = "X",
+        # --- ObsPy spectrogram kwargs (common ones) ---
+        wlen: float = 2.0,
+        per_lap: float = 0.9,
+        mult: float = 8.0,
+        dbscale: bool = True,
+        log: bool = True,
         axes=None,
+        cmap: str = "viridis",
+        show: bool = True,
     ):
         """
-        Plot contour spectrograms for the selected components.
+        Quick spectrogram plot using ObsPy for cross-checking.
 
         Parameters
         ----------
-        components : sequence or None
-            Components to plot. If None, uses whatever is in self.power.
-        fmin : float
-            Minimum frequency in Hz (to avoid infinite period on secondary axis).
-        cmap : str
-            Matplotlib colormap (default 'seismic').
-        vmin, vmax : float or None
-            Optional limits for the dB colormap.
-        fig, axes : matplotlib Figure/Axes or None
-            Optionally reuse an existing figure/axes.
+        component
+            Which component column ("X","Y","Z") to plot.
+        wlen
+            Window length in seconds (ObsPy uses seconds).
+        per_lap
+            Fractional overlap (0..1).
+        mult
+            Zero padding factor; higher = denser FFT interpolation (slower).
+        dbscale
+            Plot in dB.
+        log
+            Log-frequency axis.
+        axes
+            Existing matplotlib axes to plot into.
+        cmap
+            Colormap.
+        show
+            If True, call matplotlib show.
 
         Returns
         -------
-        fig, axes
+        fig, ax
         """
-        import matplotlib.pyplot as plt
+        try:
+            from obspy.imaging.spectrogram import spectrogram as obspy_spectrogram
+            import matplotlib.pyplot as plt
+        except Exception as e:
+            raise ImportError(
+                "ObsPy is required for plot_obspy(). Install with: pip install obspy"
+            ) from e
 
-        self._ensure_computed()
+        rec = self.record
+        if rec.dt is None:
+            raise ValueError("Record.dt is None; cannot plot spectrogram.")
+        if component not in self.df_spectrogram.columns:
+            raise ValueError(f"Component '{component}' not found in df_spectrogram columns.")
 
-        assert self.freqs is not None
-        assert self.bins is not None
-        assert self.power
+        data = self.df_spectrogram[component].to_numpy(dtype=float)
+        fs = 1.0 / rec.dt
 
-        freqs = self.freqs
-        bins = self.bins
-
-        # Components to plot
-        if components is None:
-            comps_plot: list[ComponentName] = list(self.power.keys())
+        if axes is None:
+            fig, ax = plt.subplots(figsize=(12, 4))
         else:
-            comps_plot = [c for c in components if c in self.power]
+            ax = axes
+            fig = ax.figure
 
-        if not comps_plot:
-            raise ValueError("No components available to plot.")
+        # ObsPy will draw into current axes if we set it active
+        plt.sca(ax)
+        obspy_spectrogram(
+            data,
+            samp_rate=fs,
+            wlen=wlen,
+            per_lap=per_lap,
+            mult=mult,
+            dbscale=dbscale,
+            log=log,
+            cmap=cmap,
+            show=False,  # we'll control show ourselves
+        )
 
-        nrows = len(comps_plot)
+        ax.set_title(f"ObsPy spectrogram — component {component}")
+        ax.set_xlabel("Time (s)")
+        ax.set_ylabel("Frequency (Hz)" if not log else "Frequency (log Hz)")
 
-        if fig is None or axes is None:
-            fig, axes = plt.subplots(
-                nrows=nrows,
-                ncols=1,
-                figsize=(12, 3.5 * nrows),
-                sharex=True,
-                sharey=True,
+        if show:
+            plt.show()
+
+        return fig, ax
+
+    def plot_spectrogram(
+        self,
+        *,
+        NFFT: int = 256,
+        noverlap: int = 128,
+        cmap: str = "seismic",
+        fmin: float = 0.1,
+        detrend: bool = True,
+        taper: float = 0.05,
+        band: tuple[float, float] | None = None,  # (Tc_low, Tc_high) in seconds
+        corners: int = 4,
+        zerophase: bool = True,
+        show: bool = True,
+    ):
+        """
+        Plot contour spectrograms for available components (X,Y,Z) with a colorbar
+        and a secondary y-axis showing period.
+
+        This method does NOT mutate df_spectrogram; it works on a copied ObsPy Stream.
+
+        Parameters
+        ----------
+        NFFT, noverlap, cmap, fmin
+            Same meaning as your draft.
+        detrend
+            If True: apply demean + linear detrend (plot-time only).
+        taper
+            Fractional taper (0..1) for ObsPy taper().
+        band
+            Optional band-pass in period (Tc_low, Tc_high) [s].
+            Converted to freqmin=1/Tc_high and freqmax=1/Tc_low.
+        corners, zerophase
+            Passed to ObsPy filter() when band is not None.
+        show
+            If True calls plt.show().
+        """
+        try:
+            import obspy
+            import matplotlib.pyplot as plt
+        except Exception as e:
+            raise ImportError(
+                "plot_spectrogram() requires obspy and matplotlib. Install with: pip install obspy matplotlib"
+            ) from e
+
+        rec = self.record
+        if rec.dt is None:
+            raise ValueError("Record.dt is None; cannot plot spectrogram.")
+
+        df = self.df_spectrogram
+        comps = [c for c in ("X", "Y", "Z") if c in df.columns]
+        if not comps:
+            raise ValueError("No components (X,Y,Z) found in df_spectrogram.")
+
+        # Step 1 — construct ObsPy stream from current working df (copy)
+        st = obspy.Stream()
+        for name in comps:
+            data = df[name].to_numpy(dtype=float).copy()
+            tr = obspy.Trace(data=data)
+            tr.stats.delta = rec.dt
+            tr.stats.channel = name
+            st.append(tr)
+
+        # Step 2 — preprocessing (plot-time only; does NOT affect df_spectrogram)
+        st_clean = st.copy()
+
+        if detrend:
+            st_clean.detrend("demean")
+            st_clean.detrend("linear")
+
+        if taper and taper > 0.0:
+            st_clean.taper(taper)
+
+        # Optional band-pass (period -> frequency)
+        if band is not None:
+            Tc_low, Tc_high = band
+            if Tc_low <= 0 or Tc_high <= 0:
+                raise ValueError("band periods must be > 0.")
+            if Tc_low >= Tc_high:
+                raise ValueError("band must satisfy Tc_low < Tc_high.")
+
+            f1 = 1.0 / Tc_high  # freqmin
+            f2 = 1.0 / Tc_low   # freqmax
+            st_clean.filter(
+                "bandpass",
+                freqmin=f1,
+                freqmax=f2,
+                corners=corners,
+                zerophase=zerophase,
             )
 
-        if nrows == 1:
-            axes_list = [axes]
-        else:
-            axes_list = list(axes)
+        # Step 3 — setup figure
+        fig, axes = plt.subplots(
+            nrows=len(st_clean),
+            figsize=(12, 3.5 * len(st_clean)),
+            sharex=True,
+            sharey=True,
+        )
+        if len(st_clean) == 1:
+            axes = [axes]
 
-        # Helper transforms for secondary y-axis
+        # Helper functions for secondary axis
         def freq2period(x):
             with np.errstate(divide="ignore", invalid="ignore"):
                 return 1.0 / x
@@ -323,35 +380,48 @@ class Spectrogram:
 
         last_cs = None
 
-        for comp, ax in zip(comps_plot, axes_list):
-            Pxx_dB = self.power[comp]
+        for ax, tr in zip(axes, st_clean):
+            fs = tr.stats.sampling_rate
 
+            # Compute spectrogram numerically
+            Pxx, freqs, bins = mlab.specgram(
+                tr.data,
+                NFFT=NFFT,
+                Fs=fs,
+                noverlap=noverlap,
+            )
+
+            # Convert to dB
+            Pxx_dB = 10.0 * np.log10(Pxx + 1e-12)
+
+            # Plot contour spectrogram
             cs = ax.contourf(
                 bins,
                 freqs,
                 Pxx_dB,
                 levels=50,
                 cmap=cmap,
-                vmin=vmin,
-                vmax=vmax,
                 extend="both",
             )
             last_cs = cs
 
             ax.set_ylim(bottom=fmin)
+            ax.set_title(f"Component {tr.stats.channel}")
             ax.set_ylabel("Frequency (Hz)")
-            ax.set_title(f"Component {comp}")
             ax.grid(True, alpha=0.3, ls="--")
 
-            # Secondary y-axis in period
             secax = ax.secondary_yaxis("right", functions=(freq2period, period2freq))
             secax.set_ylabel("Period (s)")
 
-        axes_list[-1].set_xlabel("Time (s)")
+        axes[-1].set_xlabel("Time (s)")
 
-        # Colorbar on the right, as in your original version
+        # Add colorbar
         cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
         fig.colorbar(last_cs, cax=cbar_ax, label="Power (dB)")
 
         plt.subplots_adjust(right=0.9)
-        return fig, axes_list
+
+        if show:
+            plt.show()
+
+        return fig, axes
