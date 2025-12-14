@@ -181,62 +181,6 @@ class Spectrogram:
         self.bins = bins_global
         self.power = power
 
-    def plot_obspy(
-        self,
-        *,
-        component: ComponentName = "X",
-        wlen: float = 2.0,
-        per_lap: float = 0.9,
-        mult: float = 8.0,
-        dbscale: bool = True,
-        log: bool = True,
-        cmap: str = "viridis",
-        show: bool = True,
-    ):
-        import matplotlib.pyplot as plt
-        from obspy.imaging.spectrogram import spectrogram as obspy_spectrogram
-
-        rec = self.record
-        if rec.dt is None:
-            raise ValueError("Record.dt is None; cannot plot spectrogram.")
-        if component not in self.df_spectrogram.columns:
-            raise ValueError(f"Component '{component}' not found in df_spectrogram columns.")
-
-        data = self.df_spectrogram[component].to_numpy(dtype=float)
-
-        # sanitize
-        data = np.nan_to_num(data, nan=0.0, posinf=0.0, neginf=0.0)
-        if np.allclose(data, 0.0):
-            raise ValueError(
-                f"Component '{component}' is (near) all zeros after preprocessing; "
-                "ObsPy spectrogram would contain log10(0)."
-            )
-
-        fs = 1.0 / rec.dt
-
-        fig, ax = plt.subplots(figsize=(12, 4))
-        plt.sca(ax)
-
-        # If you keep dbscale=True, ObsPy does log10 internally and can still hit -inf
-        # for true zeros in the internal specgram. Safer: dbscale=False then let it plot linear.
-        obspy_spectrogram(
-            data,
-            samp_rate=fs,
-            wlen=wlen,
-            per_lap=per_lap,
-            mult=mult,
-            dbscale=False,   # <-- important
-            log=log,
-            cmap=cmap,
-            show=False,
-        )
-        ax.set_title(f"ObsPy spectrogram (safe, linear) — component {component}")
-        ax.set_xlabel("Time (s)")
-        ax.set_ylabel("Frequency (Hz)")
-        if show:
-            plt.show()
-        return fig, ax
-
     def plot_spectrogram(
         self,
         *,
