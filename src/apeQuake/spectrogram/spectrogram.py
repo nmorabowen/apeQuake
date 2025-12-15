@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Sequence
 import numpy as np
 import pandas as pd
@@ -11,6 +12,20 @@ if TYPE_CHECKING:
     from ..core.record import Record
     from ..filters.filters import Filter
 
+@dataclass(slots=True)
+class SpectrogramPlotLimits:
+    # x-axis (time in seconds)
+    tmin: float | None = None
+    tmax: float | None = None
+
+    # y-axis (frequency in Hz)
+    fmin: float | None = None
+    fmax: float | None = None
+
+    # color axis (power in dB)
+    pmin: float | None = None
+    pmax: float | None = None
+    
 
 class Spectrogram:
     def __init__(self, record: "Record") -> None:
@@ -24,6 +39,47 @@ class Spectrogram:
         self.power: dict[ComponentName, np.ndarray] = {}
 
         self.applied_filters: list[str] = []
+
+        # --- NEW: plot limits as instance attribute
+        self.plot_limits: SpectrogramPlotLimits = SpectrogramPlotLimits()
+
+    # ------------------------- plot config ------------------------- #
+
+    def set_plot_limits(
+        self,
+        *,
+        tmin: float | None = None,
+        tmax: float | None = None,
+        fmin: float | None = None,
+        fmax: float | None = None,
+        pmin: float | None = None,
+        pmax: float | None = None,
+    ) -> "Spectrogram":
+        if tmin is not None and tmax is not None and tmin >= tmax:
+            raise ValueError("Require tmin < tmax.")
+        if fmin is not None and fmax is not None and fmin >= fmax:
+            raise ValueError("Require fmin < fmax.")
+        if pmin is not None and pmax is not None and pmin >= pmax:
+            raise ValueError("Require pmin < pmax.")
+
+        if tmin is not None:
+            self.plot_limits.tmin = float(tmin)
+        if tmax is not None:
+            self.plot_limits.tmax = float(tmax)
+        if fmin is not None:
+            self.plot_limits.fmin = float(fmin)
+        if fmax is not None:
+            self.plot_limits.fmax = float(fmax)
+        if pmin is not None:
+            self.plot_limits.pmin = float(pmin)
+        if pmax is not None:
+            self.plot_limits.pmax = float(pmax)
+
+        return self
+
+    def reset_plot_limits(self) -> "Spectrogram":
+        self.plot_limits = SpectrogramPlotLimits()
+        return self
 
     # ------------------------- DF lifecycle ------------------------- #
 
@@ -151,6 +207,7 @@ class Spectrogram:
         if not comps:
             raise ValueError("No components to compute spectrogram for. Check df and 'components' argument.")
 
+        
         fs = 1.0 / rec.dt
 
         freqs_global: np.ndarray | None = None
@@ -187,36 +244,15 @@ class Spectrogram:
         NFFT: int = 256,
         noverlap: int = 128,
         cmap: str = "seismic",
+        # keep this param if you like; we will treat it as a fallback default
         fmin: float = 0.1,
         detrend: bool = True,
         taper: float = 0.05,
-        band: tuple[float, float] | None = None,  # (Tc_low, Tc_high) in seconds
+        band: tuple[float, float] | None = None,
         corners: int = 4,
         zerophase: bool = True,
         show: bool = True,
     ):
-        """
-        Plot contour spectrograms for available components (X,Y,Z) with a colorbar
-        and a secondary y-axis showing period.
-
-        This method does NOT mutate df_spectrogram; it works on a copied ObsPy Stream.
-
-        Parameters
-        ----------
-        NFFT, noverlap, cmap, fmin
-            Same meaning as your draft.
-        detrend
-            If True: apply demean + linear detrend (plot-time only).
-        taper
-            Fractional taper (0..1) for ObsPy taper().
-        band
-            Optional band-pass in period (Tc_low, Tc_high) [s].
-            Converted to freqmin=1/Tc_high and freqmax=1/Tc_low.
-        corners, zerophase
-            Passed to ObsPy filter() when band is not None.
-        show
-            If True calls plt.show().
-        """
         try:
             import obspy
             import matplotlib.pyplot as plt
@@ -243,33 +279,35 @@ class Spectrogram:
             tr.stats.channel = name
             st.append(tr)
 
-        # Step 2 — preprocessing (plot-time only; does NOT affect df_spectrogram)
+        # Step 2 — preprocessing (plot-time only)
         st_clean = st.copy()
-
         if detrend:
             st_clean.detrend("demean")
             st_clean.detrend("linear")
-
         if taper and taper > 0.0:
             st_clean.taper(taper)
 
-        # Optional band-pass (period -> frequency)
         if band is not None:
             Tc_low, Tc_high = band
             if Tc_low <= 0 or Tc_high <= 0:
                 raise ValueError("band periods must be > 0.")
             if Tc_low >= Tc_high:
                 raise ValueError("band must satisfy Tc_low < Tc_high.")
+            f1 = 1.0 / Tc_high
+            f2 = 1.0 / Tc_low
+            st_clean.filter("bandpass", freqmin=f1, freqmax=f2, corners=corners, zerophase=zerophase)
 
-            f1 = 1.0 / Tc_high  # freqmin
-            f2 = 1.0 / Tc_low   # freqmax
-            st_clean.filter(
-                "bandpass",
-                freqmin=f1,
-                freqmax=f2,
-                corners=corners,
-                zerophase=zerophase,
-            )
+        # Limits (instance attributes take priority; fall back to fmin argument)
+        lim = self.plot_limits
+        tmin = lim.tmin
+        tmax = lim.tmax
+        fmin_eff = lim.fmin if lim.fmin is not None else fmin
+        fmax_eff = lim.fmax
+        pmin = lim.pmin
+        pmax = lim.pmax
+
+        if fmin_eff is not None and fmin_eff <= 0.0:
+            raise ValueError("fmin must be > 0 to use the period secondary axis.")
 
         # Step 3 — setup figure
         fig, axes = plt.subplots(
@@ -281,7 +319,6 @@ class Spectrogram:
         if len(st_clean) == 1:
             axes = [axes]
 
-        # Helper functions for secondary axis
         def freq2period(x):
             with np.errstate(divide="ignore", invalid="ignore"):
                 return 1.0 / x
@@ -295,29 +332,37 @@ class Spectrogram:
         for ax, tr in zip(axes, st_clean):
             fs = tr.stats.sampling_rate
 
-            # Compute spectrogram numerically
-            Pxx, freqs, bins = mlab.specgram(
-                tr.data,
-                NFFT=NFFT,
-                Fs=fs,
-                noverlap=noverlap,
-            )
-
-            # Convert to dB
+            Pxx, freqs, bins = mlab.specgram(tr.data, NFFT=NFFT, Fs=fs, noverlap=noverlap)
             Pxx_dB = 10.0 * np.log10(Pxx + 1e-12)
 
-            # Plot contour spectrogram
+            if (pmin is not None) and (pmax is not None):
+                levels = np.linspace(pmin, pmax, 51)  # 50 bands
+            else:
+                levels = 50
+
+            # Plot with controlled color scale (power limits)
             cs = ax.contourf(
                 bins,
                 freqs,
                 Pxx_dB,
-                levels=50,
+                levels=levels,
                 cmap=cmap,
                 extend="both",
+                vmin=pmin,
+                vmax=pmax,
             )
             last_cs = cs
 
-            ax.set_ylim(bottom=fmin)
+            # Frequency limits
+            if fmin_eff is not None:
+                ax.set_ylim(bottom=fmin_eff)
+            if fmax_eff is not None:
+                ax.set_ylim(top=fmax_eff)
+
+            # Time limits
+            if tmin is not None or tmax is not None:
+                ax.set_xlim(left=tmin, right=tmax)
+
             ax.set_title(f"Component {tr.stats.channel}")
             ax.set_ylabel("Frequency (Hz)")
             ax.grid(True, alpha=0.3, ls="--")
@@ -327,7 +372,6 @@ class Spectrogram:
 
         axes[-1].set_xlabel("Time (s)")
 
-        # Add colorbar
         cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
         fig.colorbar(last_cs, cax=cbar_ax, label="Power (dB)")
 
