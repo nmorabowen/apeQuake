@@ -28,9 +28,10 @@ class SpectrogramPlotLimits:
     
 
 class Spectrogram:
-    def __init__(self, record: "Record") -> None:
+    def __init__(self, record: "Record", name:str | None = None) -> None:
         self.record = record
         self.filter: "Filter" = record.filter
+        self.name: str | None = name
 
         self.df_spectrogram: pd.DataFrame = record.df.copy()
 
@@ -244,7 +245,7 @@ class Spectrogram:
         NFFT: int = 256,
         noverlap: int = 128,
         cmap: str = "seismic",
-        # keep this param if you like; we will treat it as a fallback default
+        # fallback default if self.plot_limits.fmin is None
         fmin: float = 0.1,
         detrend: bool = True,
         taper: float = 0.05,
@@ -300,7 +301,7 @@ class Spectrogram:
         # Limits (instance attributes take priority; fall back to fmin argument)
         lim = self.plot_limits
         tmin = lim.tmin
-        tmax = lim.tmax
+        tmax_eff = lim.tmax  # <-- do NOT mutate lim.tmax
         fmin_eff = lim.fmin if lim.fmin is not None else fmin
         fmax_eff = lim.fmax
         pmin = lim.pmin
@@ -319,6 +320,10 @@ class Spectrogram:
         if len(st_clean) == 1:
             axes = [axes]
 
+        # Figure-level title (metadata)
+        if self.name:
+            fig.suptitle(self.name, fontsize=14, y=0.98)
+
         def freq2period(x):
             with np.errstate(divide="ignore", invalid="ignore"):
                 return 1.0 / x
@@ -335,17 +340,18 @@ class Spectrogram:
             Pxx, freqs, bins = mlab.specgram(tr.data, NFFT=NFFT, Fs=fs, noverlap=noverlap)
             Pxx_dB = 10.0 * np.log10(Pxx + 1e-12)
 
-            t_available_max = float(bins.max()) if len(bins) else 0.0
-            if tmax is not None and tmax > t_available_max:
-                tmax = t_available_max
+            # Clip requested tmax to available bins (do it on the local variable, not the attribute)
+            if tmax_eff is not None:
+                t_available_max = float(bins.max()) if len(bins) else 0.0
+                if tmax_eff > t_available_max:
+                    tmax_eff = t_available_max
 
-
+            # Power levels (fixed scale if pmin/pmax provided)
             if (pmin is not None) and (pmax is not None):
                 levels = np.linspace(pmin, pmax, 51)  # 50 bands
             else:
                 levels = 50
 
-            # Plot with controlled color scale (power limits)
             cs = ax.contourf(
                 bins,
                 freqs,
@@ -353,8 +359,6 @@ class Spectrogram:
                 levels=levels,
                 cmap=cmap,
                 extend="both",
-                vmin=pmin,
-                vmax=pmax,
             )
             last_cs = cs
 
@@ -365,8 +369,8 @@ class Spectrogram:
                 ax.set_ylim(top=fmax_eff)
 
             # Time limits
-            if tmin is not None or tmax is not None:
-                ax.set_xlim(left=tmin, right=tmax)
+            if tmin is not None or tmax_eff is not None:
+                ax.set_xlim(left=tmin, right=tmax_eff)
 
             ax.set_title(f"Component {tr.stats.channel}")
             ax.set_ylabel("Frequency (Hz)")
@@ -377,10 +381,12 @@ class Spectrogram:
 
         axes[-1].set_xlabel("Time (s)")
 
-        cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
-        fig.colorbar(last_cs, cax=cbar_ax, label="Power (dB)")
+        # Add colorbar
+        if last_cs is not None:
+            cbar_ax = fig.add_axes([0.92, 0.15, 0.02, 0.7])
+            fig.colorbar(last_cs, cax=cbar_ax, label="Power (dB)")
 
-        plt.subplots_adjust(right=0.9)
+        plt.subplots_adjust(right=0.9, top=0.92)
 
         if show:
             plt.show()
