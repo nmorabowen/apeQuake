@@ -264,3 +264,162 @@ class PlotRecord:
 
         return fig, axes
 
+    def plot_component_df(
+        self,
+        component: ComponentName,
+        *,
+        df: pd.DataFrame,
+        ax: plt.Axes,
+        linewidth: float = 1.0,
+        linestyle: str = "-",
+        grid: bool = True,
+        ylabel: str | None = None,
+        **kwargs,
+    ) -> plt.Axes:
+        """Primitive: draw ONE component vs time from an explicit df into ax."""
+        if "time" not in df.columns:
+            raise ValueError("df must contain a 'time' column.")
+        if component not in df.columns:
+            raise ValueError(f"Component '{component}' not found in df.")
+
+        t = df["time"].to_numpy(float)
+        y = df[component].to_numpy(float)
+
+        ax.plot(t, y, linewidth=linewidth, linestyle=linestyle, **kwargs)
+        if grid:
+            ax.grid(True, alpha=0.3)
+        ax.set_ylabel(ylabel if ylabel is not None else component)
+        return ax
+    
+    def plot_band_pass_compare(
+        self,
+        *,
+        other_records: Sequence["Record"],
+        labels: Sequence[str] | None = None,
+        colors: Sequence[str] | None = None,
+        Tc_low_list: Sequence[float],
+        Tc_high_list: Sequence[float],
+        components: Sequence[ComponentName] | None = None,
+        title: str | None = None,
+        corners: int = 4,
+        zerophase: bool = True,
+        sharex: bool = True,
+        sharey: bool = True,
+        figsize: tuple[float, float] | None = None,
+        linewidth: float = 1.2,
+        grid: bool = True,
+        xlim: tuple[float, float] | None = None,
+        ylim: tuple[float, float] | None = None,
+        show: bool = True,
+        **kwargs,
+    ) -> tuple[plt.Figure, list[list[plt.Axes]]]:
+        """
+        Grid plot: rows=components, cols=each band.
+        In each subplot: overlays (self.record + other_records) filtered by that band.
+        """
+        if len(Tc_low_list) != len(Tc_high_list):
+            raise ValueError("Tc_low_list and Tc_high_list must have the same length.")
+
+        recs = [self.record, *list(other_records)]
+        if labels is None:
+            labels = [getattr(r, "name", f"rec{i}") for i, r in enumerate(recs)]
+        if len(labels) != len(recs):
+            raise ValueError("labels must match number of records (self + other_records).")
+
+        if colors is not None and len(colors) != len(recs):
+            raise ValueError("colors must match number of records (self + other_records).")
+
+        # components based on self.record.df (you can change to union if you want)
+        df0 = self.record.df
+        comps = self._select_components(components, df=df0)
+        n_rows = len(comps)
+        n_cols = len(Tc_low_list)
+
+        if figsize is None:
+            figsize = (5.0 * n_cols, max(2.6 * n_rows, 3.2))
+
+        fig, ax = plt.subplots(
+            nrows=n_rows, ncols=n_cols,
+            figsize=figsize,
+            sharex=sharex, sharey=sharey,
+        )
+
+        # normalize ax to 2D list
+        if n_rows == 1 and n_cols == 1:
+            axes = [[ax]]
+        elif n_rows == 1:
+            axes = [list(ax)]
+        elif n_cols == 1:
+            axes = [[a] for a in ax]
+        else:
+            axes = [list(row) for row in ax]
+
+        # plot each band (column)
+        for j, (Tc_low, Tc_high) in enumerate(zip(Tc_low_list, Tc_high_list)):
+            Tc_low = float(Tc_low)
+            Tc_high = float(Tc_high)
+            if Tc_low <= 0 or Tc_high <= 0:
+                raise ValueError("Tc_low and Tc_high must be > 0.")
+            if Tc_low >= Tc_high:
+                raise ValueError("Require Tc_low < Tc_high.")
+
+            # pre-filter each record for this band
+            dfs_f = [
+                r.filter.band_pass(
+                    df=r.df,
+                    Tc_low=Tc_low,
+                    Tc_high=Tc_high,
+                    corners=corners,
+                    zerophase=zerophase,
+                )
+                for r in recs
+            ]
+
+            for i, c in enumerate(comps):
+                for k, (r, df_f, lab) in enumerate(zip(recs, dfs_f, labels)):
+                    plot_kwargs = dict(kwargs)
+                    if colors is not None:
+                        plot_kwargs["color"] = colors[k]
+                    # use self's primitive that accepts df
+                    self.plot_component_df(
+                        c,
+                        df=df_f,
+                        ax=axes[i][j],
+                        linewidth=linewidth,
+                        linestyle=plot_kwargs.pop("linestyle", "-"),
+                        grid=grid,
+                        label=lab,
+                        **plot_kwargs,
+                    )
+
+                if i == 0:
+                    axes[i][j].set_title(f"Tc={Tc_low:g}–{Tc_high:g} s")
+
+        # global limits (constant for all)
+        if xlim is not None:
+            for row in axes:
+                for ax_ in row:
+                    ax_.set_xlim(*xlim)
+        if ylim is not None:
+            for row in axes:
+                for ax_ in row:
+                    ax_.set_ylim(*ylim)
+
+        # x-label only bottom row
+        for j in range(n_cols):
+            axes[-1][j].set_xlabel("Time (s)")
+
+        # one shared legend for the whole figure
+        handles, labs = axes[0][0].get_legend_handles_labels()
+        fig.legend(handles, labs, loc="upper right")
+
+        if title:
+            fig.suptitle(title)
+            fig.tight_layout(rect=[0, 0, 1, 0.95])
+        else:
+            fig.tight_layout()
+
+        if show:
+            plt.show()
+
+        return fig, axes
