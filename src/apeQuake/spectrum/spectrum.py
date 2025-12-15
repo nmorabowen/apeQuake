@@ -284,3 +284,195 @@ class Spectrum:
 
     def plot_separate(self, **kw):
         return self.plot(combined=False, **kw)
+
+    def get_arrays(
+        self,
+        *,
+        components: Sequence[ComponentName] | None = None,
+        fmin: float | None = None,
+        fmax: float | None = None,
+        representation: SpectrumRepresentation = "loglog",
+    ) -> tuple[np.ndarray, dict[ComponentName, np.ndarray], list[ComponentName]]:
+        """Return (freqs, amps_dict, comps) after compute(), with masking applied."""
+        self._ensure_computed()
+
+        if self.freqs is None:
+            raise RuntimeError("Spectrum.freqs is None after compute().")
+
+        freqs = self.freqs
+        amps = self.amplitudes
+
+        if components is None:
+            comps = list(amps.keys())
+        else:
+            comps = [c for c in components if c in amps]
+
+        if not comps:
+            raise ValueError("No available components to extract.")
+
+        mask = np.ones_like(freqs, dtype=bool)
+        if fmin is not None:
+            mask &= freqs >= fmin
+        if fmax is not None:
+            mask &= freqs <= fmax
+        if representation in ("semilogx", "loglog"):
+            mask &= freqs > 0.0
+
+        freqs_m = freqs[mask]
+        amps_m: dict[ComponentName, np.ndarray] = {c: amps[c][mask] for c in comps}
+        return freqs_m, amps_m, comps
+
+    def compare(
+        self,
+        *,
+        other: Sequence["Spectrum"] | None = None,
+        other_records: Sequence["Record"] | None = None,
+        labels: Sequence[str] | None = None,
+        colors: Sequence[str] | None = None,
+        components: Sequence[ComponentName] | None = None,
+        representation: SpectrumRepresentation = "loglog",
+        combined: bool = True,              # True = one plot (all comps) or one plot per comp? (see below)
+        per_component_axes: bool = False,    # if True -> one subplot per component, overlay records in each
+        fmin: float | None = None,
+        fmax: float | None = None,
+        grid: bool = True,
+        show: bool = True,
+        figsize: tuple[float, float] | None = None,
+        align: Literal["strict", "interp"] = "strict",
+        **plot_kwargs,
+    ):
+        """
+        Compare spectra by overlaying multiple Spectrum objects (or Records).
+
+        align:
+          - "strict": requires identical frequency grids (same dt & n after masking)
+          - "interp": interpolates amplitudes onto the base (self) frequency grid
+        """
+        import matplotlib.pyplot as plt
+
+        # --- build list of Spectrum objects ---
+        specs: list[Spectrum] = [self]
+
+        if other is not None:
+            specs.extend(list(other))
+
+        if other_records is not None:
+            specs.extend([Spectrum(r) for r in other_records])
+
+        # --- labels / colors ---
+        if labels is None:
+            labels = [getattr(s.record, "name", f"rec{i}") for i, s in enumerate(specs)]
+        if len(labels) != len(specs):
+            raise ValueError("labels must match number of spectra.")
+
+        if colors is not None and len(colors) != len(specs):
+            raise ValueError("colors must match number of spectra.")
+
+        # --- base arrays (self) ---
+        f_base, A_base, comps = self.get_arrays(
+            components=components,
+            fmin=fmin,
+            fmax=fmax,
+            representation=representation,
+        )
+
+        # --- gather & (optionally) align others ---
+        all_freqs: list[np.ndarray] = [f_base]
+        all_amps: list[dict[ComponentName, np.ndarray]] = [A_base]
+
+        for s in specs[1:]:
+            f_i, A_i, comps_i = s.get_arrays(
+                components=comps,          # force same component set for plotting
+                fmin=fmin,
+                fmax=fmax,
+                representation=representation,
+            )
+
+            if align == "strict":
+                if f_i.shape != f_base.shape or not np.allclose(f_i, f_base, rtol=0, atol=0):
+                    raise ValueError(
+                        "Frequency grids differ. Use align='interp' or ensure same dt and n."
+                    )
+                all_freqs.append(f_i)
+                all_amps.append(A_i)
+
+            elif align == "interp":
+                # interpolate each component amplitude onto base grid
+                A_i_interp: dict[ComponentName, np.ndarray] = {}
+                for c in comps:
+                    # safe: f_i is increasing, use np.interp
+                    A_i_interp[c] = np.interp(f_base, f_i, A_i[c], left=np.nan, right=np.nan)
+                all_freqs.append(f_base)
+                all_amps.append(A_i_interp)
+            else:
+                raise ValueError("align must be 'strict' or 'interp'.")
+
+        # --- plotting function ---
+        def plot_fn(ax):
+            match representation:
+                case "linear": return ax.plot
+                case "semilogx": return ax.semilogx
+                case "semilogy": return ax.semilogy
+                case "loglog": return ax.loglog
+                case _: raise ValueError("Bad representation")
+
+        # =======================
+        # layout choices
+        # =======================
+
+        if per_component_axes:
+            # one subplot per component, overlay records in each
+            n = len(comps)
+            if figsize is None:
+                figsize = (5.5 * n, 4.2)
+
+            fig, axes = plt.subplots(1, n, figsize=figsize, sharey=True)
+            if n == 1:
+                axes = [axes]
+
+            for ax, c in zip(axes, comps):
+                P = plot_fn(ax)
+                for k, (lab, A_k) in enumerate(zip(labels, all_amps)):
+                    kw = dict(plot_kwargs)
+                    if colors is not None:
+                        kw["color"] = colors[k]
+                    P(f_base, A_k[c], label=lab, **kw)
+
+                ax.set_title(c)
+                ax.set_xlabel("Frequency (Hz)")
+                if grid:
+                    ax.grid(True, which="both", alpha=0.5)
+
+            axes[0].set_ylabel("Amplitude")
+            axes[-1].legend()
+            fig.tight_layout()
+            if show:
+                plt.show()
+            return fig, axes
+
+        # else: combined axis
+        if figsize is None:
+            figsize = (7.2, 5.2)
+        fig, ax = plt.subplots(figsize=figsize)
+
+        P = plot_fn(ax)
+
+        # combined=True here means "plot all components on same axes, but keep label readable"
+        # label format: "<record>.<component>"
+        for k, (lab, A_k) in enumerate(zip(labels, all_amps)):
+            for c in comps:
+                kw = dict(plot_kwargs)
+                if colors is not None:
+                    kw["color"] = colors[k]
+                P(f_base, A_k[c], label=f"{lab}.{c}", **kw)
+
+        ax.set_xlabel("Frequency (Hz)")
+        ax.set_ylabel("Amplitude")
+        if grid:
+            ax.grid(True, which="both", alpha=0.5)
+        ax.legend(ncol=2)
+        ax.set_title("Spectrum comparison")
+        fig.tight_layout()
+        if show:
+            plt.show()
+        return fig, ax
