@@ -152,15 +152,16 @@ class PlotRecord:
         linewidth: float = 1.0,
         linestyle: str = "-",
         grid: bool = True,
+        xlim: tuple[float, float] | None = None,
+        ylim: tuple[float, float] | None = None,
         show: bool = True,
         **kwargs,
     ) -> tuple[plt.Figure, list[list[plt.Axes]]]:
         """
         Grid plot: rows = components, columns = [Original] + each band-pass filter.
 
-        Returns
-        -------
-        (fig, axes) where axes is a 2D list: axes[row][col].
+        xlim, ylim:
+            If provided, applied identically to ALL subplots.
         """
         rec = self.record
         df0 = rec.df
@@ -225,7 +226,6 @@ class PlotRecord:
                 zerophase=zerophase,
             )
 
-            # plot each component in its row
             for i, c in enumerate(comps):
                 t = df_f["time"].to_numpy(float)
                 y = df_f[c].to_numpy(float)
@@ -233,10 +233,21 @@ class PlotRecord:
                 axes[i][j].plot(t, y, linewidth=linewidth, linestyle=linestyle, **kwargs)
                 if grid:
                     axes[i][j].grid(True, alpha=0.3)
-                axes[i][j].set_ylabel(c)  # keep row label consistent
+                axes[i][j].set_ylabel(c)
 
                 if i == 0:
                     axes[i][j].set_title(f"Band-pass\nTc={Tc_low:g}–{Tc_high:g} s")
+
+        # ---- apply global axis limits ----
+        if xlim is not None:
+            for row in axes:
+                for ax_ in row:
+                    ax_.set_xlim(*xlim)
+
+        if ylim is not None:
+            for row in axes:
+                for ax_ in row:
+                    ax_.set_ylim(*ylim)
 
         # x-label only on bottom row
         for j in range(n_cols):
@@ -252,3 +263,4 @@ class PlotRecord:
             plt.show()
 
         return fig, axes
+
