@@ -28,10 +28,9 @@ class SpectrogramPlotLimits:
     
 
 class Spectrogram:
-    def __init__(self, record: "Record", name:str | None = None) -> None:
+    def __init__(self, record: "Record") -> None:
         self.record = record
         self.filter: "Filter" = record.filter
-        self.name: str | None = name
 
         self.df_spectrogram: pd.DataFrame = record.df.copy()
 
@@ -321,8 +320,8 @@ class Spectrogram:
             axes = [axes]
 
         # Figure-level title (metadata)
-        if self.name:
-            fig.suptitle(self.name, fontsize=14, y=0.98)
+        if self.record.name:
+            fig.suptitle(self.record.name, fontsize=14, y=0.98)
 
         def freq2period(x):
             with np.errstate(divide="ignore", invalid="ignore"):

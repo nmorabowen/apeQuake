@@ -34,6 +34,7 @@ class Record:
         z: np.ndarray | None = None,
         time_array: np.ndarray | None = None,
         dt: float | None = None,
+        name: str | None = None,
     ) -> None:
         """
         Initialize a Record from arrays (df input removed).
@@ -55,6 +56,7 @@ class Record:
         self._interpolation_flag: bool = False
         self.dt: float | None = dt
         self.init_logs: list[str] = []
+        self.name: str | None = name
 
         self._init_from_arrays(x=x, y=y, z=z, time_array=time_array, dt=dt)
 
