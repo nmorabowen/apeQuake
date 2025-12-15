@@ -335,6 +335,11 @@ class Spectrogram:
             Pxx, freqs, bins = mlab.specgram(tr.data, NFFT=NFFT, Fs=fs, noverlap=noverlap)
             Pxx_dB = 10.0 * np.log10(Pxx + 1e-12)
 
+            t_available_max = float(bins.max()) if len(bins) else 0.0
+            if tmax is not None and tmax > t_available_max:
+                tmax = t_available_max
+
+
             if (pmin is not None) and (pmax is not None):
                 levels = np.linspace(pmin, pmax, 51)  # 50 bands
             else:
