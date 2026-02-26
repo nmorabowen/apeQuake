@@ -26,6 +26,7 @@ dependencies = [
   "pandas>=1.5",
   "scipy>=1.10",
   "matplotlib>=3.7",
+  "numba>=0.59",
   "obspy>=1.4",
 ]
 

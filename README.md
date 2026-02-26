@@ -65,6 +65,10 @@ Newmark Average Acceleration (γ=0.5, β=0.25)
 
 Configurable damping
 
+Sa definition mode: pseudo (ω²Sd) or absolute max(|u¨ + a_g|)
+
+Single-component helpers: `newmark_sdof(...)`, `compute_response_spectrum(...)`
+
 Per-component spectra
 
 Combined and individual plotting modes
@@ -117,6 +121,13 @@ T = np.linspace(0.05, 5.0, 100)
 
 rec.response_spectra.compute(periods=T)
 rec.response_spectra.plot(quantity="Sa", representation="loglog")
+
+# absolute-acceleration Sa (max |u¨ + a_g|)
+rec.response_spectra.compute(periods=T, sa_mode="absolute")
+
+# single-component convenience API
+rs = rec.response_spectra.compute_response_spectrum(periods=T, component="X", sa_mode="absolute")
+rec.response_spectra.plot_response_spectrum(rs)
 
 🎛 Composite Architecture
 

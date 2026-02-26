@@ -4,6 +4,20 @@ from typing import TYPE_CHECKING, Sequence, Callable, Literal
 import numpy as np
 import pandas as pd
 
+try:
+    from numba import njit, prange
+    _NUMBA_AVAILABLE = True
+except Exception:  # pragma: no cover - optional acceleration dependency
+    _NUMBA_AVAILABLE = False
+
+    def njit(*args, **kwargs):
+        def _wrap(func):
+            return func
+        return _wrap
+
+    def prange(*args):
+        return range(*args)
+
 from apeQuake.core.types import ComponentName
 
 if TYPE_CHECKING:
@@ -12,6 +26,95 @@ if TYPE_CHECKING:
 FilterFunc = Callable[..., pd.DataFrame]
 RSQuantity = Literal["Sd", "Sv", "Sa"]   # Sa = pseudo-acceleration ω² Sd
 RSRepresentation = Literal["linear", "semilogx", "loglog"]
+SaMode = Literal["pseudo", "absolute"]
+
+
+@njit(cache=True, fastmath=True, parallel=True)
+def _newmark_spectra_kernel(
+    ag: np.ndarray,
+    dt: float,
+    periods: np.ndarray,
+    damping: float,
+    gamma: float,
+    beta: float,
+    sa_mode_abs: int,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Compute Sd, Sv, Sa for one acceleration series (parallel over periods)."""
+    nT = len(periods)
+    n = len(ag)
+
+    Sd = np.zeros(nT, dtype=np.float64)
+    Sv = np.zeros(nT, dtype=np.float64)
+    Sa = np.zeros(nT, dtype=np.float64)
+
+    for j in prange(nT):
+        T = periods[j]
+        if T <= 0.0:
+            Sd[j] = np.nan
+            Sv[j] = np.nan
+            Sa[j] = np.nan
+            continue
+
+        w = 2.0 * np.pi / T
+        k = w * w
+        c = 2.0 * damping * w
+
+        a0 = 1.0 / (beta * dt * dt)
+        a1 = gamma / (beta * dt)
+        a2 = 1.0 / (beta * dt)
+        a3 = 1.0 / (2.0 * beta) - 1.0
+        a4 = gamma / beta - 1.0
+        a5 = dt * (gamma / (2.0 * beta) - 1.0)
+
+        k_hat = k + a0 + a1 * c
+
+        u = 0.0
+        v = 0.0
+        a = -ag[0]
+
+        sd_max = 0.0
+        sv_max = 0.0
+        sa_abs_max = abs(a + ag[0])
+
+        for i in range(n - 1):
+            p_eff = (
+                -ag[i + 1]
+                + a0 * u
+                + a2 * v
+                + a3 * a
+                + a1 * c * u
+                + a4 * c * v
+                + a5 * c * a
+            )
+
+            u_new = p_eff / k_hat
+            a_new = a0 * (u_new - u) - a2 * v - a3 * a
+            v_new = v + dt * ((1.0 - gamma) * a + gamma * a_new)
+
+            abs_u = abs(u_new)
+            if abs_u > sd_max:
+                sd_max = abs_u
+
+            abs_v = abs(v_new)
+            if abs_v > sv_max:
+                sv_max = abs_v
+
+            abs_a_abs = abs(a_new + ag[i + 1])
+            if abs_a_abs > sa_abs_max:
+                sa_abs_max = abs_a_abs
+
+            u = u_new
+            v = v_new
+            a = a_new
+
+        Sd[j] = sd_max
+        Sv[j] = sv_max
+        if sa_mode_abs == 1:
+            Sa[j] = sa_abs_max
+        else:
+            Sa[j] = (w * w) * sd_max
+
+    return Sd, Sv, Sa
 
 
 class ResponseSpectra:
@@ -195,6 +298,8 @@ class ResponseSpectra:
         damping: float = 0.05,
         gamma: float = 0.5,
         beta: float = 0.25,
+        sa_mode: SaMode = "pseudo",
+        parallel: bool = True,
     ) -> None:
         """
         Compute response spectra (Sd, Sv, Sa_pseudo) for given periods.
@@ -226,6 +331,15 @@ class ResponseSpectra:
         gamma, beta : float
             Newmark integration parameters. Default is average acceleration
             (γ=0.5, β=0.25).
+
+        sa_mode : {'pseudo', 'absolute'}
+            Definition used for spectral acceleration Sa:
+            - 'pseudo'   -> Sa = ω² Sd
+            - 'absolute' -> Sa = max(|u¨ + a_g|)
+
+        parallel : bool
+            If True, use a Numba-parallel kernel over periods when available.
+            Falls back to Python loops if Numba is not installed.
         """
         rec = self._record
 
@@ -261,9 +375,12 @@ class ResponseSpectra:
         periods_arr = np.asarray(periods, dtype=float)
         if np.any(periods_arr <= 0.0):
             raise ValueError("All periods must be > 0.")
+        if sa_mode not in ("pseudo", "absolute"):
+            raise ValueError("sa_mode must be one of {'pseudo', 'absolute'}.")
 
         dt = rec.dt
         nT = len(periods_arr)
+        sa_mode_abs = 1 if sa_mode == "absolute" else 0
 
         # Initialize result dicts
         Sd: dict[ComponentName, np.ndarray] = {}
@@ -274,27 +391,40 @@ class ResponseSpectra:
         for comp in comps:
             ag = df_work[comp].to_numpy(dtype=float)
 
-            Sd_comp = np.zeros(nT, dtype=float)
-            Sv_comp = np.zeros(nT, dtype=float)
-            Sa_comp = np.zeros(nT, dtype=float)
-
-            for j, T in enumerate(periods_arr):
-                u, v, a_rel = self._newmark_sdof(
-                    ag=ag,
-                    dt=dt,
-                    T=T,
-                    damping=damping,
-                    gamma=gamma,
-                    beta=beta,
+            if parallel and _NUMBA_AVAILABLE:
+                Sd_comp, Sv_comp, Sa_comp = _newmark_spectra_kernel(
+                    ag=np.ascontiguousarray(ag, dtype=np.float64),
+                    dt=float(dt),
+                    periods=np.ascontiguousarray(periods_arr, dtype=np.float64),
+                    damping=float(damping),
+                    gamma=float(gamma),
+                    beta=float(beta),
+                    sa_mode_abs=sa_mode_abs,
                 )
+            else:
+                Sd_comp = np.zeros(nT, dtype=float)
+                Sv_comp = np.zeros(nT, dtype=float)
+                Sa_comp = np.zeros(nT, dtype=float)
 
-                # Relative maxima
-                Sd_comp[j] = np.max(np.abs(u))
-                Sv_comp[j] = np.max(np.abs(v))
+                for j, T in enumerate(periods_arr):
+                    u, v, a_rel = self._newmark_sdof(
+                        ag=ag,
+                        dt=dt,
+                        T=T,
+                        damping=damping,
+                        gamma=gamma,
+                        beta=beta,
+                    )
 
-                # Pseudo-acceleration spectrum: Sa = ω² Sd
-                w = 2.0 * np.pi / T
-                Sa_comp[j] = (w**2) * Sd_comp[j]
+                    Sd_comp[j] = np.max(np.abs(u))
+                    Sv_comp[j] = np.max(np.abs(v))
+
+                    if sa_mode == "pseudo":
+                        w = 2.0 * np.pi / T
+                        Sa_comp[j] = (w**2) * Sd_comp[j]
+                    else:
+                        a_abs = a_rel + ag
+                        Sa_comp[j] = np.max(np.abs(a_abs))
 
             Sd[comp] = Sd_comp
             Sv[comp] = Sv_comp
@@ -306,6 +436,262 @@ class ResponseSpectra:
         self.Sv = Sv
         self.Sa = Sa
         self._df_used = df_work
+
+    def newmark_sdof(
+        self,
+        T: float,
+        *,
+        component: ComponentName | None = None,
+        df: pd.DataFrame | None = None,
+        use_filters: bool | None = None,
+        damping: float = 0.05,
+        gamma: float = 0.5,
+        beta: float = 0.25,
+        plot: bool = False,
+        fig=None,
+        axes=None,
+        **plot_kwargs,
+    ) -> dict[str, np.ndarray]:
+        """
+        Compute one SDOF response history for a single component.
+
+        Returns
+        -------
+        dict with keys:
+            'time', 'ag', 'displacement', 'velocity',
+            'acceleration' (relative), 'total_acceleration' (absolute),
+            'component', 'period', 'damping'
+        """
+        rec = self._record
+
+        if rec.dt is None:
+            raise ValueError("Record.dt is None; cannot compute SDOF response.")
+        if T <= 0.0:
+            raise ValueError("T must be > 0.")
+
+        if df is None:
+            df_work = rec.df.copy()
+            effective_use_filters = True if use_filters is None else use_filters
+        else:
+            df_work = df.copy()
+            effective_use_filters = True if use_filters is True else False
+
+        if effective_use_filters and self._filter_steps:
+            df_work = self._apply_filters(df_work, use_filters=True)
+
+        available = [c for c in ("X", "Y", "Z") if c in df_work.columns]
+        if not available:
+            raise ValueError("No components available for SDOF response.")
+
+        comp: ComponentName
+        if component is None:
+            comp = available[0]  # type: ignore[assignment]
+        else:
+            if component not in df_work.columns:
+                raise ValueError(f"Component '{component}' not found in selected DataFrame.")
+            comp = component
+
+        ag = df_work[comp].to_numpy(dtype=float)
+        time = df_work["time"].to_numpy(dtype=float)
+        u, v, a_rel = self._newmark_sdof(
+            ag=ag,
+            dt=rec.dt,
+            T=float(T),
+            damping=damping,
+            gamma=gamma,
+            beta=beta,
+        )
+        a_abs = a_rel + ag
+
+        out = {
+            "time": time,
+            "ag": ag,
+            "displacement": u,
+            "velocity": v,
+            "acceleration": a_rel,
+            "total_acceleration": a_abs,
+            "component": np.array([comp]),
+            "period": np.array([float(T)]),
+            "damping": np.array([float(damping)]),
+        }
+
+        if plot:
+            self.plot_sdof_response(
+                out,
+                fig=fig,
+                axes=axes,
+                **plot_kwargs,
+            )
+
+        return out
+
+    def compute_response_spectrum(
+        self,
+        periods: Sequence[float],
+        *,
+        component: ComponentName | None = None,
+        df: pd.DataFrame | None = None,
+        use_filters: bool | None = None,
+        damping: float = 0.05,
+        gamma: float = 0.5,
+        beta: float = 0.25,
+        sa_mode: SaMode = "absolute",
+        parallel: bool = True,
+        plot: bool = False,
+        fig=None,
+        axes=None,
+        **plot_kwargs,
+    ) -> dict[str, np.ndarray]:
+        """
+        Compute Sd, Sv, Sa for one component and return them as arrays.
+
+        Notes
+        -----
+        This is a convenience API for single-component workflows.
+        For multi-component workflows, use `compute(...)` and `plot(...)`.
+        """
+        rec = self._record
+        if df is None:
+            df_work = rec.df.copy()
+        else:
+            df_work = df.copy()
+
+        available = [c for c in ("X", "Y", "Z") if c in df_work.columns]
+        if not available:
+            raise ValueError("No components available for response spectrum.")
+
+        comp: ComponentName
+        if component is None:
+            comp = available[0]  # type: ignore[assignment]
+        else:
+            if component not in df_work.columns:
+                raise ValueError(f"Component '{component}' not found in selected DataFrame.")
+            comp = component
+
+        self.compute(
+            periods=periods,
+            df=df_work,
+            use_filters=use_filters,
+            components=[comp],
+            damping=damping,
+            gamma=gamma,
+            beta=beta,
+            sa_mode=sa_mode,
+            parallel=parallel,
+        )
+
+        assert self.periods is not None
+        result = {
+            "T": self.periods.copy(),
+            "Sa": self.Sa[comp].copy(),
+            "Sv": self.Sv[comp].copy(),
+            "Sd": self.Sd[comp].copy(),
+            "component": np.array([comp]),
+            "units": {
+                "T": "s",
+                "Sa": "accel-units",
+                "Sv": "velocity-units",
+                "Sd": "length-units",
+            },
+        }
+
+        if plot:
+            self.plot_response_spectrum(result, fig=fig, axes=axes, **plot_kwargs)
+
+        return result
+
+    def plot_response_spectrum(
+        self,
+        spectrum_results: dict[str, np.ndarray],
+        *,
+        fig=None,
+        axes=None,
+        figsize: tuple[float, float] = (6, 8),
+        linewidth: float = 1.0,
+        linestyle: str = "-",
+        show: bool = True,
+    ):
+        """Plot Sa, Sv, Sd in 3 stacked subplots from a spectrum-results dictionary."""
+        import matplotlib.pyplot as plt
+
+        T = np.asarray(spectrum_results["T"], dtype=float)
+        Sa = np.asarray(spectrum_results["Sa"], dtype=float)
+        Sv = np.asarray(spectrum_results["Sv"], dtype=float)
+        Sd = np.asarray(spectrum_results["Sd"], dtype=float)
+
+        if fig is None or axes is None:
+            fig, axes = plt.subplots(nrows=3, ncols=1, figsize=figsize, sharex=True)
+
+        axes_list = [axes] if not isinstance(axes, (list, tuple, np.ndarray)) else list(axes)
+        if len(axes_list) != 3:
+            raise ValueError("axes must contain exactly 3 matplotlib axes.")
+
+        axes_list[0].plot(T, Sa, linewidth=linewidth, linestyle=linestyle, label="Sa")
+        axes_list[1].plot(T, Sv, linewidth=linewidth, linestyle=linestyle, label="Sv")
+        axes_list[2].plot(T, Sd, linewidth=linewidth, linestyle=linestyle, label="Sd")
+
+        axes_list[0].set_ylabel("Sa")
+        axes_list[1].set_ylabel("Sv")
+        axes_list[2].set_ylabel("Sd")
+        axes_list[2].set_xlabel("Period T [s]")
+
+        for ax in axes_list:
+            ax.grid(True, alpha=0.3)
+            ax.legend()
+
+        fig.tight_layout()
+        if show:
+            plt.show()
+        return fig, axes_list
+
+    def plot_sdof_response(
+        self,
+        response: dict[str, np.ndarray],
+        *,
+        fig=None,
+        axes=None,
+        figsize: tuple[float, float] = (6, 8),
+        linewidth: float = 1.0,
+        linestyle: str = "-",
+        show: bool = True,
+    ):
+        """
+        Plot SDOF response arrays returned by `newmark_sdof(...)`.
+
+        Subplots (top to bottom): absolute acceleration, relative velocity,
+        relative displacement.
+        """
+        import matplotlib.pyplot as plt
+
+        t = np.asarray(response["time"], dtype=float)
+        a_abs = np.asarray(response["total_acceleration"], dtype=float)
+        v = np.asarray(response["velocity"], dtype=float)
+        u = np.asarray(response["displacement"], dtype=float)
+
+        if fig is None or axes is None:
+            fig, axes = plt.subplots(nrows=3, ncols=1, figsize=figsize, sharex=True)
+
+        axes_list = [axes] if not isinstance(axes, (list, tuple, np.ndarray)) else list(axes)
+        if len(axes_list) != 3:
+            raise ValueError("axes must contain exactly 3 matplotlib axes.")
+
+        axes_list[0].plot(t, a_abs, linewidth=linewidth, linestyle=linestyle, label="a_abs")
+        axes_list[1].plot(t, v, linewidth=linewidth, linestyle=linestyle, label="v")
+        axes_list[2].plot(t, u, linewidth=linewidth, linestyle=linestyle, label="u")
+
+        axes_list[0].set_ylabel("Abs. Accel")
+        axes_list[1].set_ylabel("Rel. Vel")
+        axes_list[2].set_ylabel("Rel. Disp")
+        axes_list[2].set_xlabel("Time (s)")
+
+        for ax in axes_list:
+            ax.grid(True, alpha=0.3)
+            ax.legend()
+
+        fig.tight_layout()
+        if show:
+            plt.show()
+        return fig, axes_list
 
     # ---------------------------------------------------------- #
     # Plotting
