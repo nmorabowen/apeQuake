@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from ..spectrogram.spectrogram import Spectrogram
     from ..response_spectra import ResponseSpectra
     from ..intensity_measures import IntensityMeasures
+    from ..modal_analysis import ModalAnalysis
     from ..core.record import Record
 
 
@@ -67,6 +68,7 @@ class Record:
         from ..response_spectra import ResponseSpectra
         from ..intensity_measures import IntensityMeasures
         from ..plot_record import PlotRecord
+        from ..modal_analysis import ModalAnalysis
 
         self.filter: FilterType = Filter(self)
         self.spectrum: Spectrum = Spectrum(self)
@@ -74,6 +76,7 @@ class Record:
         self.response_spectra: ResponseSpectra = ResponseSpectra(self)
         self.intensity_measures: IntensityMeasures = IntensityMeasures(self)
         self.plot_record: PlotRecord = PlotRecord(self)
+        self.modal_analysis: ModalAnalysis = ModalAnalysis(self)
 
     # -------------------------------------------------------------- #
     # Initialization
