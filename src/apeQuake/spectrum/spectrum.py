@@ -331,7 +331,6 @@ class Spectrum:
         colors: Sequence[str] | None = None,
         components: Sequence[ComponentName] | None = None,
         representation: SpectrumRepresentation = "loglog",
-        combined: bool = True,              # True = one plot (all comps) or one plot per comp? (see below)
         per_component_axes: bool = False,    # if True -> one subplot per component, overlay records in each
         fmin: float | None = None,
         fmax: float | None = None,
@@ -450,15 +449,14 @@ class Spectrum:
                 plt.show()
             return fig, axes
 
-        # else: combined axis
+        # else: single combined axis — all components on one plot,
+        # labelled "<record>.<component>" to stay readable.
         if figsize is None:
             figsize = (7.2, 5.2)
         fig, ax = plt.subplots(figsize=figsize)
 
         P = plot_fn(ax)
 
-        # combined=True here means "plot all components on same axes, but keep label readable"
-        # label format: "<record>.<component>"
         for k, (lab, A_k) in enumerate(zip(labels, all_amps)):
             for c in comps:
                 kw = dict(plot_kwargs)

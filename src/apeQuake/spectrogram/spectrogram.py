@@ -38,6 +38,11 @@ class Spectrogram:
         self.bins: np.ndarray | None = None
         self.power: dict[ComponentName, np.ndarray] = {}
 
+        # FFT parameters used for the cached result above (so plotting can
+        # tell whether a recompute is needed when NFFT/noverlap change).
+        self._nfft: int | None = None
+        self._noverlap: int | None = None
+
         self.applied_filters: list[str] = []
 
         # --- NEW: plot limits as instance attribute
@@ -99,6 +104,8 @@ class Spectrogram:
         self.freqs = None
         self.bins = None
         self.power = {}
+        self._nfft = None
+        self._noverlap = None
 
     def _log(self, s: str) -> None:
         self.applied_filters.append(s)
@@ -185,10 +192,13 @@ class Spectrogram:
         noverlap: int = 128,
     ) -> None:
         """
-        Compute spectrograms (power in dB) for the selected components.
+        Compute spectrograms (power in dB) for the selected components and
+        cache the result on ``self`` (``freqs``, ``bins``, ``power``).
 
-        IMPORTANT: This function does NOT apply filters. It uses the current
-        df_spectrogram as-is.
+        Preprocessing is the responsibility of the stateful filter pipeline:
+        apply ``apply_base_filters(...)`` / ``apply_band_pass(...)`` etc. to
+        ``df_spectrogram`` first. This function consumes ``df_spectrogram``
+        exactly as-is and does NOT filter.
         """
         rec = self.record
         if rec.dt is None:
@@ -237,6 +247,24 @@ class Spectrogram:
         self.freqs = freqs_global
         self.bins = bins_global
         self.power = power
+        self._nfft = NFFT
+        self._noverlap = noverlap
+
+    def _ensure_computed(self, *, NFFT: int, noverlap: int) -> None:
+        """Compute the spectrogram if it is missing or stale.
+
+        A cached result is reused only when it was produced with the same
+        NFFT/noverlap; otherwise the spectrogram is recomputed from the
+        current ``df_spectrogram``.
+        """
+        stale = (
+            not self.power
+            or self.freqs is None
+            or self._nfft != NFFT
+            or self._noverlap != noverlap
+        )
+        if stale:
+            self.compute(NFFT=NFFT, noverlap=noverlap)
 
     def plot_spectrogram(
         self,
@@ -246,56 +274,41 @@ class Spectrogram:
         cmap: str = "seismic",
         # fallback default if self.plot_limits.fmin is None
         fmin: float = 0.1,
-        detrend: bool = True,
-        taper: float = 0.05,
-        band: tuple[float, float] | None = None,
-        corners: int = 4,
-        zerophase: bool = True,
         show: bool = True,
     ):
-        try:
-            import obspy
-            import matplotlib.pyplot as plt
-        except Exception as e:
-            raise ImportError(
-                "plot_spectrogram() requires obspy and matplotlib. Install with: pip install obspy matplotlib"
-            ) from e
+        """
+        Plot the spectrogram of the current ``df_spectrogram``.
+
+        This consumes the cached :meth:`compute` result (recomputing only if
+        it is missing or was produced with a different ``NFFT``/``noverlap``).
+        Preprocessing is NOT done here — apply it to ``df_spectrogram``
+        beforehand via the stateful pipeline, e.g.::
+
+            rec.spectrogram.apply_base_filters(detrend=True, taper=0.05,
+                                               band=(0.1, 10.0))
+            rec.spectrogram.plot_spectrogram()
+
+        Plot ranges come from :meth:`set_plot_limits` (``tmin/tmax``,
+        ``fmin/fmax``, ``pmin/pmax``); ``fmin`` here is only the fallback when
+        no frequency floor was set.
+        """
+        import matplotlib.pyplot as plt
 
         rec = self.record
         if rec.dt is None:
             raise ValueError("Record.dt is None; cannot plot spectrogram.")
 
-        df = self.df_spectrogram
-        comps = [c for c in ("X", "Y", "Z") if c in df.columns]
-        if not comps:
-            raise ValueError("No components (X,Y,Z) found in df_spectrogram.")
+        # Reuse the cached spectrogram (or compute it once, from the already
+        # preprocessed df_spectrogram — no second round of filtering here).
+        self._ensure_computed(NFFT=NFFT, noverlap=noverlap)
 
-        # Step 1 — construct ObsPy stream from current working df (copy)
-        st = obspy.Stream()
-        for name in comps:
-            data = df[name].to_numpy(dtype=float).copy()
-            tr = obspy.Trace(data=data)
-            tr.stats.delta = rec.dt
-            tr.stats.channel = name
-            st.append(tr)
+        freqs = self.freqs
+        bins = self.bins
+        power = self.power
+        if freqs is None or bins is None or not power:
+            raise RuntimeError("Spectrogram compute() produced no data.")
 
-        # Step 2 — preprocessing (plot-time only)
-        st_clean = st.copy()
-        if detrend:
-            st_clean.detrend("demean")
-            st_clean.detrend("linear")
-        if taper and taper > 0.0:
-            st_clean.taper(taper)
-
-        if band is not None:
-            Tc_low, Tc_high = band
-            if Tc_low <= 0 or Tc_high <= 0:
-                raise ValueError("band periods must be > 0.")
-            if Tc_low >= Tc_high:
-                raise ValueError("band must satisfy Tc_low < Tc_high.")
-            f1 = 1.0 / Tc_high
-            f2 = 1.0 / Tc_low
-            st_clean.filter("bandpass", freqmin=f1, freqmax=f2, corners=corners, zerophase=zerophase)
+        comps = list(power.keys())
 
         # Limits (instance attributes take priority; fall back to fmin argument)
         lim = self.plot_limits
@@ -309,14 +322,26 @@ class Spectrogram:
         if fmin_eff is not None and fmin_eff <= 0.0:
             raise ValueError("fmin must be > 0 to use the period secondary axis.")
 
-        # Step 3 — setup figure
+        # Clip requested tmax to available bins.
+        if tmax_eff is not None:
+            t_available_max = float(bins.max()) if len(bins) else 0.0
+            if tmax_eff > t_available_max:
+                tmax_eff = t_available_max
+
+        # Power levels (fixed scale if pmin/pmax provided)
+        if (pmin is not None) and (pmax is not None):
+            levels = np.linspace(pmin, pmax, 51)  # 50 bands
+        else:
+            levels = 50
+
+        # Setup figure
         fig, axes = plt.subplots(
-            nrows=len(st_clean),
-            figsize=(12, 3.5 * len(st_clean)),
+            nrows=len(comps),
+            figsize=(12, 3.5 * len(comps)),
             sharex=True,
             sharey=True,
         )
-        if len(st_clean) == 1:
+        if len(comps) == 1:
             axes = [axes]
 
         # Figure-level title (metadata)
@@ -333,28 +358,11 @@ class Spectrogram:
 
         last_cs = None
 
-        for ax, tr in zip(axes, st_clean):
-            fs = tr.stats.sampling_rate
-
-            Pxx, freqs, bins = mlab.specgram(tr.data, NFFT=NFFT, Fs=fs, noverlap=noverlap)
-            Pxx_dB = 10.0 * np.log10(Pxx + 1e-12)
-
-            # Clip requested tmax to available bins (do it on the local variable, not the attribute)
-            if tmax_eff is not None:
-                t_available_max = float(bins.max()) if len(bins) else 0.0
-                if tmax_eff > t_available_max:
-                    tmax_eff = t_available_max
-
-            # Power levels (fixed scale if pmin/pmax provided)
-            if (pmin is not None) and (pmax is not None):
-                levels = np.linspace(pmin, pmax, 51)  # 50 bands
-            else:
-                levels = 50
-
+        for ax, comp in zip(axes, comps):
             cs = ax.contourf(
                 bins,
                 freqs,
-                Pxx_dB,
+                power[comp],
                 levels=levels,
                 cmap=cmap,
                 extend="both",
@@ -371,7 +379,7 @@ class Spectrogram:
             if tmin is not None or tmax_eff is not None:
                 ax.set_xlim(left=tmin, right=tmax_eff)
 
-            ax.set_title(f"Component {tr.stats.channel}")
+            ax.set_title(f"Component {comp}")
             ax.set_ylabel("Frequency (Hz)")
             ax.grid(True, alpha=0.3, ls="--")
 
