@@ -1,3 +1,3 @@
 from .filters import Filter
 
-__all__ = ["Filters"]
+__all__ = ["Filter"]

@@ -222,14 +222,20 @@ class Record:
         if dt_array.size == 0:
             raise ValueError("time_array must have at least 2 points to infer dt.")
 
-        dt_unique = np.unique(dt_array)
+        # Representative step and a tolerance-based uniformity test.
+        # Exact comparison (np.unique) would flag floating-point round-off in an
+        # otherwise-uniform grid (e.g. np.arange) as "non-uniform" and trigger a
+        # spurious interpolation, so compare the spread of spacings to the step.
+        dt_repr = float(np.median(dt_array))
+        spread = float(np.ptp(dt_array))
+        is_uniform = spread <= 1e-6 * abs(dt_repr)
 
         if dt_user is not None:
             dt_user = float(dt_user)
             if dt_user <= 0.0:
                 raise ValueError(f"dt must be > 0, got {dt_user}.")
 
-            if len(dt_unique) > 1 or not np.isclose(dt_unique[0], dt_user, rtol=1e-6, atol=1e-9):
+            if (not is_uniform) or not np.isclose(dt_repr, dt_user, rtol=1e-6, atol=1e-9):
                 self._interpolation_flag = True
                 self.init_logs.append(
                     f"User dt={dt_user} differs from/incompatible with time_array; will interpolate."
@@ -240,7 +246,7 @@ class Record:
             return dt_user
 
         # No dt_user: infer
-        if len(dt_unique) > 1:
+        if not is_uniform:
             self._interpolation_flag = True
             dt_eff = float(dt_array.min())
             self.init_logs.append(
@@ -249,20 +255,18 @@ class Record:
             return dt_eff
 
         self._interpolation_flag = False
-        return float(dt_unique[0])
+        return dt_repr
 
     def __repr__(self) -> str:
-        comps = ",".join(self.record.components)
-        npts = len(self.df_im)
-
-        if self.applied_filters:
-            filt = f"{len(self.applied_filters)} ({self.applied_filters[-1]})"
-        else:
-            filt = "0"
+        comps = ",".join(self.components)
+        npts = len(self.df)
+        name = f"'{self.name}'" if self.name is not None else "None"
+        interp = "interpolated" if self._interpolation_flag else "as-provided"
 
         return (
-            f"<IntensityMeasures "
+            f"<Record name={name} "
             f"components=[{comps}] "
             f"npts={npts} "
-            f"filters={filt}>"
+            f"dt={self.dt} "
+            f"({interp})>"
         )
