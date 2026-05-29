@@ -1,222 +1,169 @@
-🐒 apeQuake
+<div align="center">
 
-A modular Python toolkit for seismic ground-motion processing, filtering, spectra, spectrograms, and engineering intensity measures.
+<img src="docs/assets/logo.svg" alt="apeQuake logo" width="120" />
 
-📌 Overview
+# apeQuake
 
-apeQuake provides a clean, extensible framework for working with earthquake acceleration time histories in engineering workflows.
-It is built around a central Record object and a set of powerful composite modules:
+**A modular Python toolkit for seismic ground-motion processing** — filtering, amplitude spectra, time–frequency spectrograms, Newmark response spectra, and engineering intensity measures.
 
-Record.filter — preprocessing pipeline (detrend, taper, bandpass…)
+[![Docs](https://img.shields.io/badge/docs-nmorabowen.github.io%2FapeQuake-c0392b)](https://nmorabowen.github.io/apeQuake/)
+[![Python](https://img.shields.io/badge/python-3.10%2B-0b2540)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-0b2540)](#-license)
 
-Record.spectrum — amplitude spectral analysis
+### 📖 [**Read the documentation →**](https://nmorabowen.github.io/apeQuake/)
 
-Record.spectrogram — high-quality time–frequency spectrograms
+</div>
 
-Record.response_spectra — Newmark-based Sd, Sv, Saₚₛ spectra
+---
 
-Record.IM — intensity measures (significant duration, Husid, AI, CAV…)
+## Overview
 
-All operations use DataFrames, support multi-component (X/Y/Z) records, and follow a transparent, reproducible design with no hidden state.
+apeQuake provides a clean, extensible framework for working with earthquake
+acceleration time histories in engineering workflows. Everything hangs off a
+single, transparent **`Record`** object and a set of composable processors:
 
-✨ Key Features
-Ground-motion Record Handling
+| Composite | Accessor | Purpose |
+|-----------|----------|---------|
+| Filtering | `rec.filter` | Detrend, taper, band-pass / -stop, low/high-pass |
+| Amplitude spectrum | `rec.spectrum` | Single-sided FFT amplitude spectra |
+| Spectrogram | `rec.spectrogram` | Time–frequency power (dB) |
+| Response spectra | `rec.response_spectra` | Newmark SDOF Sd / Sv / Sa |
+| Intensity measures | `rec.intensity_measures` | Significant duration, Husid curve |
+| Plotting | `rec.plot_record` | Time histories & band-pass comparisons |
 
-1–3 components (X, Y, Z)
+All operations use DataFrames, support multi-component (X/Y/Z) records, and
+follow a transparent, reproducible design with **no hidden state** — the
+baseline time history is never mutated unless you ask.
 
-Automatic dt detection & interpolation for irregular time steps
+## Features
 
-Unified DataFrame structure: time, components, metadata
+- **1–3 components** (X, Y, Z) on a uniform time grid.
+- **Automatic `dt` detection & interpolation** for irregular time steps.
+- **Composable filter pipelines** — declare detrend → taper → band-pass once,
+  reuse across spectra, spectrograms, and response spectra.
+- **Newmark response spectra** (average acceleration, γ=0.5, β=0.25),
+  Numba-accelerated with a pure-Python fallback; pseudo (ω²·Sd) or absolute
+  (max|ü + a_g|) Sa.
+- **Spectra & spectrograms** with dual frequency↔period axes.
+- **Intensity measures** — significant duration (D5–75, D5–95, custom) and the
+  normalized Husid curve.
 
-Composable Filtering System
+## Installation
 
-Filters can be applied directly or chained as pipelines:
-
-rec.filter.detrend(type="demean")
-rec.filter.taper(max_percentage=0.05)
-rec.filter.band_pass(Tc_low=0.1, Tc_high=5.0)
-
-
-Or attach them to another composite:
-
-rec.spectrogram.add_filter(rec.filter.detrend, type="demean")
-rec.spectrogram.add_filter(rec.filter.band_pass, Tc_low=0.1, Tc_high=5.0)
-
-Spectral Tools
-📡 Amplitude Spectrum
-
-Linear, semi-log, log-log representations
-
-Combined or per-component plots
-
-Frequency ↔ Period dual axes
-
-🎨 Spectrograms
-
-Smooth contour spectrograms
-
-Period (right axis) & frequency (left axis)
-
-Optional filtering pipelines
-
-📈 Response Spectra (Sd, Sv, Saₚₛ)
-
-Newmark Average Acceleration (γ=0.5, β=0.25)
-
-Configurable damping
-
-Sa definition mode: pseudo (ω²Sd) or absolute max(|u¨ + a_g|)
-
-Single-component helpers: `newmark_sdof(...)`, `compute_response_spectrum(...)`
-
-Per-component spectra
-
-Combined and individual plotting modes
-
-📊 Intensity Measures
-
-Available under Record.IM:
-
-Significant duration:
-
-D5–75, D5–95, or custom (p1, p2)
-
-Husid curve (normalized Arias intensity)
-
-Extensible structure for:
-
-Arias Intensity
-
-CAV
-
-PGA, PGV, PGD
-
-Energy-based metrics
-
-🛠 Installation
-Local install (development mode)
-git clone https://github.com/<your-user>/apeQuake.git
+```bash
+git clone https://github.com/nmorabowen/apeQuake.git
 cd apeQuake
 pip install -e .
+```
 
-PyPI (future)
-pip install apeQuake
+Depends on `numpy`, `pandas`, `scipy`, `matplotlib`, `numba`, and `obspy`
+(installed automatically). Optional extras: `pip install -e ".[dev]"` for
+tests/linting, `pip install -e ".[docs]"` to build the docs site.
 
-🚀 Quick Start
-from apeQuake.core import Record
+## Quick start
+
+```python
 import numpy as np
+from apeQuake import Record
 
-# Example synthetic acceleration
+# Synthetic acceleration
 dt = 0.01
 t = np.arange(0, 20, dt)
-x = 0.5 * np.sin(2*np.pi*1.5 * t)
+x = 0.5 * np.sin(2 * np.pi * 1.5 * t)
 
-rec = Record(x=x, dt=dt)
+rec = Record(x=x, dt=dt, name="Demo")
 
-# --- Filtering pipeline for response spectra ---
+# --- Filtering pipeline for the response spectrum ---
 rec.response_spectra.add_filter(rec.filter.detrend, type="demean")
 rec.response_spectra.add_filter(rec.filter.taper, max_percentage=0.05)
 
-T = np.linspace(0.05, 5.0, 100)
-
-rec.response_spectra.compute(periods=T)
+T = np.linspace(0.05, 5.0, 200)
+rec.response_spectra.compute(periods=T)                 # pipeline applied
 rec.response_spectra.plot(quantity="Sa", representation="loglog")
 
-# absolute-acceleration Sa (max |u¨ + a_g|)
+# Absolute-acceleration Sa (max |ü + a_g|)
 rec.response_spectra.compute(periods=T, sa_mode="absolute")
 
-# single-component convenience API
-rs = rec.response_spectra.compute_response_spectrum(periods=T, component="X", sa_mode="absolute")
+# Single-component convenience API
+rs = rec.response_spectra.compute_response_spectrum(periods=T, component="X")
 rec.response_spectra.plot_response_spectrum(rs)
 
-🎛 Composite Architecture
+# Intensity measures
+d595 = rec.intensity_measures.significant_duration("X", p1=0.05, p2=0.95)
+```
 
-Each Record exposes a set of modular processors:
+See the [**documentation**](https://nmorabowen.github.io/apeQuake/) for the full
+guides and API reference.
 
-rec.filter            # low-level signal filtering
-rec.spectrum          # amplitude spectra
-rec.spectrogram       # time-frequency analysis
-rec.response_spectra  # engineering RS (Sd/Sv/Sa)
-rec.IM                # intensity measures (duration, AI, CAV…)
+## Composite architecture
 
+Each `Record` exposes a set of modular processors:
 
-Each module:
+```python
+rec.filter             # low-level signal filtering
+rec.spectrum           # amplitude spectra
+rec.spectrogram        # time–frequency analysis
+rec.response_spectra   # engineering RS (Sd / Sv / Sa)
+rec.intensity_measures # intensity measures (duration, Husid, …)
+rec.plot_record        # time-history plotting
+```
 
-can apply its own filter pipeline
+Each module can apply its own filter pipeline and operate on either the
+baseline record (`rec.df`) or a user-provided DataFrame (`df=`), and never
+modifies the original time history unless explicitly requested.
 
-can operate on:
+## Project structure
 
-the baseline record (rec.df)
-
-or a user-provided custom DataFrame (df= argument)
-
-never modifies the original time history unless explicitly requested
-
-This ensures full transparency and reproducibility.
-
-📂 Project Structure
+```
 apeQuake/
-    core/
-        record.py
-        types.py
-    filters/
-        filters.py
-    spectrum/
-        spectrum.py
-    spectrogram/
-        spectrogram.py
-    response_spectra/
-        response_spectra.py
-    intensity_measures/
-        intensity_measures.py
-    examples/
-        basic_usage.ipynb
+├── src/apeQuake/
+│   ├── core/                 # Record + types
+│   ├── filters/              # ObsPy-backed Filter toolbox
+│   ├── spectrum/             # amplitude spectra
+│   ├── spectrogram/          # time–frequency spectrograms
+│   ├── response_spectra/     # Newmark Sd / Sv / Sa
+│   ├── intensity_measures/   # duration, Husid
+│   └── plot_record/          # time-history plotting
+├── tests/                    # pytest suite (Newmark validated vs scipy)
+├── docs/                     # MkDocs site
+└── mkdocs.yml
+```
 
-📘 Documentation
+## Roadmap
 
-(coming soon)
+- [x] Significant duration
+- [x] Newmark response spectra
+- [ ] Arias Intensity
+- [ ] Cumulative Absolute Velocity (CAV)
+- [ ] RotD50 response spectra
+- [ ] Batch processing utilities
+- [ ] PEER/NGA flatfile importer
+- [ ] PyPI package
 
-API Reference
+## Contributing
 
-Example notebooks
+Pull requests are welcome! Please open an issue to discuss improvements or new
+features. Run the test suite with:
 
-Seismological vs Engineering conventions
+```bash
+pip install -e ".[dev]"
+pytest -q
+```
 
-Validation against OpenSees SDOF and PEER tools
-
-🗺 Roadmap
-
-✔ Significant duration
-
-✔ Newmark response spectra
-
-Arias Intensity
-
-Cumulative Absolute Velocity (CAV)
-
-Husid plotting utilities
-
-RotD50 response spectra
-
-Batch processing utilities
-
-PEER/NGA flatfile importer
-
-PyPI package + docs website
-
-If you want, I can generate strike-through completion tracking in the README.
-
-🤝 Contributing
-
-Pull requests are welcome!
-Please open an issue to discuss improvements or new features.
-
-📜 License
+## 📜 License
 
 MIT License © 2025 Nicolás Mora Bowen
 
-📣 Citation
+## Citation
 
 If you use apeQuake in research, please cite this repository:
 
-Nicolas Mora Bowen (2025). apeQuake: A modular toolkit for seismic ground-motion processing and engineering response analysis. GitHub Repository.
+> Nicolás Mora Bowen (2025). *apeQuake: A modular toolkit for seismic
+> ground-motion processing and engineering response analysis.* GitHub
+> Repository. https://github.com/nmorabowen/apeQuake
+
+---
+
+<div align="center">
+<sub>Part of José Abell's <em>El Ladruño Research Group</em>.</sub>
+</div>
