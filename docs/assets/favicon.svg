@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" fill="none" stroke="#c0392b" stroke-linecap="round" stroke-linejoin="round" aria-label="apeQuake">
+  <rect width="240" height="240" rx="44" fill="#f4f0e6"/>
+  <!-- ears -->
+  <ellipse cx="52"  cy="108" rx="18" ry="22" stroke-width="4"/>
+  <ellipse cx="188" cy="108" rx="18" ry="22" stroke-width="4"/>
+  <!-- head -->
+  <path d="M 80 42 C 72 42, 66 48, 66 58 L 66 80 C 58 84, 54 94, 56 108 C 54 122, 58 136, 68 146 L 68 160 C 70 174, 82 182, 96 184 C 106 194, 134 194, 144 184 C 158 182, 170 174, 172 160 L 172 146 C 182 136, 186 122, 184 108 C 186 94, 182 84, 174 80 L 174 58 C 174 48, 168 42, 160 42 C 148 36, 124 34, 120 34 C 116 34, 92 36, 80 42 Z" stroke-width="4"/>
+  <!-- brow -->
+  <path d="M 88 78 C 104 72, 136 72, 152 78" stroke-width="3"/>
+  <!-- eyes -->
+  <ellipse cx="100" cy="98" rx="8" ry="6" fill="#c0392b" stroke="none"/>
+  <ellipse cx="140" cy="98" rx="8" ry="6" fill="#c0392b" stroke="none"/>
+  <!-- seismograph trace (the "quake") -->
+  <polyline points="74,150 90,150 98,134 106,170 114,120 122,176 130,126 138,162 146,146 166,150" stroke-width="3.5"/>
+</svg>

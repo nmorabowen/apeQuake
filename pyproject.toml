@@ -47,6 +47,11 @@ dev = [
   "black>=24.0",
   "mypy>=1.7",
 ]
+docs = [
+  "mkdocs>=1.6",
+  "mkdocs-material>=9.5",
+  "mkdocstrings[python]>=0.24",
+]
 
 [tool.ruff]
 line-length = 100
