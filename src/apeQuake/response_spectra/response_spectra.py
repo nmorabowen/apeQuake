@@ -551,12 +551,14 @@ class ResponseSpectra:
         For multi-component workflows, use `compute(...)` and `plot(...)`.
         """
         rec = self._record
-        if df is None:
-            df_work = rec.df.copy()
-        else:
-            df_work = df.copy()
 
-        available = [c for c in ("X", "Y", "Z") if c in df_work.columns]
+        # Only inspect column availability here for default component selection.
+        # The actual df/filter handling is delegated to compute(), so that the
+        # filter pipeline is applied with the SAME semantics as the multi-component
+        # path (df=None -> filters on by default; df supplied -> off unless use_filters=True).
+        src = rec.df if df is None else df
+
+        available = [c for c in ("X", "Y", "Z") if c in src.columns]
         if not available:
             raise ValueError("No components available for response spectrum.")
 
@@ -564,13 +566,13 @@ class ResponseSpectra:
         if component is None:
             comp = available[0]  # type: ignore[assignment]
         else:
-            if component not in df_work.columns:
+            if component not in src.columns:
                 raise ValueError(f"Component '{component}' not found in selected DataFrame.")
             comp = component
 
         self.compute(
             periods=periods,
-            df=df_work,
+            df=df,
             use_filters=use_filters,
             components=[comp],
             damping=damping,
