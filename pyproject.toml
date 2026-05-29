@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Tools for multicomponent ground-motion: filtering, spectra, spectrograms, and SDOF response spectra."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "Proprietary" }
+license = { text = "MIT" }
 authors = [
   { name = "Nicolas Mora Bowen", email = "nmorabowen@gmail.com" }
 ]
@@ -16,7 +16,7 @@ keywords = ["seismology", "signal-processing", "spectrogram", "response-spectra"
 classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "License :: Other/Proprietary License",
+  "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Topic :: Scientific/Engineering",
 ]
