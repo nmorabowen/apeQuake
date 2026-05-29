@@ -1,0 +1,113 @@
+site_name: apeQuake
+site_description: Modular Python toolkit for seismic ground-motion processing — filtering, spectra, spectrograms, Newmark response spectra, and intensity measures.
+site_url: https://nmorabowen.github.io/apeQuake/
+repo_url: https://github.com/nmorabowen/apeQuake
+repo_name: nmorabowen/apeQuake
+edit_uri: edit/main/docs/
+
+docs_dir: docs
+
+theme:
+  name: material
+  logo: assets/logo.svg
+  favicon: assets/favicon.svg
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - toc.follow
+    - content.code.copy
+    - content.code.annotate
+    - search.suggest
+    - search.highlight
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path:
+        - .
+      check_paths: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_root_heading: true
+            show_source: true
+            show_if_no_docstring: false
+            members_order: source
+            separate_signature: true
+            show_signature_annotations: true
+            docstring_section_style: table
+            merge_init_into_class: true
+            filters:
+              - "!^_"
+
+nav:
+  - Home: index.md
+  - Guides:
+      - Quickstart: guides/quickstart.md
+      - The Record object: guides/records.md
+      - Filtering: guides/filtering.md
+      - Spectra & spectrograms: guides/spectra.md
+      - Response spectra: guides/response-spectra.md
+      - Intensity measures: guides/intensity-measures.md
+  - API Reference:
+      - Overview: api/index.md
+      - Record: api/record.md
+      - Filters: api/filters.md
+      - Spectrum: api/spectrum.md
+      - Spectrogram: api/spectrogram.md
+      - Response spectra: api/response_spectra.md
+      - Intensity measures: api/intensity_measures.md
+      - Plotting: api/plot_record.md
