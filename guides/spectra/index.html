@@ -1010,26 +1010,33 @@ its stateful working DataFrame.</p>
 </span></code></pre></div>
 <h2 id="spectrogram">Spectrogram<a class="headerlink" href="#spectrogram" title="Permanent link">&para;</a></h2>
 <p><code>rec.spectrogram</code> produces time–frequency power (dB) via
-<code>matplotlib.mlab.specgram</code>, with a secondary period axis.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">set_plot_limits</span><span class="p">(</span><span class="n">fmin</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="mf">25.0</span><span class="p">,</span> <span class="n">tmin</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="mf">40.0</span><span class="p">)</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">plot_spectrogram</span><span class="p">(</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">NFFT</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">noverlap</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">detrend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>         <span class="c1"># plot-time preprocessing</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">taper</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>     <span class="c1"># optional band-pass, in periods (s)</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;seismic&quot;</span><span class="p">,</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="p">)</span>
+<code>matplotlib.mlab.specgram</code>, with a secondary period axis. It follows the same
+<strong>preprocess → compute → plot</strong> pipeline as the other processors: filter the
+stateful working DataFrame with the <code>apply_*</code> wrappers, then plot.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1. Preprocess (mutates df_spectrogram, logged in applied_filters)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">apply_base_filters</span><span class="p">(</span><span class="n">detrend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">taper</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">))</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 2. Set plot ranges</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">set_plot_limits</span><span class="p">(</span><span class="n">fmin</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="mf">25.0</span><span class="p">,</span> <span class="n">tmin</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="mf">40.0</span><span class="p">)</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># 3. Plot — computes once and caches; no re-filtering at plot time</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">plot_spectrogram</span><span class="p">(</span><span class="n">NFFT</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">noverlap</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;seismic&quot;</span><span class="p">)</span>
 </span></code></pre></div>
+<p><code>plot_spectrogram()</code> consumes the cached <code>compute()</code> result, recomputing only
+if it is missing or was produced with a different <code>NFFT</code>/<code>noverlap</code>. Because
+preprocessing lives entirely in the <code>apply_*</code> path, there is <strong>no double
+filtering</strong> — the spectrogram reflects exactly the current <code>df_spectrogram</code>.
+Any <code>apply_*</code> call invalidates the cache so the next plot recomputes.</p>
 <p><code>set_plot_limits()</code> controls the time window (<code>tmin/tmax</code>), frequency window
 (<code>fmin/fmax</code>), and color scale (<code>pmin/pmax</code>); <code>reset_plot_limits()</code> clears
-them. A frequency <code>fmin &gt; 0</code> is required for the period secondary axis.</p>
-<div class="admonition tip">
-<p class="admonition-title">Preprocessing applies twice if you're not careful</p>
-<p><code>plot_spectrogram()</code> applies its own <code>detrend</code>/<code>taper</code>/<code>band</code> at plot time
-on top of whatever is already in <code>df_spectrogram</code>. If you pre-filtered with
-<code>apply_*</code>, pass <code>detrend=False, taper=0.0</code> to avoid double processing.</p>
-</div>
+them. A frequency floor <code>&gt; 0</code> is required for the period secondary axis (the
+<code>fmin</code> argument is just the fallback when no floor was set).</p>
+<p>You can also compute without plotting and read the arrays:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">NFFT</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">noverlap</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">freqs</span>    <span class="c1"># (n_freqs,)</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">bins</span>     <span class="c1"># (n_time,)</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">power</span>    <span class="c1"># {comp: (n_freqs, n_time) dB array}</span>
+</span></code></pre></div>
 <p>See the <a href="../../api/spectrum/"><code>Spectrum</code></a> and
 <a href="../../api/spectrogram/"><code>Spectrogram</code></a> API pages for full signatures.</p>
 
