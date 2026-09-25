@@ -214,3 +214,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Claude Code / agent session scratch (worktrees, settings.local.json) stays
+# untracked; .claude/skills/ is re-included for future task guides.
+# See AGENTS.md and docs/agent-surface.md.
+.claude/*
+!.claude/skills/

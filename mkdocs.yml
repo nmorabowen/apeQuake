@@ -6,6 +6,9 @@ repo_name: nmorabowen/apeQuake
 edit_uri: edit/main/docs/
 
 docs_dir: docs
+# Developer/agent notes kept next to the docs but not published (see AGENTS.md).
+exclude_docs: |
+  /agent-surface.md
 
 theme:
   name: material
