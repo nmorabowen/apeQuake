@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -978,24 +978,24 @@ as the other processors.</p>
 <p>The Husid curve is the normalized cumulative energy
 $\int_0^t a^2\,d\tau \big/ \int_0^{t_{\text{end}}} a^2\,d\tau$, a monotone curve
 from 0 to 1 (proportional to the build-up of Arias intensity):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">t_h</span><span class="p">,</span> <span class="n">husid</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">intensity_measures</span><span class="o">.</span><span class="n">husid</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">t_h</span><span class="p">,</span> <span class="n">husid</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">intensity_measures</span><span class="o">.</span><span class="n">husid</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="significant-duration">Significant duration<a class="headerlink" href="#significant-duration" title="Permanent link">&para;</a></h2>
 <p>The significant duration D(p₁–p₂) is the time between the instants at which the
 Husid curve reaches fractions <code>p1</code> and <code>p2</code>:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">d575</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">intensity_measures</span><span class="o">.</span><span class="n">significant_duration</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">p1</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">d595</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">intensity_measures</span><span class="o">.</span><span class="n">significant_duration</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">p1</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">d575</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">intensity_measures</span><span class="o">.</span><span class="n">significant_duration</span><span class="p">(</span><span class="s2">"X"</span><span class="p">,</span> <span class="n">p1</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">d595</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">intensity_measures</span><span class="o">.</span><span class="n">significant_duration</span><span class="p">(</span><span class="s2">"X"</span><span class="p">,</span> <span class="n">p1</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
 </span></code></pre></div>
 <p>The common metrics are <strong>D5–75</strong> (<code>p1=0.05, p2=0.75</code>) and <strong>D5–95</strong>
 (<code>p1=0.05, p2=0.95</code>); any <code>0 ≤ p1 &lt; p2 ≤ 1</code> is allowed.</p>
 <p>For every component at once:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">durations</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">intensity_measures</span><span class="o">.</span><span class="n">significant_all</span><span class="p">(</span><span class="n">p1</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># {&#39;X&#39;: 12.3, &#39;Y&#39;: 11.8, &#39;Z&#39;: 9.4}</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># {'X': 12.3, 'Y': 11.8, 'Z': 9.4}</span>
 </span></code></pre></div>
 <h2 id="preprocessing">Preprocessing<a class="headerlink" href="#preprocessing" title="Permanent link">&para;</a></h2>
 <p>Duration measures are sensitive to baseline drift, so detrend/taper first:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">intensity_measures</span><span class="o">.</span><span class="n">apply_base_filters</span><span class="p">(</span><span class="n">detrend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">demean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">taper</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">intensity_measures</span><span class="o">.</span><span class="n">significant_duration</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">p1</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">intensity_measures</span><span class="o">.</span><span class="n">significant_duration</span><span class="p">(</span><span class="s2">"X"</span><span class="p">,</span> <span class="n">p1</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">p2</span><span class="o">=</span><span class="mf">0.95</span><span class="p">)</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">intensity_measures</span><span class="o">.</span><span class="n">reset_df</span><span class="p">()</span>
 </span></code></pre></div>
 <p>You can also pass a one-off DataFrame via <code>df=</code> to any method without touching
@@ -1059,7 +1059,7 @@ the stateful working copy.</p>
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.top", "navigation.indexes", "toc.follow", "content.code.copy", "content.code.annotate", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
