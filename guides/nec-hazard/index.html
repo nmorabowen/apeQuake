@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://nmorabowen.github.io/apeQuake/guides/spectra/">
+        <link rel="canonical" href="https://nmorabowen.github.io/apeQuake/guides/nec-hazard/">
       
       
-        <link rel="prev" href="../filtering/">
+        <link rel="prev" href="../intensity-measures/">
       
       
-        <link rel="next" href="../response-spectra/">
+        <link rel="next" href="../../api/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Spectra & spectrograms - apeQuake</title>
+        <title>NEC hazard curves - apeQuake</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#spectra-spectrograms" class="md-skip">
+        <a href="#nec-hazard-curves" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Spectra & spectrograms
+              NEC hazard curves
             
           </span>
         </div>
@@ -442,37 +442,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Spectra & spectrograms
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../spectra/" class="md-nav__link">
         
   
   
@@ -488,65 +461,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#amplitude-spectrum" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Amplitude spectrum
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Amplitude spectrum">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#comparing-records" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Comparing records
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#spectrogram" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Spectrogram
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -612,10 +526,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../nec-hazard/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEC hazard curves
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -631,6 +572,87 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-four-nec-hazard-levels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The four NEC hazard levels
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uniform-hazard-spectrum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uniform-hazard spectrum
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extrapolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extrapolation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extrapolation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-good-is-it" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How good is it?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accuracy-and-caveats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accuracy and caveats
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -984,22 +1006,44 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#amplitude-spectrum" class="md-nav__link">
+  <a href="#the-four-nec-hazard-levels" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Amplitude spectrum
+        The four NEC hazard levels
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Amplitude spectrum">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uniform-hazard-spectrum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uniform-hazard spectrum
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#extrapolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extrapolation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Extrapolation">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#comparing-records" class="md-nav__link">
+  <a href="#how-good-is-it" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Comparing records
+        How good is it?
       
     </span>
   </a>
@@ -1012,10 +1056,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#spectrogram" class="md-nav__link">
+  <a href="#accuracy-and-caveats" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Spectrogram
+        Accuracy and caveats
       
     </span>
   </a>
@@ -1042,63 +1086,106 @@
   
 
 
-<h1 id="spectra-spectrograms">Spectra &amp; spectrograms<a class="headerlink" href="#spectra-spectrograms" title="Permanent link">&para;</a></h1>
-<h2 id="amplitude-spectrum">Amplitude spectrum<a class="headerlink" href="#amplitude-spectrum" title="Permanent link">&para;</a></h2>
-<p><code>rec.spectrum</code> computes a single-sided FFT amplitude spectrum per component on
-its stateful working DataFrame.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">apply_base_filters</span><span class="p">(</span><span class="n">detrend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">demean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">taper</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="s2">"amplitude"</span><span class="p">)</span>   <span class="c1"># 'amplitude' or 'none'</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">representation</span><span class="o">=</span><span class="s2">"loglog"</span><span class="p">)</span>
+<h1 id="nec-hazard-curves">NEC hazard curves<a class="headerlink" href="#nec-hazard-curves" title="Permanent link">&para;</a></h1>
+<p>NEC-SE-DS (NEC-15), section 10.3, plots the seismic hazard of 23 provincial
+capitals (Figures 10–32): the annual exceedance rate of <strong>PGA</strong> and of
+<strong>Sa at T = 0.1, 0.2, 0.5 and 1.0 s</strong> against acceleration. They only exist as
+raster images in the PDF, so <code>apeQuake.nec</code> ships them as numbers, digitized
+from the official document, and adds interpolation, <strong>extrapolation</strong>, return
+period inversion and a uniform-hazard spectrum.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">apeQuake.nec</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_hazard_database</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">db</span> <span class="o">=</span> <span class="n">load_hazard_database</span><span class="p">()</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">quito</span> <span class="o">=</span> <span class="n">db</span><span class="p">[</span><span class="s2">"Quito"</span><span class="p">]</span>                  <span class="c1"># case / accent insensitive: db["tulcán"]</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">quito</span><span class="p">[</span><span class="s2">"PGA"</span><span class="p">]</span><span class="o">.</span><span class="n">a_at_return_period</span><span class="p">(</span><span class="mi">475</span><span class="p">)</span>     <span class="c1"># array([0.436])  g</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">quito</span><span class="p">[</span><span class="s2">"0.2"</span><span class="p">]</span><span class="o">.</span><span class="n">rate_at</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)</span>                <span class="c1"># annual exceedance rate at 0.8 g</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">quito</span><span class="o">.</span><span class="n">hazard_table</span><span class="p">()</span>                     <span class="c1"># PGA / Sa at the four NEC levels</span>
 </span></code></pre></div>
+<h2 id="the-four-nec-hazard-levels">The four NEC hazard levels<a class="headerlink" href="#the-four-nec-hazard-levels" title="Permanent link">&para;</a></h2>
+<p><code>hazard_table()</code> evaluates every measure at the NEC levels (Table 9): 72, 225,
+475 and 2 500 years.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">quito</span><span class="o">.</span><span class="n">hazard_table</span><span class="p">(</span><span class="n">tail</span><span class="o">=</span><span class="s2">"quadratic"</span><span class="p">)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1">#                          PGA  Sa(0.1s)  Sa(0.2s)  Sa(0.5s)  Sa(1s)</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># frecuente (Tr=72)       ...</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># ocasional (Tr=225)      ...</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># raro (Tr=475)           ...</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># muy raro (Tr=2500)      ...</span>
+</span></code></pre></div>
+<p>Per the NEC (§4.1), forces taken from these curves are <strong>not</strong> multiplied by
+the importance factor <code>I</code>.</p>
+<h2 id="uniform-hazard-spectrum">Uniform-hazard spectrum<a class="headerlink" href="#uniform-hazard-spectrum" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">periods</span><span class="p">,</span> <span class="n">sa</span> <span class="o">=</span> <span class="n">quito</span><span class="o">.</span><span class="n">uhs</span><span class="p">(</span><span class="n">return_period</span><span class="o">=</span><span class="mi">475</span><span class="p">)</span>   <span class="c1"># T = 0, 0.1, 0.2, 0.5, 1.0 s</span>
+</span></code></pre></div>
+<p>Only five periods exist in the source plots, so the shape between them is a
+straight line; use it as a check against the NEC design spectrum, not as a
+replacement for it.</p>
+<h2 id="extrapolation">Extrapolation<a class="headerlink" href="#extrapolation" title="Permanent link">&para;</a></h2>
+<p>The plots stop at 10⁻⁵ 1/yr or at 0.8–2.0 g, whichever comes first. Rarer
+events (for example Tr = 10 000 yr) lie beyond them. Past the plotted range,
+<code>rate_at</code>, <code>a_at_rate</code> and <code>a_at_return_period</code> use a <strong>log-log quadratic tail
+model</strong></p>
+<p>$$\ln\lambda(a) = c_0 + c_1 \ln a + c_2 (\ln a)^2$$</p>
+<p>fitted to the last 30 % of each curve (<code>tail_fraction</code>). If the fit would turn
+upward it falls back to the end slope. A pure power law (<code>tail="linear"</code>) is
+available but <em>not recommended</em>: hazard curves bend steeper in log-log.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">cur</span> <span class="o">=</span> <span class="n">quito</span><span class="p">[</span><span class="s2">"1.0"</span><span class="p">]</span>                       <span class="c1"># leaves the plot at ~1.05 g, 1e-5 1/yr</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">cur</span><span class="o">.</span><span class="n">a_at_rate</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">)</span>                      <span class="c1"># beyond the plot: extrapolated</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">cur</span><span class="o">.</span><span class="n">a_at_return_period</span><span class="p">(</span><span class="mf">1e4</span><span class="p">,</span> <span class="n">extrapolate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>   <span class="c1"># NaN outside the data</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">longer</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>            <span class="c1"># a new HazardCurve to 3 g</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">quito</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">extrapolate_to</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>           <span class="c1"># extrapolation drawn dashed</span>
+</span></code></pre></div>
+<h3 id="how-good-is-it">How good is it?<a class="headerlink" href="#how-good-is-it" title="Permanent link">&para;</a></h3>
+<p>Back-test: hide each curve below a cutoff rate, fit on the rest, predict the
+acceleration at a lower rate and compare with the digitized value (all
+cities and periods):</p>
+<table>
+<thead>
+<tr>
+<th>Hidden range</th>
+<th>Quadratic tail, mean error</th>
+<th>90th percentile</th>
+<th>Power-law tail, mean error</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10⁻³ → 10⁻⁴ (one decade)</td>
+<td>3 %</td>
+<td>6 %</td>
+<td>20 %</td>
+</tr>
+<tr>
+<td>10⁻³ → 3·10⁻⁵ (1.5 decades)</td>
+<td>7 %</td>
+<td>11 %</td>
+<td>41 %</td>
+</tr>
+</tbody>
+</table>
+<p>Extrapolating further than about 1.5 decades beyond the data is a judgement
+call. Treat those numbers as order-of-magnitude.</p>
+<h2 id="accuracy-and-caveats">Accuracy and caveats<a class="headerlink" href="#accuracy-and-caveats" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>compute()</code> does <strong>not</strong> filter — it uses <code>df_spectrum</code> as-is. Preprocess
-  with the <code>apply_*</code> wrappers first.</li>
-<li><code>scale="amplitude"</code> divides by <code>n</code> and doubles interior bins (single-sided
-  convention), so a pure sinusoid recovers its physical amplitude.</li>
-<li>Plot representations: <code>linear</code>, <code>semilogx</code>, <code>semilogy</code>, <code>loglog</code>. Combined
-  (<code>combined=True</code>) overlays components; otherwise one subplot each.</li>
+<li><strong>Digitization.</strong> The source is a raster plot: expect about ±2–4 % in annual
+  rate (1–2 px on a five-decade axis). The pipeline is reproducible with
+  <code>scripts/digitize_nec_hazard.py</code>, which also writes overlay images for visual
+  QA.</li>
+<li><strong>Hidden curves.</strong> Where one curve is drawn over another, the hidden stretch
+  follows the curve on top (it lies underneath it in the plot). Sa(0.2 s) is
+  almost entirely hidden under Sa(0.1 s) in some cities; <code>curve.aliased_from</code>
+  flags a curve that is a copy.</li>
+<li><strong>The curves do not reproduce the zone factor Z everywhere.</strong> The PGA at
+  Tr = 475 yr read from these plots is close to Z in the Sierra centre and
+  Guayaquil (Quito 0.44 vs Z = 0.40, Guayaquil 0.40 vs 0.40), above the
+  saturated Z = 0.50 on the coast (Esmeraldas 0.97), but well <em>below</em> Z in the
+  north and Oriente (Tulcán 0.25 vs 0.40, Orellana 0.13 vs 0.25). This is how the
+  NEC figures read, not a digitizing artefact. Use Z for the NEC design
+  spectrum and these curves only where the NEC asks for them (multiple
+  hazard levels, essential structures, bridges, ports).</li>
+<li><strong>Rock motion.</strong> The curves are for rock, 5 % damping; apply site
+  coefficients Fa, Fd, Fs separately.</li>
 </ul>
-<p>Pull the arrays directly:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">freqs</span><span class="p">,</span> <span class="n">amps</span><span class="p">,</span> <span class="n">comps</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">spectrum</span><span class="o">.</span><span class="n">get_arrays</span><span class="p">(</span><span class="n">fmin</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="mf">25.0</span><span class="p">)</span>
-</span></code></pre></div>
-<h3 id="comparing-records">Comparing records<a class="headerlink" href="#comparing-records" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">base</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">spectrum</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">base</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">base</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">other_records</span><span class="o">=</span><span class="p">[</span><span class="n">rec2</span><span class="p">,</span> <span class="n">rec3</span><span class="p">],</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>             <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">"M1"</span><span class="p">,</span> <span class="s2">"M2"</span><span class="p">,</span> <span class="s2">"M3"</span><span class="p">],</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>             <span class="n">align</span><span class="o">=</span><span class="s2">"interp"</span><span class="p">)</span>   <span class="c1"># 'strict' requires identical grids</span>
-</span></code></pre></div>
-<h2 id="spectrogram">Spectrogram<a class="headerlink" href="#spectrogram" title="Permanent link">&para;</a></h2>
-<p><code>rec.spectrogram</code> produces time–frequency power (dB) via
-<code>matplotlib.mlab.specgram</code>, with a secondary period axis. It follows the same
-<strong>preprocess → compute → plot</strong> pipeline as the other processors: filter the
-stateful working DataFrame with the <code>apply_*</code> wrappers, then plot.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># 1. Preprocess (mutates df_spectrogram, logged in applied_filters)</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">apply_base_filters</span><span class="p">(</span><span class="n">detrend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">taper</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">))</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># 2. Set plot ranges</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">set_plot_limits</span><span class="p">(</span><span class="n">fmin</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">fmax</span><span class="o">=</span><span class="mf">25.0</span><span class="p">,</span> <span class="n">tmin</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="mf">40.0</span><span class="p">)</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># 3. Plot — computes once and caches; no re-filtering at plot time</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">plot_spectrogram</span><span class="p">(</span><span class="n">NFFT</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">noverlap</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"seismic"</span><span class="p">)</span>
-</span></code></pre></div>
-<p><code>plot_spectrogram()</code> consumes the cached <code>compute()</code> result, recomputing only
-if it is missing or was produced with a different <code>NFFT</code>/<code>noverlap</code>. Because
-preprocessing lives entirely in the <code>apply_*</code> path, there is <strong>no double
-filtering</strong> — the spectrogram reflects exactly the current <code>df_spectrogram</code>.
-Any <code>apply_*</code> call invalidates the cache so the next plot recomputes.</p>
-<p><code>set_plot_limits()</code> controls the time window (<code>tmin/tmax</code>), frequency window
-(<code>fmin/fmax</code>), and color scale (<code>pmin/pmax</code>); <code>reset_plot_limits()</code> clears
-them. A frequency floor <code>&gt; 0</code> is required for the period secondary axis (the
-<code>fmin</code> argument is just the fallback when no floor was set).</p>
-<p>You can also compute without plotting and read the arrays:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">NFFT</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">noverlap</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">freqs</span>    <span class="c1"># (n_freqs,)</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">bins</span>     <span class="c1"># (n_time,)</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span><span class="o">.</span><span class="n">power</span>    <span class="c1"># {comp: (n_freqs, n_time) dB array}</span>
-</span></code></pre></div>
-<p>See the <a href="../../api/spectrum/"><code>Spectrum</code></a> and
-<a href="../../api/spectrogram/"><code>Spectrogram</code></a> API pages for full signatures.</p>
 
 
 
