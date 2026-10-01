@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://nmorabowen.github.io/apeQuake/guides/response-spectra/">
+        <link rel="canonical" href="https://nmorabowen.github.io/apeQuake/guides/code-spectrum-nec/">
       
       
-        <link rel="prev" href="../spectra/">
+        <link rel="prev" href="../nec-hazard/">
       
       
-        <link rel="next" href="../intensity-measures/">
+        <link rel="next" href="../code-spectrum-asce7-10/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Response spectra - apeQuake</title>
+        <title>NEC-15 - apeQuake</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#response-spectra" class="md-skip">
+        <a href="#nec-15-design-spectrum-ecuador" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Response spectra
+              NEC-15
             
           </span>
         </div>
@@ -474,37 +474,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Response spectra
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../response-spectra/" class="md-nav__link">
         
   
   
@@ -520,70 +493,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#multi-component-compute-plot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Multi-component compute &amp; plot
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sa-pseudo-vs-absolute" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Sa: pseudo vs. absolute
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#single-component-convenience-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Single-component convenience API
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#a-single-sdof-history" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        A single SDOF history
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -649,8 +558,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -668,11 +579,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" checked>
         
           
           <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
@@ -693,7 +604,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -708,10 +619,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../code-spectrum-nec/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NEC-15
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -727,6 +665,70 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1260,10 +1262,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#multi-component-compute-plot" class="md-nav__link">
+  <a href="#usage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Multi-component compute &amp; plot
+        Usage
       
     </span>
   </a>
@@ -1271,10 +1273,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sa-pseudo-vs-absolute" class="md-nav__link">
+  <a href="#inputs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Sa: pseudo vs. absolute
+        Inputs
       
     </span>
   </a>
@@ -1282,10 +1284,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#single-component-convenience-api" class="md-nav__link">
+  <a href="#equations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Single-component convenience API
+        Equations
       
     </span>
   </a>
@@ -1293,10 +1295,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a-single-sdof-history" class="md-nav__link">
+  <a href="#limitations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A single SDOF history
+        Limitations
       
     </span>
   </a>
@@ -1323,77 +1325,110 @@
   
 
 
-<h1 id="response-spectra">Response spectra<a class="headerlink" href="#response-spectra" title="Permanent link">&para;</a></h1>
-<p><code>rec.response_spectra</code> solves the single-degree-of-freedom equation of motion
-for each oscillator period and component, returning displacement (Sd),
-velocity (Sv), and acceleration (Sa) spectra.</p>
-<p>The equation of motion (unit mass) is</p>
-<p>$$ \ddot{u} + 2\,\xi\,\omega\,\dot{u} + \omega^2 u = -a_g(t), \qquad \omega = \tfrac{2\pi}{T} $$</p>
-<p>integrated with <strong>Newmark's average-acceleration</strong> scheme (γ = 0.5, β = 0.25),
-which is unconditionally stable. The per-period solve runs on a Numba-parallel
-kernel when Numba is available, with an identical pure-Python fallback.</p>
-<h2 id="multi-component-compute-plot">Multi-component compute &amp; plot<a class="headerlink" href="#multi-component-compute-plot" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">add_filter</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">detrend</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">"demean"</span><span class="p">)</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">add_filter</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">taper</span><span class="p">,</span> <span class="n">max_percentage</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">periods</span><span class="o">=</span><span class="n">T</span><span class="p">,</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">damping</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>        <span class="c1"># ξ</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">sa_mode</span><span class="o">=</span><span class="s2">"pseudo"</span><span class="p">,</span>    <span class="c1"># 'pseudo' (ω²·Sd) or 'absolute' (max|ü + a_g|)</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">)</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">quantity</span><span class="o">=</span><span class="s2">"Sa"</span><span class="p">,</span> <span class="n">representation</span><span class="o">=</span><span class="s2">"loglog"</span><span class="p">)</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">quantity</span><span class="o">=</span><span class="s2">"Sd"</span><span class="p">,</span> <span class="n">combined</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<h1 id="nec-15-design-spectrum-ecuador">NEC-15 design spectrum (Ecuador)<a class="headerlink" href="#nec-15-design-spectrum-ecuador" title="Permanent link">&para;</a></h1>
+<p><code>NECSpectrum</code> implements the elastic design spectrum of <strong>NEC-SE-DS</strong>
+(<em>Peligro sismico y requisitos de diseno sismo resistente</em>, NEC-15), 5 % damping,
+with <code>Sa</code> in units of g. Section, table and page numbers below are those printed
+in the standard.</p>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">code_spectrum</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">"NEC"</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">0.40</span><span class="p">,</span> <span class="n">site_class</span><span class="o">=</span><span class="s2">"D"</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="s2">"sierra"</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">code_spectrum</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">code_spectrum</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </span></code></pre></div>
-<p>After <code>compute()</code> the results live on the object:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">periods</span>   <span class="c1"># T grid</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">Sa</span><span class="p">[</span><span class="s2">"X"</span><span class="p">]</span>   <span class="c1"># per-component dicts</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">Sv</span><span class="p">[</span><span class="s2">"X"</span><span class="p">]</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">Sd</span><span class="p">[</span><span class="s2">"X"</span><span class="p">]</span>
+<p>Or standalone:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">apeQuake.code_spectrum.codes.nec</span><span class="w"> </span><span class="kn">import</span> <span class="n">NECSpectrum</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">m</span> <span class="o">=</span> <span class="n">NECSpectrum</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="mf">0.40</span><span class="p">,</span> <span class="n">site_class</span><span class="o">=</span><span class="s2">"D"</span><span class="p">,</span> <span class="n">region</span><span class="o">=</span><span class="s2">"sierra"</span><span class="p">)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">m</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>          <span class="c1"># Z, eta, Fa, Fd, Fs, r, T0, Tc, TL, site_class, region</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">m</span><span class="o">.</span><span class="n">sa</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>   <span class="c1"># g</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">m</span><span class="o">.</span><span class="n">sd</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>               <span class="c1"># m   (3.3.2)</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">m</span><span class="o">.</span><span class="n">reduced_sa</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">r_factor</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">phi_p</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">phi_e</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">importance</span><span class="o">=</span><span class="mf">1.3</span><span class="p">)</span>  <span class="c1"># V/W (6.3.2)</span>
 </span></code></pre></div>
-<h2 id="sa-pseudo-vs-absolute">Sa: pseudo vs. absolute<a class="headerlink" href="#sa-pseudo-vs-absolute" title="Permanent link">&para;</a></h2>
+<h2 id="inputs">Inputs<a class="headerlink" href="#inputs" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th><code>sa_mode</code></th>
-<th>Definition</th>
-<th>Use when</th>
+<th>Input</th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>"pseudo"</code></td>
-<td>Sa = ω²·Sd</td>
-<td>Standard design spectra; Sa, Sv, Sd are consistent by construction.</td>
+<td><code>z</code></td>
+<td>Zone factor Z (fraction of g, &gt; 0)</td>
 </tr>
 <tr>
-<td><code>"absolute"</code></td>
-<td>Sa = max|ü + a_g|</td>
-<td>You need true total acceleration (e.g. floor demands at high damping).</td>
+<td><code>site_class</code></td>
+<td><code>"A"</code> to <code>"E"</code>. <code>"F"</code> raises <code>ValueError</code>: a site-specific response study is required (3.2 and 10.5.4)</td>
+</tr>
+<tr>
+<td><code>region</code></td>
+<td><code>"costa"</code> (1.80), <code>"sierra"</code> (2.48), <code>"oriente"</code> (2.60), <code>"galapagos"</code> (2.48), <code>"esmeraldas"</code> (2.48)</td>
+</tr>
+<tr>
+<td><code>eta</code></td>
+<td>optional override of the regional value</td>
+</tr>
+<tr>
+<td><code>fa</code>, <code>fd</code>, <code>fs</code></td>
+<td>optional overrides (e.g. from a microzonation study, 3.3.1); each one replaces its table value</td>
+</tr>
+<tr>
+<td><code>component</code></td>
+<td><code>"horizontal"</code> (default) or <code>"vertical"</code> (2/3 of horizontal, 3.4.2)</td>
+</tr>
+<tr>
+<td><code>ascending_branch</code></td>
+<td><code>True</code> (default): full Fig. 3 curve, left branch for T &lt; T0 (<code>Sa(0) = Z Fa</code>). <code>False</code>: plateau down to T = 0 (static analysis / fundamental mode)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="single-component-convenience-api">Single-component convenience API<a class="headerlink" href="#single-component-convenience-api" title="Permanent link">&para;</a></h2>
-<p>For one component, <code>compute_response_spectrum</code> returns the arrays directly:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">rs</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">compute_response_spectrum</span><span class="p">(</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">periods</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="s2">"X"</span><span class="p">,</span> <span class="n">sa_mode</span><span class="o">=</span><span class="s2">"absolute"</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">)</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">rs</span><span class="p">[</span><span class="s2">"T"</span><span class="p">],</span> <span class="n">rs</span><span class="p">[</span><span class="s2">"Sa"</span><span class="p">],</span> <span class="n">rs</span><span class="p">[</span><span class="s2">"Sv"</span><span class="p">],</span> <span class="n">rs</span><span class="p">[</span><span class="s2">"Sd"</span><span class="p">]</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">plot_response_spectrum</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span>   <span class="c1"># stacked Sa/Sv/Sd</span>
+<h2 id="equations">Equations<a class="headerlink" href="#equations" title="Permanent link">&para;</a></h2>
+<p>Site coefficients (3.2.2, Tables 3, 4, 5, pp. 31-32): <code>Fa</code>, <code>Fd</code>, <code>Fs</code> are
+interpolated linearly in Z between the columns 0.15, 0.25, 0.30, 0.35, 0.40 and</p>
+<blockquote>
+<p>= 0.50, and clamped to the end columns outside that range.</p>
+</blockquote>
+<p>Spectrum (3.3.1, pp. 33-35):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Sa = eta Z Fa                     0 &lt;= T &lt;= Tc
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Sa = eta Z Fa (Tc / T)^r          T &gt; Tc
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>T0 = 0.10 Fs Fd / Fa
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Tc = 0.55 Fs Fd / Fa
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>TL = 2.4 Fd                       (at most 4 s for site classes D and E)
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>r  = 1.0 (classes A-D),  1.5 (class E)
 </span></code></pre></div>
-<p>The registered filter pipeline is applied here on the same terms as
-<code>compute()</code>: when reading from the record it is on by default; pass
-<code>use_filters=False</code> to skip it.</p>
-<h2 id="a-single-sdof-history">A single SDOF history<a class="headerlink" href="#a-single-sdof-history" title="Permanent link">&para;</a></h2>
-<p>To inspect one oscillator's full response (not just the peaks):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">out</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">newmark_sdof</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="s2">"X"</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">out</span><span class="p">[</span><span class="s2">"displacement"</span><span class="p">],</span> <span class="n">out</span><span class="p">[</span><span class="s2">"velocity"</span><span class="p">],</span> <span class="n">out</span><span class="p">[</span><span class="s2">"total_acceleration"</span><span class="p">]</span>
-</span></code></pre></div>
-<p>See the <a href="../../api/response_spectra/"><code>ResponseSpectra</code> API</a> for every option.</p>
+<p><code>eta</code> (3.3.1, p. 34): 1.80 for the Costa provinces <strong>except Esmeraldas</strong>; 2.48 for
+the Sierra, Esmeraldas and Galapagos; 2.60 for the Oriente.</p>
+<p>Left branch (3.3.1, p. 35, Fig. 3): <code>Sa = Z Fa [1 + (eta - 1) T / T0]</code> for
+<code>T &lt;= T0</code>. NEC states it is for dynamic analysis of modes <strong>other than the
+fundamental</strong>; for static analysis and the fundamental mode the plateau reaches
+T = 0 (appendix 10.1.2). The default draws the full Fig. 3 curve
+(<code>Sa(0) = Z Fa</code>), which is what you want when comparing with a record;
+pass <code>ascending_branch=False</code> for the plateau (<code>Sa(0) = eta Z Fa</code>).
+<code>reduced_sa</code>, used for force-based design, always takes the plateau.</p>
+<p>Displacement spectrum (3.3.2, p. 36): <code>Sd = Sa g (T / 2 pi)^2</code> for <code>T &lt;= TL</code>; it is
+held constant beyond <code>TL</code> (Fig. 4), with <code>TL</code> capped at 4 s for classes D and E.</p>
+<p>Vertical component (3.4.2, p. 37): <code>Ev &gt;= 2/3 Eh</code>; the model uses exactly 2/3 of
+the horizontal spectrum. The code gives no period range for it.</p>
+<p>Design ordinate (6.3.2, p. 61): the base shear is
+<code>V = I Sa(Ta) W / (R phiP phiE)</code>, so <code>reduced_sa</code> returns
+<code>I Sa(T) / (R phiP phiE)</code>. It always uses the plateau-from-zero horizontal
+spectrum. (The text of 6.3.2 points to 3.3.2 for <code>Sa</code>; that is an erratum,
+it is 3.3.1.)</p>
+<h2 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Site class F, and essential / special structures that require hazard-curve
+  based ordinates (6.3.2), are outside the tabulated procedure.</li>
+<li>Z below 0.15 or above 0.50 is clamped to the table end columns; the standard
+  tabulates nothing outside that range.</li>
+<li>The vertical component is the general-case 2/3 factor only; near-field
+  essential structures (3.4.3) need a site response study.</li>
+<li>The 3.3.2 formula for <code>T &gt; TL</code> is ambiguous in the printed text (the
+  formula uses <code>TL</code> in the period factor, the figure shows a constant). The
+  constant branch is implemented.</li>
+<li>No Ta estimation, R tables, irregularity factors or drift checks: this
+  module only builds spectra.</li>
+</ul>
 
 
 

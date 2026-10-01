@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://nmorabowen.github.io/apeQuake/guides/response-spectra/">
+        <link rel="canonical" href="https://nmorabowen.github.io/apeQuake/guides/code-spectrum-asce7-22/">
       
       
-        <link rel="prev" href="../spectra/">
+        <link rel="prev" href="../code-spectrum-asce7-16/">
       
       
-        <link rel="next" href="../intensity-measures/">
+        <link rel="next" href="../seismic-hazard/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Response spectra - apeQuake</title>
+        <title>ASCE 7-22 - apeQuake</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#response-spectra" class="md-skip">
+        <a href="#asce-7-22-two-period-design-spectrum" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Response spectra
+              ASCE 7-22
             
           </span>
         </div>
@@ -474,37 +474,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Response spectra
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../response-spectra/" class="md-nav__link">
         
   
   
@@ -520,70 +493,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#multi-component-compute-plot" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Multi-component compute &amp; plot
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sa-pseudo-vs-absolute" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Sa: pseudo vs. absolute
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#single-component-convenience-api" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Single-component convenience API
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#a-single-sdof-history" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        A single SDOF history
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -649,8 +558,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -668,11 +579,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" checked>
         
           
           <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
@@ -693,7 +604,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -792,10 +703,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../code-spectrum-asce7-22/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ASCE 7-22
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -811,6 +749,81 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#inputs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#equations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Equations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#difference-from-the-multi-period-procedure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Difference from the multi-period procedure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1260,10 +1273,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#multi-component-compute-plot" class="md-nav__link">
+  <a href="#usage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Multi-component compute &amp; plot
+        Usage
       
     </span>
   </a>
@@ -1271,10 +1284,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sa-pseudo-vs-absolute" class="md-nav__link">
+  <a href="#inputs" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Sa: pseudo vs. absolute
+        Inputs
       
     </span>
   </a>
@@ -1282,10 +1295,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#single-component-convenience-api" class="md-nav__link">
+  <a href="#equations" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Single-component convenience API
+        Equations
       
     </span>
   </a>
@@ -1293,10 +1306,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#a-single-sdof-history" class="md-nav__link">
+  <a href="#difference-from-the-multi-period-procedure" class="md-nav__link">
     <span class="md-ellipsis">
       
-        A single SDOF history
+        Difference from the multi-period procedure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations
       
     </span>
   </a>
@@ -1323,77 +1347,91 @@
   
 
 
-<h1 id="response-spectra">Response spectra<a class="headerlink" href="#response-spectra" title="Permanent link">&para;</a></h1>
-<p><code>rec.response_spectra</code> solves the single-degree-of-freedom equation of motion
-for each oscillator period and component, returning displacement (Sd),
-velocity (Sv), and acceleration (Sa) spectra.</p>
-<p>The equation of motion (unit mass) is</p>
-<p>$$ \ddot{u} + 2\,\xi\,\omega\,\dot{u} + \omega^2 u = -a_g(t), \qquad \omega = \tfrac{2\pi}{T} $$</p>
-<p>integrated with <strong>Newmark's average-acceleration</strong> scheme (γ = 0.5, β = 0.25),
-which is unconditionally stable. The per-period solve runs on a Numba-parallel
-kernel when Numba is available, with an identical pure-Python fallback.</p>
-<h2 id="multi-component-compute-plot">Multi-component compute &amp; plot<a class="headerlink" href="#multi-component-compute-plot" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">add_filter</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">detrend</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">"demean"</span><span class="p">)</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">add_filter</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">taper</span><span class="p">,</span> <span class="n">max_percentage</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">periods</span><span class="o">=</span><span class="n">T</span><span class="p">,</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">damping</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>        <span class="c1"># ξ</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">sa_mode</span><span class="o">=</span><span class="s2">"pseudo"</span><span class="p">,</span>    <span class="c1"># 'pseudo' (ω²·Sd) or 'absolute' (max|ü + a_g|)</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">)</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">quantity</span><span class="o">=</span><span class="s2">"Sa"</span><span class="p">,</span> <span class="n">representation</span><span class="o">=</span><span class="s2">"loglog"</span><span class="p">)</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">quantity</span><span class="o">=</span><span class="s2">"Sd"</span><span class="p">,</span> <span class="n">combined</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<h1 id="asce-7-22-two-period-design-spectrum">ASCE 7-22 two-period design spectrum<a class="headerlink" href="#asce-7-22-two-period-design-spectrum" title="Permanent link">&para;</a></h1>
+<p><code>ASCE7_22Spectrum</code> implements the <strong>two-period</strong> design response spectrum of
+ASCE 7-22 Section 11.4.5.2 (5 % damping, <code>Sa</code> in g).</p>
+<div class="admonition warning">
+<p class="admonition-title">7-22 has no Fa / Fv tables</p>
+<p>ASCE 7-10 and 7-16 obtain <code>SMS = Fa Ss</code> and <code>SM1 = Fv S1</code> from Tables
+11.4-1 and 11.4-2. ASCE 7-22 removed those tables: the site-class-adjusted
+<code>SMS</code> and <code>SM1</code> (Section 11.4.3) come <strong>directly from the USGS Seismic Design
+Geodatabase</strong> for the site class. This model therefore takes <code>sms</code> / <code>sm1</code>
+as inputs and does no site-coefficient interpolation. Use the 7-10 or 7-16
+models if you start from mapped <code>Ss</code> / <code>S1</code>.</p>
+</div>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">code_spectrum</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">"ASCE7-22"</span><span class="p">,</span> <span class="n">sms</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">sm1</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">site_class</span><span class="o">=</span><span class="s2">"D"</span><span class="p">,</span> <span class="n">tl</span><span class="o">=</span><span class="mf">8.0</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">code_spectrum</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 </span></code></pre></div>
-<p>After <code>compute()</code> the results live on the object:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">periods</span>   <span class="c1"># T grid</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">Sa</span><span class="p">[</span><span class="s2">"X"</span><span class="p">]</span>   <span class="c1"># per-component dicts</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">Sv</span><span class="p">[</span><span class="s2">"X"</span><span class="p">]</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">Sd</span><span class="p">[</span><span class="s2">"X"</span><span class="p">]</span>
+<p>Standalone:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">apeQuake.code_spectrum.codes.asce7_22</span><span class="w"> </span><span class="kn">import</span> <span class="n">ASCE7_22Spectrum</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">m</span> <span class="o">=</span> <span class="n">ASCE7_22Spectrum</span><span class="p">(</span><span class="n">sms</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">sm1</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">tl</span><span class="o">=</span><span class="mf">8.0</span><span class="p">,</span> <span class="n">site_class</span><span class="o">=</span><span class="s2">"D"</span><span class="p">)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">m</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>      <span class="c1"># SMS, SM1, SDS, SD1, TL, site_class, level, T0, Ts</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">m</span><span class="o">.</span><span class="n">sa</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># Site-specific values (Chapter 21, or any external SDS/SD1 pair):</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">ASCE7_22Spectrum</span><span class="o">.</span><span class="n">from_sds_sd1</span><span class="p">(</span><span class="n">sds</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">sd1</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">tl</span><span class="o">=</span><span class="mf">6.0</span><span class="p">)</span>
 </span></code></pre></div>
-<h2 id="sa-pseudo-vs-absolute">Sa: pseudo vs. absolute<a class="headerlink" href="#sa-pseudo-vs-absolute" title="Permanent link">&para;</a></h2>
+<h2 id="inputs">Inputs<a class="headerlink" href="#inputs" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th><code>sa_mode</code></th>
-<th>Definition</th>
-<th>Use when</th>
+<th>Input</th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>"pseudo"</code></td>
-<td>Sa = ω²·Sd</td>
-<td>Standard design spectra; Sa, Sv, Sd are consistent by construction.</td>
+<td><code>sms</code>, <code>sm1</code></td>
+<td>Site-class-adjusted MCE_R accelerations in g (Section 11.4.3), from the USGS geodatabase for <code>site_class</code>. Both &gt; 0</td>
 </tr>
 <tr>
-<td><code>"absolute"</code></td>
-<td>Sa = max|ü + a_g|</td>
-<td>You need true total acceleration (e.g. floor demands at high damping).</td>
+<td><code>tl</code></td>
+<td>Long-period transition period in s (Figures 22-14 to 22-17 or the geodatabase); must exceed <code>Ts</code></td>
+</tr>
+<tr>
+<td><code>site_class</code></td>
+<td><code>A</code>, <code>B</code>, <code>BC</code>, <code>C</code>, <code>CD</code>, <code>D</code>, <code>DE</code>, <code>E</code> (Table 20.2-1). Reported in <code>parameters()</code>; the accelerations must already correspond to it. <code>F</code> raises <code>ValueError</code> (site response analysis, Sections 11.4.7 and 21.1)</td>
+</tr>
+<tr>
+<td><code>level</code></td>
+<td><code>"design"</code> (default) or <code>"mcer"</code></td>
 </tr>
 </tbody>
 </table>
-<h2 id="single-component-convenience-api">Single-component convenience API<a class="headerlink" href="#single-component-convenience-api" title="Permanent link">&para;</a></h2>
-<p>For one component, <code>compute_response_spectrum</code> returns the arrays directly:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">rs</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">compute_response_spectrum</span><span class="p">(</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">periods</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="s2">"X"</span><span class="p">,</span> <span class="n">sa_mode</span><span class="o">=</span><span class="s2">"absolute"</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">)</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">rs</span><span class="p">[</span><span class="s2">"T"</span><span class="p">],</span> <span class="n">rs</span><span class="p">[</span><span class="s2">"Sa"</span><span class="p">],</span> <span class="n">rs</span><span class="p">[</span><span class="s2">"Sv"</span><span class="p">],</span> <span class="n">rs</span><span class="p">[</span><span class="s2">"Sd"</span><span class="p">]</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">plot_response_spectrum</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span>   <span class="c1"># stacked Sa/Sv/Sd</span>
-</span></code></pre></div>
-<p>The registered filter pipeline is applied here on the same terms as
-<code>compute()</code>: when reading from the record it is on by default; pass
-<code>use_filters=False</code> to skip it.</p>
-<h2 id="a-single-sdof-history">A single SDOF history<a class="headerlink" href="#a-single-sdof-history" title="Permanent link">&para;</a></h2>
-<p>To inspect one oscillator's full response (not just the peaks):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">out</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">newmark_sdof</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">component</span><span class="o">=</span><span class="s2">"X"</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">out</span><span class="p">[</span><span class="s2">"displacement"</span><span class="p">],</span> <span class="n">out</span><span class="p">[</span><span class="s2">"velocity"</span><span class="p">],</span> <span class="n">out</span><span class="p">[</span><span class="s2">"total_acceleration"</span><span class="p">]</span>
-</span></code></pre></div>
-<p>See the <a href="../../api/response_spectra/"><code>ResponseSpectra</code> API</a> for every option.</p>
+<p><code>from_sds_sd1(sds, sd1, tl, site_class="site-specific", level="design")</code> bypasses
+<code>sms</code> / <code>sm1</code>; it sets <code>SMS = 1.5 SDS</code>, <code>SM1 = 1.5 SD1</code>, and does not validate the
+site-class label, so Site Class F studies (Section 21.4 values) can be entered.</p>
+<h2 id="equations">Equations<a class="headerlink" href="#equations" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>SDS = 2/3 SMS</code> (Eq. 11.4-1), <code>SD1 = 2/3 SM1</code> (Eq. 11.4-2).</li>
+<li><code>T0 = 0.2 Ts</code>, <code>Ts = SD1 / SDS</code>.</li>
+<li><code>T &lt; T0</code>: <code>Sa = SDS (0.4 + 0.6 T / T0)</code> (Eq. 11.4-3).</li>
+<li><code>T0 &lt;= T &lt;= Ts</code>: <code>Sa = SDS</code>.</li>
+<li><code>Ts &lt; T &lt;= TL</code>: <code>Sa = SD1 / T</code> (Eq. 11.4-4).</li>
+<li><code>T &gt; TL</code>: <code>Sa = SD1 TL / T^2</code> (Eq. 11.4-5).</li>
+<li><code>level="mcer"</code> (Section 11.4.6): the MCE_R spectrum is 1.5 times the design
+  spectrum, i.e. the same shape built from <code>SMS</code> / <code>SM1</code>.</li>
+</ul>
+<h2 id="difference-from-the-multi-period-procedure">Difference from the multi-period procedure<a class="headerlink" href="#difference-from-the-multi-period-procedure" title="Permanent link">&para;</a></h2>
+<p>ASCE 7-22 makes the 22-point <strong>multi-period</strong> design spectrum (Section 11.4.5.1,
+USGS geodatabase ordinates, linear interpolation) the default; the two-period
+spectrum is the fallback when multi-period values are unavailable (Section
+11.4.5, Exception 2). The two can differ materially, especially at long periods.
+This class does not implement the multi-period spectrum.</p>
+<h2 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The <code>SMS</code> / <code>SM1</code> values are not computed here; obtain them from the USGS
+  geodatabase for the exact site class and coordinates.</li>
+<li>Sections 11.4.2 to 11.4.7 and Eqs. 11.4-1 to 11.4-5 were checked against the
+  printed ASCE/SEI 7-22: the nine site classes (A, B, BC, C, CD, D, DE, E, F),
+  <code>SS</code>, <code>S1</code>, <code>SMS</code> and <code>SM1</code> taken from the USGS Seismic Design Geodatabase
+  (11.4.3, no <code>Fa</code> / <code>Fv</code> tables), <code>SDS = 2/3 SMS</code>, <code>SD1 = 2/3 SM1</code>, the
+  two-period spectrum of 11.4.5.2 and <code>MCER = 1.5 x design</code> (11.4.6).</li>
+<li>Site Class F, seismic isolation and damped structures need site-specific
+  analysis (Chapter 21).</li>
+</ul>
 
 
 
