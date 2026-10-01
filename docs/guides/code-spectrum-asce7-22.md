@@ -67,8 +67,10 @@ This class does not implement the multi-period spectrum.
 
 - The `SMS` / `SM1` values are not computed here; obtain them from the USGS
   geodatabase for the exact site class and coordinates.
-- Sections 11.4.3 to 11.4.7 and Eqs. 11.4-1 to 11.4-5 were checked against the
-  text of ASCE 7-22 itself. The site-class list (Table 20.2-1) comes from the
-  project's ASCE 7-22 skill notes and was not re-read in the standard.
+- Sections 11.4.2 to 11.4.7 and Eqs. 11.4-1 to 11.4-5 were checked against the
+  printed ASCE/SEI 7-22: the nine site classes (A, B, BC, C, CD, D, DE, E, F),
+  `SS`, `S1`, `SMS` and `SM1` taken from the USGS Seismic Design Geodatabase
+  (11.4.3, no `Fa` / `Fv` tables), `SDS = 2/3 SMS`, `SD1 = 2/3 SM1`, the
+  two-period spectrum of 11.4.5.2 and `MCER = 1.5 x design` (11.4.6).
 - Site Class F, seismic isolation and damped structures need site-specific
   analysis (Chapter 21).
