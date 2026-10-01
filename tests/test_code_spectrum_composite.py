@@ -9,8 +9,6 @@ import pytest
 from apeQuake import Record
 from apeQuake.code_spectrum import (
     AsceTwoPeriodSpectrum,
-    CodeSpectrum,
-    CodeSpectrumModel,
     available_codes,
     get_model_class,
 )
