@@ -105,5 +105,6 @@ def test_composites_attached(sine):
     dt, t, x = sine
     rec = Record(x=x, dt=dt)
     for attr in ("filter", "spectrum", "spectrogram",
-                 "response_spectra", "intensity_measures", "plot_record"):
+                 "response_spectra", "intensity_measures", "code_spectrum",
+                 "plot_record"):
         assert hasattr(rec, attr)

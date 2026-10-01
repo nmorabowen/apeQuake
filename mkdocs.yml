@@ -106,6 +106,11 @@ nav:
       - Response spectra: guides/response-spectra.md
       - Intensity measures: guides/intensity-measures.md
       - NEC hazard curves: guides/nec-hazard.md
+      - Code spectrum:
+          - NEC-15: guides/code-spectrum-nec.md
+          - ASCE 7-10: guides/code-spectrum-asce7-10.md
+          - ASCE 7-16: guides/code-spectrum-asce7-16.md
+          - ASCE 7-22: guides/code-spectrum-asce7-22.md
       - IG-EPN probabilistic hazard: guides/seismic-hazard.md
   - API Reference:
       - Overview: api/index.md
@@ -117,4 +122,5 @@ nav:
       - Intensity measures: api/intensity_measures.md
       - Plotting: api/plot_record.md
       - NEC hazard: api/nec.md
+      - Code spectrum: api/code_spectrum.md
       - IG-EPN hazard: api/hazard.md
