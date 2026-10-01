@@ -29,10 +29,6 @@ SOURCE_TYPES: dict[str, str] = {
 }
 """Short name -> ``Tipo`` value of the IG-EPN source model."""
 
-SOURCE_COLORS = {"crustal": "tab:orange", "interface": "tab:red", "inslab": "tab:purple",
-                 "background": "0.45"}
-CATALOG_COLORS = {"shallow": "tab:blue", "deep": "tab:cyan", "historical": "tab:green",
-                  "custom": "tab:purple"}
 
 
 # ---------------------------------------------------------------------- inputs
@@ -132,18 +128,62 @@ def _mw_size(mw: np.ndarray) -> np.ndarray:
 
 # ---------------------------------------------------------------------- static map
 
+# Catalogs differ by fill and outline, not by hue: a map carries at most three identity
+# hues and those belong to the source-zone types. All epicenters are ink with a surface
+# ring, so they read on every hazard color.
+CATALOG_STYLE = {
+    "shallow": {"fill": 0.0, "lw": 0.8, "ls": "-"},
+    "deep": {"fill": 0.35, "lw": 0.8, "ls": "-"},
+    "historical": {"fill": 0.0, "lw": 0.9, "ls": (0, (2, 1.5))},
+    "recent": {"fill": 0.8, "lw": 0.6, "ls": "-"},
+    "custom": {"fill": 0.8, "lw": 0.6, "ls": "-"},
+}
+
+
+def _catalog_style(name: str) -> dict:
+    return CATALOG_STYLE.get(name, CATALOG_STYLE["custom"])
+
+
+def _label_sites(ax, t, sites, tr, stat, period, near_deg: float) -> None:
+    """Name + value beside each site, kept inside the map window.
+
+    Labels go to the right unless the point sits in the right quarter of the window;
+    a site close to an already-labelled one takes the label below instead.
+    """
+    from . import _style
+
+    idx = int(np.where(np.isclose(_data.PERIODS, period))[0][0])
+    x0, x1 = ax.get_xlim()
+    placed: list[tuple[float, float]] = []
+    for s in sites:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            val = s.uhs(tr, stat).Sa.iloc[idx]
+        right = (s.lon - x0) / (x1 - x0) < 0.75
+        near = sum(np.hypot(s.lon - x, s.lat - y) < near_deg for x, y in placed)
+        dy = 6 if near % 2 == 0 else -20
+        placed.append((s.lon, s.lat))
+        txt = ax.annotate(f"{s.label}\n{val:.2f} g", (s.lon, s.lat),
+                          xytext=(8 if right else -8, dy), textcoords="offset points",
+                          fontsize=8, color=t.ink, ha="left" if right else "right", zorder=8)
+        txt.set_path_effects(_style.halo(t, 3))
+
+
 def plot_map(hz: "EcuadorHazard", tr: float = 475, period: float = 0.0, stat: str = "mean",
              ax: "Axes | None" = None, *, provinces: bool = True, faults: bool = False,
              sources: bool | str | Sequence[str] = False, catalog: CatalogLike = None,
              min_mw: float | None = None, capitals: bool = False, points: PointsLike = None,
              annotate: bool = True, extent: str | Sequence[float] | None = None,
-             cmap: str = "magma_r", vmin: float | None = None, vmax: float | None = None,
-             legend: bool = True) -> "Axes":
+             cmap: Any = None, vmin: float | None = None, vmax: float | None = None,
+             legend: bool = True, theme: str = "light") -> "Axes":
     """Static hazard map with overlays. See :meth:`EcuadorHazard.plot_map`."""
-    import matplotlib.patheffects as pe
     import matplotlib.pyplot as plt
+    from matplotlib.colors import to_rgba
     from matplotlib.lines import Line2D
 
+    from . import _style
+
+    t = _style.theme(theme)
     m = hz.hazard_map(tr, period, stat)
     step = _data.GRID_STEP
     lats = np.round(np.arange(m.lat.min(), m.lat.max() + step / 2, step), 2)
@@ -153,64 +193,67 @@ def plot_map(hz: "EcuadorHazard", tr: float = 475, period: float = 0.0, stat: st
     jj = np.round((m.lon - lons[0]) / step).astype(int)
     Z[ii, jj] = m.sa
     if ax is None:
-        _, ax = plt.subplots(figsize=(8, 7.5))
+        _, ax = plt.subplots(figsize=(8, 7.8))
+    _style.style_axes(ax, t)
+    ax.grid(False)                                   # the map is the data, not a grid
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(True)
+        ax.spines[side].set_color(t.baseline)
+        ax.spines[side].set_linewidth(0.8)
     pc = ax.pcolormesh(np.r_[lons - step / 2, lons[-1] + step / 2],
-                       np.r_[lats - step / 2, lats[-1] + step / 2], Z, cmap=cmap,
-                       vmin=vmin, vmax=vmax)
+                       np.r_[lats - step / 2, lats[-1] + step / 2], Z,
+                       cmap=cmap or _style.hazard_cmap(t.name), vmin=vmin, vmax=vmax,
+                       rasterized=True)
     lbl = "PGA" if period == 0 else f"Sa({period:g} s)"
-    plt.colorbar(pc, ax=ax, label=f"{lbl} [g]", shrink=0.75)
+    cb = plt.colorbar(pc, ax=ax, shrink=0.72, fraction=0.035, pad=0.03)
+    cb.set_label(f"{lbl} [g]", color=t.secondary, fontsize=8.5)
+    cb.outline.set_edgecolor(t.baseline)
+    cb.outline.set_linewidth(0.6)
+    cb.ax.tick_params(colors=t.muted, labelcolor=t.secondary, labelsize=8, width=0.6)
     handles: list[Any] = []
+    ring = _style.halo(t, 2.4)
 
     if provinces:
-        _draw_geojson(ax, "admin_provinces.geojson.gz", color="0.35", lw=0.4)
+        _draw_geojson(ax, "admin_provinces.geojson.gz", color=t.secondary, lw=0.35,
+                      alpha=0.55)
 
-    for t in source_types(sources):
+    for kind in source_types(sources):
         src = hz.sources()
-        for g in src[src.Tipo == SOURCE_TYPES[t]].geometry:
+        col = t.zones.get(kind, t.background_zone)
+        for g in src[src.Tipo == SOURCE_TYPES[kind]].geometry:
             for xy in geom_lines(g):
-                ax.plot(xy[:, 0], xy[:, 1], color=SOURCE_COLORS[t], lw=1.0, ls="--")
-        handles.append(Line2D([], [], color=SOURCE_COLORS[t], ls="--",
-                              label=f"{t} sources"))
+                ax.plot(xy[:, 0], xy[:, 1], color=col, lw=1.3, path_effects=ring,
+                        solid_joinstyle="round", zorder=3)
+        handles.append(Line2D([], [], color=col, lw=1.6, label=f"{kind} source zones"))
 
     if faults:
-        _draw_geojson(ax, "faults.geojson", color="tab:blue", lw=1.6)
-        handles.append(Line2D([], [], color="tab:blue", lw=1.6, label="faults"))
+        _draw_geojson(ax, "faults.geojson", color=t.ink, lw=1.8, path_effects=ring,
+                      solid_capstyle="round", zorder=4)
+        handles.append(Line2D([], [], color=t.ink, lw=1.8, label="faults"))
 
     for name, df in catalog_frames(hz, catalog, min_mw):
-        col = CATALOG_COLORS.get(name, CATALOG_COLORS["custom"])
-        ax.scatter(df.lon, df.lat, s=_mw_size(df.mw), facecolors="none", edgecolors=col,
-                   linewidths=0.6, alpha=0.8, zorder=3)
-        handles.append(Line2D([], [], marker="o", ls="", mfc="none", mec=col,
-                              label=f"{name} catalog ({len(df)})"))
+        st = _catalog_style(name)
+        face = to_rgba(t.ink, st["fill"]) if st["fill"] else "none"
+        sc = ax.scatter(df.lon, df.lat, s=_mw_size(df.mw), facecolors=face,
+                        edgecolors=t.ink, linewidths=st["lw"], linestyles=[st["ls"]],
+                        zorder=5)
+        sc.set_path_effects(_style.halo(t, st["lw"] + 1.6))
+        handles.append(Line2D([], [], marker="o", ls="", ms=7, mec=t.ink, mew=st["lw"],
+                              mfc=face, label=f"{name} catalog ({len(df)})"))
 
     if capitals:
         c = _data.capitals()
         prov = c[c.type == "CAPITAL PROVINCIAL"].drop_duplicates("canton")
-        ax.plot(prov.lon, prov.lat, "k.", ms=3, zorder=4)
-        handles.append(Line2D([], [], marker=".", ls="", color="k",
-                              label="provincial capitals"))
+        ax.plot(prov.lon, prov.lat, "o", ms=4, mfc=t.surface, mec=t.ink, mew=0.8, zorder=6)
+        handles.append(Line2D([], [], marker="o", ls="", ms=4, mfc=t.surface, mec=t.ink,
+                              mew=0.8, label="provincial capitals"))
 
     sites = resolve_points(hz, points)
     if sites:
-        idx = int(np.where(np.isclose(_data.PERIODS, period))[0][0])
-        near_deg = 0.25 if extent is None else 0.05      # "close" relative to the window
-        placed: list[tuple[float, float]] = []
         for s in sites:
-            ax.plot(s.lon, s.lat, marker="*", ms=13, mfc="white", mec="k", mew=1.0, zorder=6)
-            if annotate:
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore")
-                    val = s.uhs(tr, stat).Sa.iloc[idx]
-                # alternate the label corner when an already-labelled point is close by
-                near = sum(np.hypot(s.lon - x, s.lat - y) < near_deg for x, y in placed)
-                dx, dy = [(7, 7), (-7, -20), (7, -20), (-7, 7)][near % 4]
-                placed.append((s.lon, s.lat))
-                txt = ax.annotate(f"{s.label}\n{lbl} = {val:.2f} g", (s.lon, s.lat),
-                                  xytext=(dx, dy), textcoords="offset points", fontsize=8,
-                                  ha="left" if dx > 0 else "right", zorder=7)
-                txt.set_path_effects([pe.withStroke(linewidth=2.5, foreground="white")])
-        handles.append(Line2D([], [], marker="*", ls="", ms=11, mfc="white", mec="k",
-                              label="sites"))
+            ax.plot(s.lon, s.lat, "o", ms=9, mfc=t.ink, mec=t.surface, mew=2, zorder=7)
+        handles.append(Line2D([], [], marker="o", ls="", ms=8, mfc=t.ink, mec=t.surface,
+                              mew=1.6, label="sites"))
 
     ax.set_aspect("equal")
     if extent is None:
@@ -228,11 +271,14 @@ def plot_map(hz: "EcuadorHazard", tr: float = 475, period: float = 0.0, stat: st
         x0, x1, y0, y1 = extent
         ax.set_xlim(x0, x1)
         ax.set_ylim(y0, y1)
+    if sites and annotate:
+        _label_sites(ax, t, sites, tr, stat, period, near_deg=0.25 if extent is None else 0.05)
     ax.set_xlabel("Longitude [deg]")
     ax.set_ylabel("Latitude [deg]")
-    ax.set_title(f"{lbl}, TR = {tr:g} yr ({stat}), rock - IG-EPN", fontsize=10)
+    _style.title(ax, t, f"{lbl}, TR = {tr:g} yr ({stat})",
+                 "Rock, Vs30 = 760 m/s - IG-EPN (Beauval et al., 2018)")
     if legend and handles:
-        ax.legend(handles=handles, loc="lower left", fontsize=7, framealpha=0.85)
+        _style.legend(ax, t, handles=handles, loc="lower left")
     return ax
 
 

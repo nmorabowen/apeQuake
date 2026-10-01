@@ -150,8 +150,32 @@ hz.explore("hazard.html", points=["Quito", (-0.25, -78.45, "Proyecto")],
 - **"Go to lat, lon"** finds the cell that contains any coordinate, with the same
   point-in-polygon rule as `site()`.
 
+- **Hover a cell** for its value at a glance. **Minimum Mw** thins the earthquake
+  layers, and **Download map values (CSV)** exports exactly what the map shows (the
+  table view of the map).
+- **Theme:** Auto follows the system setting; Light and Dark are remembered. The base
+  map follows the theme.
+
 Viewing the page needs internet for Leaflet and the base-map tiles. The file itself is
 about 2.7 MB and can be shared as is.
+
+### How the colors are chosen
+
+Every plot and map uses one set of design tokens, checked with a palette validator
+rather than chosen by eye:
+
+| What | Encoding | Why |
+|------|----------|-----|
+| Hazard (map cells) | one blue hue, light = low, dark = high | magnitude is sequential, and a one-hue ramp leaves room for overlays |
+| Return periods, spectral periods (lines) | steps of the same blue, short → long | they are ordered, not categories |
+| Source-zone types | orange, aqua, violet (background zones gray) | the only identity colors on a map; a map can carry at most three |
+| Faults, earthquakes, sites | ink with a thin surface-colored ring | readable on any hazard color |
+| Earthquake catalogs | fill and outline: shallow hollow, deep tinted, historical dashed, live solid | identity without spending a fourth color |
+
+A one-hue ramp separates about five ordered lines. That is why `plot_hazard_curves()`
+shows five periods by default (PGA, 0.2, 0.5, 1 and 2 s). Ask for more and the curves
+are also labelled at their ends. Every plot takes `theme="light"` or `"dark"`; in dark
+mode the hazard ramp flips, so low hazard recedes into the background.
 
 ## Sources and catalogs
 

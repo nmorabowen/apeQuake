@@ -356,8 +356,8 @@ class EcuadorHazard:
                  catalog: "str | Sequence[str] | pd.DataFrame | None" = None,
                  min_mw: float | None = None, capitals: bool = False, points=None,
                  annotate: bool = True, extent: "str | Sequence[float] | None" = None,
-                 cmap: str = "magma_r", vmin: float | None = None, vmax: float | None = None,
-                 legend: bool = True) -> "Axes":
+                 cmap=None, vmin: float | None = None, vmax: float | None = None,
+                 legend: bool = True, theme: Literal["light", "dark"] = "light") -> "Axes":
         """Static map of the hazard grid with overlays.
 
         Parameters
@@ -384,14 +384,23 @@ class EcuadorHazard:
         extent : None, "points" or (lon_min, lon_max, lat_min, lat_max)
             Map window; ``"points"`` zooms on the given points.
         cmap, vmin, vmax, legend
-            Styling.
+            Styling. The default colormap is a single-hue blue ramp (light = low hazard),
+            so faults, epicenters and sites can be drawn in ink on top of it.
+        theme : {"light", "dark"}
+            Color tokens; in dark mode the ramp flips so low hazard recedes into the
+            dark surface.
+
+        Source-zone types are the only colored overlays (orange / aqua / violet,
+        background zones neutral). Faults, epicenters and sites are ink with a surface
+        halo; catalogs differ by fill: shallow hollow, deep tinted, historical dashed,
+        live / custom solid.
         """
         from .maps import plot_map
 
         return plot_map(self, tr, period, stat, ax, provinces=provinces, faults=faults,
                         sources=sources, catalog=catalog, min_mw=min_mw, capitals=capitals,
                         points=points, annotate=annotate, extent=extent, cmap=cmap,
-                        vmin=vmin, vmax=vmax, legend=legend)
+                        vmin=vmin, vmax=vmax, legend=legend, theme=theme)
 
     def explore(self, path: str = "igepn_hazard_map.html", tr: float = 475,
                 period: float = 0.0, stat: Stat = "mean", points=None,

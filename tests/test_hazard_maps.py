@@ -44,9 +44,9 @@ def test_plot_map_overlays(hz):
     labels = _legend_labels(ax)
     n_hist = int((hz.catalog("historical").mw >= 6.5).sum())
     assert f"historical catalog ({n_hist})" in labels
-    assert {"crustal sources", "interface sources", "faults", "sites"} <= set(labels)
+    assert {"crustal source zones", "interface source zones", "faults", "sites"} <= set(labels)
     texts = [t.get_text() for t in ax.texts]
-    assert any(t.startswith("Site A\nPGA = ") for t in texts)
+    assert any(t.startswith("Site A\n") and t.endswith(" g") for t in texts)
 
 
 def test_plot_map_point_label_matches_site(hz):
@@ -120,3 +120,43 @@ def test_explore_escapes_script_breakout(hz, tmp_path):
     html, d = _payload(out)
     assert html.count("</script>") == 3                    # leaflet.js, data, app code
     assert d["points"][0]["label"] == "</script><b>x"
+
+
+# ---------------------------------------------------------------- design tokens
+
+def test_style_uses_validated_steps_only():
+    from apeQuake.hazard import _style
+
+    documented = set(_style.BLUE.values())
+    for mode in ("light", "dark"):
+        for n in range(1, 6):
+            cols, needs_labels = _style.ordinal(n, mode)
+            assert len(cols) == n and not needs_labels and set(cols) <= documented
+        cols, needs_labels = _style.ordinal(8, mode)
+        assert len(set(cols)) == 8 and needs_labels      # beyond 5: direct labels required
+    # dark mode flips the sequential anchor: low hazard recedes into the dark surface
+    assert _style.hazard_steps("dark") == _style.hazard_steps("light")[::-1]
+    assert _style.theme("dark").zones["inslab"] == "#9085e9"
+
+
+def test_plots_render_in_both_themes(hz):
+    import matplotlib.pyplot as plt
+
+    q = hz.site("Quito")
+    for theme in ("light", "dark"):
+        ax = hz.plot_map(475, faults=True, sources=True, catalog="deep", min_mw=6,
+                         points=["Quito"], theme=theme)
+        assert ax.get_facecolor()[:3] != (1.0, 1.0, 1.0) or theme == "light"
+        q.plot_uhs([225, 475, 975, 2475], theme=theme)
+        q.plot_hazard_curves(list(q.periods), theme=theme)     # 8 periods: end labels
+        plt.close("all")
+    with pytest.raises(ValueError):
+        hz.plot_map(theme="sepia")
+
+
+def test_explore_page_has_both_themes_and_table_view(hz, tmp_path):
+    html = hz.explore(tmp_path / "m.html", catalogs=()).read_text(encoding="utf-8")
+    assert ':root[data-theme="dark"]' in html and "prefers-color-scheme: dark" in html
+    assert 'id="csv"' in html and 'id="mw"' in html                  # table view, Mw filter
+    for hexcode in ("#eb6834", "#1baf7a", "#4a3aa7", "#d95926", "#199e70", "#9085e9"):
+        assert hexcode in html                                      # validated zone hues
