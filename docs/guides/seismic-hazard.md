@@ -10,6 +10,13 @@ source model and the earthquake catalogs.
     reference values: they do not replace a site-specific study or the design spectrum
     of NEC-SE-DS, which adds site amplification (Fa, Fd, Fs) and its own zoning.
 
+!!! note "IG-EPN model vs. NEC hazard curves"
+    [`apeQuake.nec`](nec-hazard.md) holds the hazard curves printed in NEC-SE-DS (NEC-15)
+    for 23 provincial capitals, which belong to the code. `apeQuake.hazard` holds the newer
+    IG-EPN model (Beauval et al., 2018) on a 3146-cell grid, with logic-tree percentiles.
+    The two models differ. Use the NEC curves for code work, and the IG-EPN model for
+    site-specific studies and comparisons.
+
 ## What is in the database
 
 ```python
