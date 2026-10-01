@@ -307,12 +307,11 @@ class EcuadorHazard:
         return sum(wk * g.loc[cid] for wk, cid in zip(w, ids))
 
     def sites(self, places: Iterable[Point] | pd.DataFrame, **kw) -> list[HazardSite]:
-        """Several sites at once: names, ``(lat, lon)`` tuples, or a DataFrame with
-        ``lat`` / ``lon`` columns."""
-        if isinstance(places, pd.DataFrame):
-            places = list(zip(places["lat"], places["lon"]))
-        return [self.site(p, **kw) if isinstance(p, str) else self.site(p[0], p[1], **kw)
-                for p in places]
+        """Several sites at once: names, ``(lat, lon)`` or ``(lat, lon, label)`` tuples,
+        or a DataFrame with ``lat`` / ``lon`` (and optionally ``label`` / ``name``)."""
+        from .maps import resolve_points
+
+        return resolve_points(self, places, **kw)
 
     def uhs_at(self, places: Iterable[Point] | pd.DataFrame, tr: float = 475,
                stat: Stat = "mean", **kw) -> pd.DataFrame:

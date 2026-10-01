@@ -301,6 +301,47 @@ def _clean(v: Any) -> Any:
     return v
 
 
+def _simplify(ring: list, tol: float) -> list:
+    """Douglas-Peucker on a lon/lat ring (tol in degrees); keeps rings closed."""
+    pts = np.asarray(ring, float)
+    if len(pts) < 5:
+        return ring
+    keep = np.zeros(len(pts), bool)
+    keep[0] = keep[-1] = True
+    stack = [(0, len(pts) - 1)]
+    while stack:
+        i, j = stack.pop()
+        if j <= i + 1:
+            continue
+        a, b = pts[i], pts[j]
+        ab = b - a
+        seg = pts[i + 1:j] - a
+        den = np.hypot(*ab)
+        d = (np.abs(ab[0] * seg[:, 1] - ab[1] * seg[:, 0]) / den if den > 0
+             else np.hypot(seg[:, 0], seg[:, 1]))
+        k = int(np.argmax(d))
+        if d[k] > tol:
+            keep[i + 1 + k] = True
+            stack += [(i, i + 1 + k), (i + 1 + k, j)]
+    out = np.round(pts[keep], 3).tolist()
+    return out if len(out) >= 4 else ring
+
+
+def _outlines(tol: float = 0.005) -> dict:
+    """Province outlines simplified (~0.5 km) for embedding as the offline underlay."""
+    feats = []
+    for f in _data.geojson("admin_provinces.geojson.gz")["features"]:
+        g = f["geometry"]
+        if g is None:
+            continue
+        polys = g["coordinates"] if g["type"] == "MultiPolygon" else [g["coordinates"]]
+        simple = [[_simplify(r, tol) for r in poly[:1]] for poly in polys
+                  if len(poly[0]) > 3]
+        feats.append({"type": "Feature", "properties": {},
+                      "geometry": {"type": "MultiPolygon", "coordinates": simple}})
+    return {"type": "FeatureCollection", "features": feats}
+
+
 def _feature_collection(df: pd.DataFrame) -> dict:
     feats = []
     for r in df.to_dict("records"):
@@ -389,6 +430,7 @@ def explore_data(hz: "EcuadorHazard", tr: float = 475, period: float = 0.0,
         "cells": {"type": "FeatureCollection", "features": feats},
         "faults": _feature_collection(hz.faults()),
         "sources": _feature_collection(hz.sources()),
+        "provinces": _outlines(),
         "catalogs": cats, "capitals": caps, "points": pts,
         "meta": {"url": m["url"], "retrieved": m["retrieved_utc"][:10]},
     }

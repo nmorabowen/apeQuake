@@ -120,6 +120,68 @@
   .leaflet-control-attribution { background:var(--panel) !important; color:var(--ink-2); }
   .leaflet-control-attribution a { color:var(--ink-2); }
   .leaflet-control-scale-line { background:var(--panel); color:var(--ink-2); border-color:var(--muted); }
+
+  /* pick & point: numbered ink pins with a surface ring (identity by number on the map) */
+  .pin { display:flex; align-items:center; justify-content:center; border-radius:50%;
+         background:var(--ink); color:var(--surface); font:600 11px/1 system-ui, sans-serif;
+         box-shadow:0 0 0 2px var(--surface), 0 1px 4px rgba(0,0,0,.35); cursor:grab; }
+  .pin.out { background:var(--muted); }
+  .pin:focus-visible { outline:2px solid var(--focus); outline-offset:2px; }
+  .picking, .picking .leaflet-interactive { cursor:crosshair !important; }
+  .btn[aria-pressed="true"] { background:var(--ink); color:var(--surface); border-color:var(--ink); }
+  .picks { list-style:none; margin:6px 0 0; padding:0; max-height:168px; overflow:auto; }
+  .picks li { display:grid; grid-template-columns:20px 1fr auto 18px; gap:6px; align-items:center;
+              padding:3px 2px; border-radius:6px; cursor:pointer; font-size:11.5px; }
+  .picks li:hover, .picks li:focus-visible { background:var(--grid); }
+  .picks .n { width:18px; height:18px; border-radius:50%; background:var(--ink); color:var(--surface);
+              display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:600; }
+  .picks .n.out { background:var(--muted); }
+  .picks .ll { color:var(--ink-2); font-variant-numeric:tabular-nums; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .picks .v { color:var(--ink); font-weight:600; font-variant-numeric:tabular-nums; }
+  .picks .x { border:0; background:transparent; color:var(--muted); cursor:pointer; font-size:14px; padding:0; }
+  .picks .x:hover { color:var(--ink); }
+  .picks:empty::before { content:"Turn on Pick, then click the map. Pins can be dragged."; color:var(--ink-2); font-size:11px; }
+  .btns { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+  .btns[hidden] { display:none; }
+  .panel .body { max-height:calc(100vh - 120px); overflow-y:auto; overscroll-behavior:contain;
+                 margin-right:-8px; padding-right:8px; }
+  .btns .btn { padding:3px 8px; font-size:11.5px; }
+  .pop .actions { margin-top:8px; display:flex; gap:6px; }
+  dialog.cmp { border:1px solid var(--ring); border-radius:12px; padding:0; background:var(--surface);
+               color:var(--ink); box-shadow:var(--shadow); width:min(760px, 94vw); max-height:88vh; }
+  dialog.cmp::backdrop { background:rgba(0,0,0,.35); }
+  dialog.cmp header { display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+                      padding:14px 18px 6px; }
+  dialog.cmp h2 { font-size:15px; margin:0; }
+  dialog.cmp .sub { color:var(--ink-2); font-size:12px; }
+  dialog.cmp .body { padding:4px 18px 16px; overflow:auto; max-height:calc(88vh - 60px); }
+  dialog.cmp svg text { fill:var(--ink-2); font-size:10.5px; }
+  dialog.cmp table { border-collapse:collapse; font-size:12px; margin-top:10px; width:100%;
+                     font-variant-numeric:tabular-nums; }
+  dialog.cmp th { color:var(--ink-2); font-weight:500; font-size:11px; text-align:right; padding:3px 6px;
+                  border-bottom:1px solid var(--grid); white-space:nowrap; }
+  dialog.cmp td { text-align:right; padding:3px 6px; border-bottom:1px solid var(--grid); white-space:nowrap; }
+  dialog.cmp th:first-child, dialog.cmp td:first-child { text-align:left; }
+  dialog.cmp tr.hl td { background:var(--grid); }
+  dialog.cmp textarea { width:100%; box-sizing:border-box; min-height:150px; font:12px/1.45 ui-monospace, Consolas, monospace;
+                        color:var(--ink); background:var(--page); border:1px solid var(--baseline); border-radius:8px; padding:8px; }
+  .swatch { display:inline-block; width:14px; height:2px; vertical-align:middle; margin-right:6px; border-radius:1px; }
+
+  /* isometric 3D view */
+  #isoview { position:fixed; inset:0; z-index:2000; background:var(--surface); display:flex; flex-direction:column; outline:none; }
+  #isoview[hidden] { display:none; }
+  #isoview canvas { display:block; cursor:grab; touch-action:none; }
+  #isoview canvas:active { cursor:grabbing; }
+  .iso-bar { display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; padding:10px 14px;
+             border-bottom:1px solid var(--grid); font-size:12.5px; color:var(--ink); }
+  .iso-bar .iso-cap { color:var(--ink-2); flex:1; min-width:180px; }
+  .iso-bar label { color:var(--ink-2); display:flex; align-items:center; gap:6px; }
+  .iso-bar input[type=range] { width:110px; accent-color:var(--focus); }
+  .iso-help { position:absolute; left:14px; bottom:12px; color:var(--muted); font-size:11px; }
+  .iso-legend { position:absolute; left:14px; top:60px; width:220px; background:var(--panel);
+                border:1px solid var(--ring); border-radius:8px; padding:8px 10px 2px; }
+  .iso-legend .bar { margin-bottom:18px; }
+  .iso-tip { position:fixed; pointer-events:none; z-index:2001; }
   @media (max-width: 600px) { .panel { width:210px; padding:10px; } }
   @media (forced-colors: active) { .legend .bar { forced-color-adjust:none; } }
 </style>
@@ -149,6 +211,44 @@ const pLabel = (T) => T === 0 ? "PGA" : `Sa(${T} s)`;
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g,
   (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const tok = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+// ------------------------------------------------------------------ copy to clipboard
+// Tables copy as tab-separated text: one paste into Excel / Sheets fills the columns.
+// Getters run at click time, so the copy always matches what is on screen.
+const copyReg = new Map(); let copySeq = 0;
+function copyButton(getText, label = "Copy values") {
+  const k = "c" + (++copySeq); copyReg.set(k, getText);
+  return `<button class="btn" data-cp="${k}" title="Tab-separated: pastes into Excel / Sheets as columns">${label}</button>`;
+}
+async function copyText(text, btn) {
+  const done = (msg) => { if (!btn) return; const old = btn.dataset.label || btn.textContent;
+    btn.dataset.label = old; btn.textContent = msg; setTimeout(() => { btn.textContent = old; }, 1400); };
+  try { await navigator.clipboard.writeText(text); done("Copied ✓"); return; } catch (e) { /* fall back */ }
+  const ta = document.createElement("textarea");           // sandboxed viewers: legacy path
+  ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  let ok = false; try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+  ta.remove();
+  if (ok) done("Copied ✓"); else { prompt("Copy these values (Ctrl+C):", text); }
+}
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-cp]"); if (!b) return;
+  const get = copyReg.get(b.dataset.cp); if (get) copyText(get(), b);
+});
+const tsv = (rows) => rows.map(r => r.join("\t")).join("\n") + "\n";
+function cellTsv(cell, tr, lat, lon, label) {
+  const head = [["# " + (label || `cell ${cell.id}`), `lat ${(+lat).toFixed(5)}`, `lon ${(+lon).toFixed(5)}`,
+                 `TR ${tr} yr`, "rock Vs30 = 760 m/s", "IG-EPN"],
+                ["T [s]", "mean [g]", "q16 [g]", "q84 [g]"]];
+  return tsv(head.concat(PERIODS.map((T, p) => [T,
+    fmt(saAt(cell, tr, iMean, p), 4), fmt(saAt(cell, tr, iLo, p), 4), fmt(saAt(cell, tr, iHi, p), 4)])));
+}
+function picksTsv() {
+  const head = ["point", "lat", "lon", "cell", `TR [yr]`, "stat", ...PERIODS.map(T => T === 0 ? "PGA [g]" : `Sa(${T} s) [g]`)];
+  return tsv([head, ...picks.map(pk => [pk.id, pk.lat.toFixed(5), pk.lng.toFixed(5), pk.cell ? pk.cell.id : "outside",
+    state.tr, STATS[state.s], ...PERIODS.map((_, p) => pk.cell ? fmt(saAt(pk.cell, state.tr, state.s, p), 4) : "")])]);
+}
+
 
 // v[tr][stat][period] flattened: index = (t * STATS.length + s) * PERIODS.length + p
 const published = (cell, t, s, p) => cell.v[(t * STATS.length + s) * PERIODS.length + p];
@@ -195,8 +295,20 @@ const ORD = { light: { 1:[7], 2:[3,9], 3:[3,7,11], 4:[3,6,9,12], 5:[3,5,7,9,12] 
 const ordinal = (n) => ORD[isDark() ? "dark" : "light"][Math.min(Math.max(n, 1), 5)].map(i => BLUE[i]);
 
 // ------------------------------------------------------------------ state
-const state = { tr: D.init.tr, p: PERIODS.indexOf(D.init.period), s: STATS.indexOf(D.init.stat),
-                opacity: 0.78, lo: 0, hi: 1, hover: null };
+// a shared link (#tr=..&m=..&s=..&pts=lat,lon;lat,lon) overrides the initial view
+function parseHash() {
+  const h = new URLSearchParams(location.hash.slice(1)), out = {};
+  const tr = +h.get("tr"), m = +h.get("m"), st = STATS.indexOf(h.get("s"));
+  if (tr > 0) out.tr = tr;
+  if (Number.isInteger(m) && m >= 0 && m < PERIODS.length && h.has("m")) out.p = m;
+  if (st >= 0) out.s = st;
+  if (h.get("pts")) out.pts = h.get("pts").split(";").map(x => x.split(",").map(Number))
+    .filter(a => a.length === 2 && a.every(isFinite) && Math.abs(a[0]) <= 90 && Math.abs(a[1]) <= 180);
+  return out;
+}
+const HASH = parseHash();
+const state = { tr: HASH.tr ?? D.init.tr, p: HASH.p ?? PERIODS.indexOf(D.init.period),
+                s: HASH.s ?? STATS.indexOf(D.init.stat), opacity: 0.7, lo: 0, hi: 1, hover: null };
 
 // ------------------------------------------------------------------ map + base layers
 const map = L.map("map", { preferCanvas: true, zoomSnap: 0.5, zoomControl: true })
@@ -243,19 +355,28 @@ const cellStyle = (f) => ({ weight: 0, fillOpacity: state.opacity,
 // hovered cell lifts: an ink outline on its own top pane (never covers the overlays)
 const hoverLine = L.geoJSON(null, { pane: "hover", renderer: hoverCanvas, interactive: false,
   style: () => ({ color: tok("--ink"), weight: 2, fill: false }) }).addTo(map);
+// The hazard canvas only paints. Clicks and hover are resolved at the map level with the
+// same point-in-polygon lookup as "go to" (cellAt), so they work no matter which canvas
+// sits on top (the overlay canvas covers the whole map and would swallow the events).
 const hazard = L.geoJSON(D.cells, {
-  pane: "hazard", renderer: hazardCanvas, style: cellStyle,
-  onEachFeature: (f, layer) => {
-    layer.on("click", (e) => openCell(f.properties, e.latlng));
-    layer.on("mouseover", () => { hoverLine.clearLayers(); hoverLine.addData(f); });
-    layer.on("mouseout", () => hoverLine.clearLayers());
-    layer.bindTooltip(() => {
-      const v = saAt(f.properties, state.tr, state.s, state.p);
-      return `<div class="tt"><div class="v">${fmt(v, 2)} g</div>` +
-        `<div class="c">${pLabel(PERIODS[state.p])} · ${state.tr} yr · ${STATS[state.s]}</div></div>`;
-    }, { sticky: true, direction: "top", offset: [0, -10], opacity: 1 });
-  },
+  pane: "hazard", renderer: hazardCanvas, style: cellStyle, interactive: false });
+const hoverTip = L.tooltip({ direction: "top", offset: [0, -12], opacity: 1 });
+let hoverId = null, hoverFrame = 0;
+function hoverAt(latlng) {
+  const c = map.hasLayer(hazard) ? cellAt(latlng.lat, latlng.lng) : null;
+  if (!c) { hoverId = null; hoverLine.clearLayers(); map.closeTooltip(hoverTip); return; }
+  if (c.id !== hoverId) {
+    hoverId = c.id; hoverLine.clearLayers(); hoverLine.addData(cellFeature.get(c.id));
+  }
+  hoverTip.setLatLng(latlng).setContent(`<div class="tt"><div class="v">${fmt(saAt(c, state.tr, state.s, state.p), 2)} g</div>` +
+    `<div class="c">${pLabel(PERIODS[state.p])} · ${state.tr} yr · ${STATS[state.s]}</div></div>`);
+  if (!map.hasLayer(hoverTip)) map.openTooltip(hoverTip);
+}
+map.on("mousemove", (e) => {
+  cancelAnimationFrame(hoverFrame);
+  hoverFrame = requestAnimationFrame(() => hoverAt(e.latlng));
 });
+map.on("mouseout", () => { cancelAnimationFrame(hoverFrame); hoverAt(L.latLng(90, 0)); });
 
 // popup chart: ordered return periods share one hue, direct-labelled; crosshair on hover
 function uhsSvg(cell, tr) {
@@ -328,9 +449,11 @@ function openCell(cell, latlng) {
     <table><thead><tr><th></th><th>mean</th><th>q16</th><th>q84</th></tr></thead><tbody>${rows}</tbody></table>
     ${uhsSvg(cell, state.tr)}
     <div class="src">Sa in g, rock Vs30 = 760 m/s. Bands: q16–q84 of the published spectra.${cell.cap ?
-      "<br>A digitized hazard curve exists for this cell: <code>hz.site(lat, lon)</code>." : ""}</div></div>`;
+      "<br>A digitized hazard curve exists for this cell: <code>hz.site(lat, lon)</code>." : ""}</div>
+    <div class="actions"><button class="btn" data-pin>Pin this point</button>${copyButton(() => cellTsv(cell, state.tr, latlng.lat, latlng.lng))}</div></div>`;
   const pop = L.popup(popupOpts()).setLatLng(latlng).setContent(html).openOn(map);
   wireCrosshair(pop.getElement());
+  pop.getElement().querySelector("[data-pin]").onclick = () => { map.closePopup(); addPick(latlng); };
 }
 // popups pan clear of the control panel (Leaflet pads [left, top] and [right, bottom])
 function popupOpts() {
@@ -343,8 +466,12 @@ function popupOpts() {
 // Every overlay is drawn twice: a wider surface-colored casing, then the mark. The
 // casing is the 2px surface ring that keeps it legible on any hazard color.
 const overlays = {}, restylers = [], keys = new Map();
+// overlay clicks also reach the map; this stamp tells the map's handler to stand down
+// (outside pick mode) so a fault or epicenter popup is not replaced by a cell popup
+let lastOverlayClick = 0;
+const overlayGroup = () => L.featureGroup().on("click", () => { lastOverlayClick = performance.now(); });
 function cased(build, mark, casing) {
-  const g = L.layerGroup();
+  const g = overlayGroup();
   const under = build({ style: casing, renderer: canvas, interactive: false });
   const over = build({ style: mark, renderer: canvas, interactive: true });
   g.addLayer(under); g.addLayer(over);
@@ -393,7 +520,7 @@ function applyMinMw() {
 }
 Object.entries(D.catalogs).forEach(([name, ev]) => {
   const st = CAT[name] || CAT.recent;
-  const g = L.layerGroup(), marks = [];
+  const g = overlayGroup(), marks = [];
   ev.forEach(([lat, lon, mw, dep, t]) => {
     const r = mwRadius(mw);
     const ring = L.circleMarker([lat, lon], { renderer: canvas, radius: r, weight: 3.2, interactive: false });
@@ -413,7 +540,7 @@ Object.entries(D.catalogs).forEach(([name, ev]) => {
   keys.set(g, () => [`<svg width="22" height="14"><circle cx="11" cy="7" r="5" fill="none" stroke="${tok("--surface")}" stroke-width="3"/><circle cx="11" cy="7" r="5" fill="${tok("--ink")}" fill-opacity="${st.fill}" stroke="${tok("--ink")}" stroke-width="1"${st.dash ? ` stroke-dasharray="${st.dash}"` : ""}/></svg>`, label]);
 });
 
-const caps = L.layerGroup(), capMarks = [];
+const caps = overlayGroup(), capMarks = [];
 D.capitals.forEach(c => {
   const m = L.circleMarker([c.lat, c.lon], { renderer: canvas, radius: c.prov ? 4 : 2.5, weight: 1, fillOpacity: 1 })
     .bindTooltip(`<div class="tt"><div class="v">${esc(c.name)}</div><div class="c">PGA ${fmt(c.pga475, 2)} g (475 yr) · ${fmt(c.pga2475, 2)} g (2475 yr)${c.pop ? ` · pop. ${c.pop.toLocaleString()}` : ""}</div></div>`,
@@ -426,7 +553,7 @@ overlays["Cantonal capitals"] = caps;
 keys.set(caps, () => [`<svg width="22" height="12"><circle cx="11" cy="6" r="4" fill="${tok("--surface")}" stroke="${tok("--ink")}" stroke-width="1"/></svg>`, "Cantonal capitals (cell centroid)"]);
 
 // user sites: the emphasis marks - ink dot with a surface ring, direct labels when <= 4
-const sites = L.layerGroup().addTo(map), siteMarks = [];
+const sites = overlayGroup().addTo(map), siteMarks = [];
 D.points.forEach(pt => {
   const head = pt.uhs.map(u => `<th>${u.tr} yr</th>`).join("");
   const rows = PERIODS.map((T, p) => `<tr><td>${pLabel(T)}</td>` +
@@ -434,7 +561,8 @@ D.points.forEach(pt => {
   const m = L.circleMarker([pt.lat, pt.lon], { renderer: canvas, radius: 6.5, weight: 2.5, fillOpacity: 1 })
     .bindPopup(`<div class="pop"><h2>${esc(pt.label)}</h2><div class="meta">${fmt(pt.lat, 4)}, ${fmt(pt.lon, 4)} · cell ${esc(pt.cell_id)}</div>` +
       `<table><thead><tr><th></th>${head}</tr></thead><tbody>${rows}</tbody></table>` +
-      `<div class="src">Mean Sa [g] from apeQuake · ${pt.uhs.map(u => `${u.tr} yr: ${esc(u.source)}`).join(" · ")}</div></div>`, popupOpts())
+      `<div class="src">Mean Sa [g] from apeQuake · ${pt.uhs.map(u => `${u.tr} yr: ${esc(u.source)}`).join(" · ")}</div>` +
+      `<div class="actions">${copyButton(() => tsv([["T [s]", ...pt.uhs.map(u => `${u.tr} yr [g]`)], ...PERIODS.map((T, p) => [T, ...pt.uhs.map(u => fmt(u.sa[p], 4))])]))}</div></div>`, popupOpts())
     .bindTooltip(esc(pt.label), D.points.length <= 4
       ? { permanent: true, direction: "right", offset: [8, 0], className: "site-label", opacity: 1 }
       : { direction: "top", className: "site-label", opacity: 1 });
@@ -449,7 +577,7 @@ if (D.points.length) {
 }
 overlays["Hazard"] = hazard.addTo(map);
 
-L.control.layers(bases, overlays, { collapsed: true }).addTo(map);
+const layersCtl = L.control.layers(bases, overlays, { collapsed: true }).addTo(map);
 L.control.scale({ imperial: false }).addTo(map);
 
 // ------------------------------------------------------------------ point lookup
@@ -461,11 +589,20 @@ function inRing(x, y, ring) {
   }
   return inside;
 }
+// bounding boxes first: cellAt runs on every mouse move
+const cellIndex = D.cells.features.map(f => {
+  const g = f.geometry, polys = g.type === "MultiPolygon" ? g.coordinates : [g.coordinates];
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  polys.forEach(p => p[0].forEach(([x, y]) => { x0 = Math.min(x0, x); x1 = Math.max(x1, x);
+                                                y0 = Math.min(y0, y); y1 = Math.max(y1, y); }));
+  return { f, polys, x0, x1, y0, y1 };
+});
+const cellFeature = new Map(D.cells.features.map(f => [f.properties.id, f]));
 function cellAt(lat, lon) {
-  for (const f of D.cells.features) {
-    const g = f.geometry, polys = g.type === "MultiPolygon" ? g.coordinates : [g.coordinates];
-    for (const poly of polys)
-      if (inRing(lon, lat, poly[0]) && !poly.slice(1).some(h => inRing(lon, lat, h))) return f.properties;
+  for (const c of cellIndex) {
+    if (lon < c.x0 || lon > c.x1 || lat < c.y0 || lat > c.y1) continue;
+    for (const poly of c.polys)
+      if (inRing(lon, lat, poly[0]) && !poly.slice(1).some(h => inRing(lon, lat, h))) return c.f.properties;
   }
   return null;
 }
@@ -497,6 +634,16 @@ const Panel = L.Control.extend({
           <div class="cap" id="cap"></div>
           <div class="bar" id="bar"></div>
           <div class="note" id="trnote"></div>
+          <button class="btn" id="iso" style="width:100%;margin-top:8px" title="Isometric view: height and color = Sa">3D view</button>
+        </div>
+        <div class="sec">
+          <div class="row" style="align-items:center"><div class="sec-h" style="margin:0">Picked points</div>
+            <button class="btn" id="pick" aria-pressed="false" style="flex:none" title="Click the map to drop pins (Esc to stop)">Pick on map</button></div>
+          <ul class="picks" id="picks" aria-label="Picked points"></ul>
+          <div class="btns" id="pickbtns" hidden>
+            <button class="btn" id="cmp">Compare</button><button class="btn" id="pcsv">CSV</button>
+            <button class="btn" id="py">Python</button><button class="btn" id="link">Copy link</button>
+            <button class="btn" id="pcopy" title="Tab-separated: pastes into Excel / Sheets">Copy</button><button class="btn" id="pclear">Clear</button></div>
         </div>
         <div class="sec"><div class="sec-h">Layers on the map</div><div class="key" id="key"></div>
           <label for="mw">Earthquakes: minimum Mw</label><select id="mw">
@@ -548,6 +695,9 @@ function refresh() {
   rescale();
   hazard.setStyle(cellStyle);
   drawLegend();
+  renderPicks();
+  saveState();
+  ISO.refresh();
 }
 function applyTheme() {
   syncAutoBase();
@@ -592,13 +742,437 @@ function goTo() {
 }
 $("go").onclick = goTo;
 $("ll").onkeydown = (e) => { if (e.key === "Enter") goTo(); };
-map.on("click", (e) => {             // clicks that miss every cell (sea, abroad)
-  if (!cellAt(e.latlng.lat, e.latlng.lng)) L.popup(popupOpts()).setLatLng(e.latlng)
-    .setContent(`<div class="pop"><div class="meta">${fmt(e.latlng.lat, 4)}, ${fmt(e.latlng.lng, 4)}</div>Outside the IG-EPN hazard grid.</div>`)
-    .openOn(map);
+map.on("click", (e) => {
+  if (picking) { addPick(e.latlng); return; }              // pick mode: every click pins
+  if (performance.now() - lastOverlayClick < 100) return;  // a fault / epicenter / site popup
+  const c = cellAt(e.latlng.lat, e.latlng.lng);
+  if (c && map.hasLayer(hazard)) openCell(c, e.latlng);
+  else L.popup(popupOpts()).setLatLng(e.latlng)
+    .setContent(`<div class="pop"><div class="meta">${fmt(e.latlng.lat, 4)}, ${fmt(e.latlng.lng, 4)}</div>` +
+      `${c ? "Hazard layer is off." : "Outside the IG-EPN hazard grid."}</div>`).openOn(map);
 });
 map.on("overlayadd overlayremove", drawKey);
 
+// ------------------------------------------------------------------ pick & point
+// Pins are ink on the map (identity by number). In the Compare chart each pick keeps a
+// fixed categorical slot by its number, so removing one never recolors the others;
+// past eight picks the chart stops (no generated hues) and the table carries the rest.
+const SLOTS = { light: ["#2a78d6","#eb6834","#1baf7a","#eda100","#e87ba4","#008300","#4a3aa7","#e34948"],
+                dark:  ["#3987e5","#d95926","#199e70","#c98500","#d55181","#008300","#9085e9","#e66767"] };
+const slot = (id) => SLOTS[isDark() ? "dark" : "light"][(id - 1) % 8];
+map.createPane("pins").style.zIndex = 640;
+const pinLayer = L.layerGroup().addTo(map);
+let picks = [], nextId = 1, picking = false;
+const PICK_KEY = "igepn-explorer-picks:" + D.meta.retrieved;
+
+const pinIcon = (pk) => L.divIcon({ className: "", iconSize: [22, 22], iconAnchor: [11, 11],
+  html: `<div class="pin${pk.cell ? "" : " out"}" style="width:22px;height:22px">${pk.id}</div>` });
+
+function setPicking(on) {
+  picking = on;
+  $("pick").setAttribute("aria-pressed", String(on));
+  $("pick").textContent = on ? "Picking… (Esc)" : "Pick on map";
+  map.getContainer().classList.toggle("picking", on);
+  if (on) map.closePopup();
+}
+
+function addPick(latlng, opts = {}) {
+  const pk = { id: nextId++, lat: latlng.lat, lng: latlng.lng, cell: cellAt(latlng.lat, latlng.lng) };
+  pk.marker = L.marker(latlng, { icon: pinIcon(pk), draggable: true, pane: "pins", keyboard: true,
+                                 title: `Point ${pk.id}`, autoPan: true })
+    .on("drag", (e) => { pk.lat = e.latlng.lat; pk.lng = e.latlng.lng; })
+    .on("dragend", () => {
+      pk.cell = cellAt(pk.lat, pk.lng); pk.marker.setIcon(pinIcon(pk));
+      renderPicks(); saveState(); openPick(pk);
+    })
+    .on("click", () => openPick(pk))
+    .addTo(pinLayer);
+  picks.push(pk);
+  renderPicks();
+  if (!opts.silent) { saveState(); openPick(pk); }
+  return pk;
+}
+
+function removePick(id) {
+  const pk = picks.find(p => p.id === id); if (!pk) return;
+  pinLayer.removeLayer(pk.marker); picks = picks.filter(p => p.id !== id);
+  map.closePopup(); renderPicks(); saveState();
+}
+
+function openPick(pk) {
+  const ll = L.latLng(pk.lat, pk.lng);
+  let body;
+  if (!pk.cell) body = `<div class="note">Outside the IG-EPN hazard grid (offshore or abroad).</div>`;
+  else {
+    const rows = PERIODS.map((T, p) => `<tr><td>${pLabel(T)}</td><td class="m">${fmt(saAt(pk.cell, state.tr, iMean, p))}</td>` +
+      `<td>${fmt(saAt(pk.cell, state.tr, iLo, p))}</td><td>${fmt(saAt(pk.cell, state.tr, iHi, p))}</td></tr>`).join("");
+    body = `<table><thead><tr><th></th><th>mean</th><th>q16</th><th>q84</th></tr></thead><tbody>${rows}</tbody></table>
+      ${uhsSvg(pk.cell, state.tr)}`;
+  }
+  const html = `<div class="pop"><h2>Point ${pk.id} <span style="font-weight:400;color:var(--ink-2)">· ${state.tr} yr</span></h2>
+    <div class="meta">${fmt(pk.lat, 5)}, ${fmt(pk.lng, 5)}${pk.cell ? ` · cell ${esc(pk.cell.id)}` : ""} · drag the pin to move it</div>
+    ${body}<div class="actions"><button class="btn" data-rm>Remove</button>${pk.cell ? copyButton(() => cellTsv(pk.cell, state.tr, pk.lat, pk.lng, `point ${pk.id}`)) : ""}</div></div>`;
+  const pop = L.popup({ ...popupOpts(), offset: [0, -8] }).setLatLng(ll).setContent(html).openOn(map);
+  wireCrosshair(pop.getElement());
+  pop.getElement().querySelector("[data-rm]").onclick = () => removePick(pk.id);
+}
+
+function renderPicks() {
+  const ul = $("picks"); if (!ul) return;
+  ul.innerHTML = "";
+  picks.forEach(pk => {
+    const li = document.createElement("li"); li.tabIndex = 0;
+    const v = pk.cell ? `${fmt(saAt(pk.cell, state.tr, state.s, state.p), 2)} g` : "outside";
+    li.innerHTML = `<span class="n${pk.cell ? "" : " out"}">${pk.id}</span>` +
+      `<span class="ll">${fmt(pk.lat, 4)}, ${fmt(pk.lng, 4)}</span><span class="v">${v}</span>` +
+      `<button class="x" aria-label="Remove point ${pk.id}" title="Remove">×</button>`;
+    li.title = `${pLabel(PERIODS[state.p])}, ${state.tr} yr, ${STATS[state.s]}`;
+    const go = () => { map.panTo([pk.lat, pk.lng]); openPick(pk); };
+    li.onclick = (e) => { if (e.target.closest(".x")) removePick(pk.id); else go(); };
+    li.onkeydown = (e) => { if (e.key === "Enter") go(); if (e.key === "Delete") removePick(pk.id); };
+    ul.appendChild(li);
+  });
+  $("pickbtns").hidden = picks.length === 0;
+}
+
+// ---- persistence: URL hash (shareable) + localStorage (survives reloads)
+function stateHash() {
+  const h = new URLSearchParams({ tr: state.tr, m: state.p, s: STATS[state.s] });
+  if (picks.length) h.set("pts", picks.map(p => `${p.lat.toFixed(5)},${p.lng.toFixed(5)}`).join(";"));
+  return "#" + h.toString().replace(/%2C/g, ",").replace(/%3B/g, ";");
+}
+function saveState() {
+  try { history.replaceState(null, "", stateHash()); } catch (e) { /* sandboxed viewer */ }
+  try { localStorage.setItem(PICK_KEY, JSON.stringify(picks.map(p => [p.lat, p.lng]))); } catch (e) { /* private mode */ }
+}
+function restorePicks() {
+  let pts = HASH.pts;
+  if (!pts) { try { pts = JSON.parse(localStorage.getItem(PICK_KEY) || "[]"); } catch (e) { pts = []; } }
+  pts.forEach(([a, b]) => addPick(L.latLng(a, b), { silent: true }));
+  if (pts.length) saveState();
+}
+
+// ---- export
+function download(name, text, type) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type })); a.download = name;
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function picksCsv() {
+  const head = ["point", "lat", "lon", "cell_id", "tr_yr", "stat", ...PERIODS.map(T => T === 0 ? "PGA_g" : `Sa_${T}s_g`)];
+  const rows = picks.map(pk => [pk.id, pk.lat.toFixed(6), pk.lng.toFixed(6), pk.cell ? pk.cell.id : "",
+    state.tr, STATS[state.s], ...PERIODS.map((_, p) => pk.cell ? fmt(saAt(pk.cell, state.tr, state.s, p), 4) : "")]);
+  return [head, ...rows].map(r => r.join(",")).join("\n") + "\n";
+}
+function picksPython() {
+  const pts = picks.map(pk => `    (${pk.lat.toFixed(5)}, ${pk.lng.toFixed(5)}, "P${pk.id}"),`).join("\n");
+  return `from apeQuake.hazard import EcuadorHazard\n\nhz = EcuadorHazard()\npoints = [\n${pts}\n]\n` +
+    `table = hz.uhs_at(points, tr=${state.tr}, stat="${STATS[state.s]}")   # one row per point\n` +
+    `sites = hz.sites(points)            # HazardSite objects: .uhs(), .hazard_curve(), plots\n` +
+    `hz.plot_map(${state.tr}, period=${PERIODS[state.p]}, stat="${STATS[state.s]}", points=points, faults=True)\n`;
+}
+
+// ---- dialog (compare / python)
+function dialog(title, sub, html) {
+  let d = document.querySelector("dialog.cmp");
+  if (!d) { d = document.createElement("dialog"); d.className = "cmp"; document.body.appendChild(d);
+            d.addEventListener("click", (e) => { if (e.target === d) d.close(); }); }
+  d.innerHTML = `<header><div><h2>${esc(title)}</h2><div class="sub">${sub}</div></div>` +
+    `<button class="btn" data-close aria-label="Close">Close</button></header><div class="body">${html}</div>`;
+  d.querySelector("[data-close]").onclick = () => d.close();
+  d.showModal();
+  return d;
+}
+
+function compareSvg(list) {
+  const W = 700, H = 300, m = { l: 40, r: 40, t: 12, b: 28 };
+  const xs = PERIODS, xmax = Math.max(...xs);
+  let ymax = 0;
+  list.forEach(pk => xs.forEach((_, p) => { ymax = Math.max(ymax, saAt(pk.cell, state.tr, state.s, p)); }));
+  const yt = [0.1, 0.2, 0.25, 0.5, 1].find(v => ymax / v <= 6) || 1;
+  ymax = Math.ceil(ymax / yt) * yt || 1;
+  const X = (x) => m.l + (x / xmax) * (W - m.l - m.r), Y = (y) => H - m.b - (y / ymax) * (H - m.t - m.b);
+  let g = "";
+  for (let y = 0; y <= ymax + 1e-9; y += yt) g +=
+    `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(y)}" y2="${Y(y)}" stroke="${tok("--grid")}"/>` +
+    `<text x="${m.l - 6}" y="${Y(y) + 3.5}" text-anchor="end">${+y.toFixed(2)}</text>`;
+  [0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2].forEach(t =>
+    g += `<text x="${X(t)}" y="${H - 9}" text-anchor="middle">${t}</text>`);
+  g += `<text x="${m.l}" y="${m.t + 2}" dy="-2">Sa [g]</text><text x="${W - m.r}" y="${H - 9}" dx="34" text-anchor="end">T [s]</text>`;
+  const ends = [];
+  list.forEach(pk => {
+    const v = xs.map((_, p) => saAt(pk.cell, state.tr, state.s, p));
+    const d = v.map((y, i) => `${i ? "L" : "M"}${X(xs[i]).toFixed(1)},${Y(y).toFixed(1)}`).join("");
+    g += `<path d="${d}" fill="none" stroke="${slot(pk.id)}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    v.forEach((y, i) => g += `<circle cx="${X(xs[i])}" cy="${Y(y)}" r="3.5" fill="${slot(pk.id)}" stroke="${tok("--surface")}" stroke-width="2"/>`);
+    ends.push({ y: Y(v[v.length - 1]), id: pk.id });
+  });
+  ends.sort((a, b) => a.y - b.y);
+  ends.forEach((e, i) => { e.ly = i ? Math.max(e.y, ends[i - 1].ly + 12) : e.y; });
+  ends.forEach(e => g +=
+    `<line x1="${X(xmax) + 4}" x2="${X(xmax) + 14}" y1="${e.y}" y2="${e.ly}" stroke="${tok("--baseline")}"/>` +
+    `<text x="${X(xmax) + 17}" y="${e.ly + 3.5}" font-weight="600" style="fill:var(--ink)">${e.id}</text>`);
+  return `<svg width="100%" viewBox="0 0 ${W} ${H}" role="img" aria-label="Uniform hazard spectra of the picked points">${g}</svg>`;
+}
+
+function openCompare() {
+  const inGrid = picks.filter(p => p.cell);
+  const charted = inGrid.slice(0, 8);
+  const how = TRS.includes(state.tr) ? "published" : "power-law fit" + ((state.tr < TRS[0] || state.tr > TRS[1]) ? ", extrapolated" : "");
+  const head = `<tr><th>Point</th><th>lat, lon</th><th>cell</th>${PERIODS.map(T => `<th>${pLabel(T)}</th>`).join("")}</tr>`;
+  const rows = picks.map(pk => `<tr data-id="${pk.id}"><td><span class="swatch" style="background:${pk.cell && charted.includes(pk) ? slot(pk.id) : "transparent"}"></span>${pk.id}</td>` +
+    `<td>${fmt(pk.lat, 4)}, ${fmt(pk.lng, 4)}</td><td>${pk.cell ? esc(pk.cell.id) : "outside grid"}</td>` +
+    PERIODS.map((_, p) => `<td>${pk.cell ? fmt(saAt(pk.cell, state.tr, state.s, p)) : "–"}</td>`).join("") + `</tr>`).join("");
+  const note = inGrid.length > 8 ? `<div class="note">The chart shows points 1–8 in order; every point is in the table.</div>` : "";
+  dialog(`Picked points · ${state.tr} yr · ${STATS[state.s]}`,
+    `Uniform hazard spectra (${how}), rock Vs30 = 760 m/s. Values in g.`,
+    (charted.length ? compareSvg(charted) : `<div class="note">No picked point is inside the hazard grid.</div>`) + note +
+    `<table><thead>${head}</thead><tbody>${rows}</tbody></table>` +
+    `<div class="btns">${copyButton(picksTsv, "Copy table")}<button class="btn" data-csv>Download CSV</button></div>`)
+    .querySelector("[data-csv]").onclick = () => download(`igepn_points_TR${state.tr}_${STATS[state.s]}.csv`, picksCsv(), "text/csv");
+}
+
+function openPython() {
+  const code = picksPython();
+  const d = dialog("Reproduce in Python", "apeQuake uses the digitized hazard curves for capital cells, so values at other return periods can differ slightly from the map's power-law fit.",
+    `<textarea readonly spellcheck="false" aria-label="Python code">${esc(code)}</textarea>` +
+    `<div class="btns"><button class="btn" data-copy>Copy</button></div>`);
+  const ta = d.querySelector("textarea"), btn = d.querySelector("[data-copy]");
+  btn.onclick = async () => {
+    try { await navigator.clipboard.writeText(code); btn.textContent = "Copied"; }
+    catch (e) { ta.focus(); ta.select(); btn.textContent = "Press Ctrl+C"; }
+  };
+}
+
+$("pick").onclick = () => setPicking(!picking);
+$("pclear").onclick = () => { picks.forEach(p => pinLayer.removeLayer(p.marker)); picks = []; nextId = 1;
+                              map.closePopup(); renderPicks(); saveState(); };
+$("cmp").onclick = openCompare;
+$("pcsv").onclick = () => download(`igepn_points_TR${state.tr}_${STATS[state.s]}.csv`, picksCsv(), "text/csv");
+$("py").onclick = openPython;
+$("link").onclick = async () => {
+  const url = location.href.split("#")[0] + stateHash();
+  try { await navigator.clipboard.writeText(url); $("link").textContent = "Link copied"; }
+  catch (e) { prompt("Copy this link:", url); }
+  setTimeout(() => { $("link").textContent = "Copy link"; }, 1600);
+};
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && picking) setPicking(false);
+  if ((e.key === "p" || e.key === "P") && !e.ctrlKey && !e.metaKey &&
+      !/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName)) setPicking(!picking);
+});
+
+// ------------------------------------------------------------------ vector underlay
+// Province outlines ship inside the file, so the map keeps its geography where the
+// background tiles cannot load (sandboxed previews, offline, blocked tile servers).
+map.createPane("outline").style.zIndex = 380;                 // above hazard, below overlays
+map.getPane("outline").style.pointerEvents = "none";
+const outlines = L.geoJSON(D.provinces, { pane: "outline", renderer: L.canvas({ pane: "outline" }), interactive: false,
+  style: () => ({ color: tok("--ink-2"), weight: 0.8, opacity: 0.55, fill: false }) });
+restylers.push(() => outlines.setStyle({ color: tok("--ink-2") }));
+outlines.addTo(map);
+layersCtl.addOverlay(outlines, "Province outlines");
+keys.set(outlines, () => [`<svg width="22" height="10"><line x1="1" y1="5" x2="21" y2="5" stroke="${tok("--ink-2")}" stroke-opacity=".55"/></svg>`, "Province outlines"]);
+
+// tell the reader when the tiles are blocked instead of showing a blank background
+let tilesOk = 0, tilesBad = 0, tileNote = false;
+function watchTiles(layer) {
+  layer.on("tileload", () => { tilesOk++; });
+  layer.on("tileerror", () => {
+    tilesBad++;
+    if (!tileNote && tilesOk === 0 && tilesBad >= 4) {
+      tileNote = true;
+      const n = document.createElement("div"); n.className = "note warn"; n.id = "tilenote";
+      n.textContent = "Background map tiles are blocked in this viewer; province outlines are shown. " +
+        "Open the file in a web browser for streets and terrain.";
+      const sub = document.querySelector(".panel .sub"); if (sub) sub.after(n);
+    }
+  });
+}
+[grayLight, grayDark, ...Object.values(bases).filter(b => b instanceof L.TileLayer)].forEach(watchTiles);
+
+// ------------------------------------------------------------------ isometric 3D view
+// Prisms extruded from the real cell polygons; height and color both encode Sa (the
+// second channel keeps values readable where prisms hide each other). Painter's
+// algorithm back to front, Lambert shading on the sides, province outlines on the
+// ground, pins as needles. Drag rotates, Shift-drag pans, the wheel zooms.
+const ISO = (() => {
+  const lat0 = -1.6, lon0 = -78.4, kx = 111.32 * Math.cos(lat0 * Math.PI / 180), ky = 110.57;
+  const toKm = ([lon, lat]) => [(lon - lon0) * kx, (lat - lat0) * ky];
+  const ccw = (r) => { let a = 0; for (let i = 0; i < r.length; i++) { const [x1, y1] = r[i], [x2, y2] = r[(i + 1) % r.length]; a += x1 * y2 - x2 * y1; } return a > 0 ? r : r.slice().reverse(); };
+  const prisms = [];
+  D.cells.features.forEach(f => {
+    const g = f.geometry, polys = g.type === "MultiPolygon" ? g.coordinates : [g.coordinates];
+    polys.forEach(poly => {
+      let ring = poly[0].map(toKm);
+      if (ring.length > 1) { const [a, b] = [ring[0], ring[ring.length - 1]]; if (a[0] === b[0] && a[1] === b[1]) ring.pop(); }
+      ring = ccw(ring);
+      const cx = ring.reduce((s, p) => s + p[0], 0) / ring.length, cy = ring.reduce((s, p) => s + p[1], 0) / ring.length;
+      prisms.push({ cell: f.properties, ring, cx, cy });
+    });
+  });
+  const ground = (D.provinces.features || []).flatMap(f => {
+    const g = f.geometry; if (!g) return [];
+    const polys = g.type === "MultiPolygon" ? g.coordinates : [g.coordinates];
+    return polys.map(p => p[0].map(toKm));
+  });
+  const view = { az: -28, el: 38, s: 1, px: 0, py: 0, exag: 1 };
+  let root, cv, ctx, tip, W = 0, H = 0, dpr = 1, frame = 0, tops = [], vmax = 1, fast = false;
+
+  function build() {
+    root = document.createElement("div"); root.id = "isoview"; root.hidden = true;
+    root.innerHTML = `<div class="iso-bar">
+        <b>3D view</b><span class="iso-cap" id="isocap"></span>
+        <label>Height ×<input id="isoex" type="range" min="0.3" max="3" step="0.1" value="1"></label>
+        <button class="btn" id="isoreset">Reset view</button><button class="btn" id="isoclose">Close (Esc)</button></div>
+      <canvas id="isocv" aria-label="Isometric 3D view of the hazard; drag to rotate, scroll to zoom"></canvas>
+      <div class="iso-help">Drag: rotate · Shift+drag: pan · Wheel: zoom · Arrows: rotate</div>
+      <div class="iso-legend legend" id="isolegend"></div>
+      <div class="leaflet-tooltip iso-tip" id="isotip" hidden></div>`;
+    document.body.appendChild(root);
+    cv = root.querySelector("#isocv"); ctx = cv.getContext("2d"); tip = root.querySelector("#isotip");
+    root.querySelector("#isoclose").onclick = close;
+    root.querySelector("#isoreset").onclick = () => { Object.assign(view, { az: -28, el: 38, px: 0, py: 0 }); fit(); draw(); };
+    root.querySelector("#isoex").oninput = (e) => { view.exag = +e.target.value; draw(); };
+    let drag = null;
+    cv.addEventListener("pointerdown", (e) => { drag = { x: e.clientX, y: e.clientY, pan: e.shiftKey }; cv.setPointerCapture(e.pointerId); tip.hidden = true; });
+    cv.addEventListener("pointermove", (e) => {
+      if (drag) {
+        const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.x = e.clientX; drag.y = e.clientY;
+        if (drag.pan) { view.px += dx; view.py += dy; }
+        else { view.az += dx * 0.4; view.el = Math.min(80, Math.max(12, view.el + dy * 0.3)); }
+        fast = true; schedule();
+      } else hover(e);
+    });
+    const end = () => { if (drag) { drag = null; fast = false; draw(); } };
+    cv.addEventListener("pointerup", end); cv.addEventListener("pointercancel", end);
+    cv.addEventListener("pointerleave", () => { tip.hidden = true; });
+    cv.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const r = cv.getBoundingClientRect(), mx = e.clientX - r.left - W / 2 - view.px, my = e.clientY - r.top - H / 2 - view.py;
+      const k = Math.pow(1.0015, -e.deltaY);
+      view.s *= k; view.px -= mx * (k - 1); view.py -= my * (k - 1); draw();
+    }, { passive: false });
+    window.addEventListener("resize", () => { if (!root.hidden) { size(); draw(); } });
+    root.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") { view.az -= 8; draw(); } if (e.key === "ArrowRight") { view.az += 8; draw(); }
+      if (e.key === "ArrowUp") { view.el = Math.min(80, view.el + 5); draw(); } if (e.key === "ArrowDown") { view.el = Math.max(12, view.el - 5); draw(); }
+    });
+    root.tabIndex = -1;
+  }
+  function size() {
+    dpr = window.devicePixelRatio || 1;
+    W = root.clientWidth; H = root.clientHeight - root.querySelector(".iso-bar").offsetHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    cv.style.width = W + "px"; cv.style.height = H + "px";
+  }
+  function fit() {               // country (~700 km) fills most of the canvas
+    view.s = Math.min(W, H * 1.5) / 820;
+  }
+  const hScale = () => 140 * view.exag / vmax;      // km of height per g
+  function proj(x, y, z) {
+    const a = view.az * Math.PI / 180, e = view.el * Math.PI / 180;
+    const xr = x * Math.cos(a) - y * Math.sin(a), yr = x * Math.sin(a) + y * Math.cos(a);
+    return [W / 2 + view.px + view.s * xr, H / 2 + view.py + 40 - view.s * (yr * Math.sin(e) + z * Math.cos(e)), yr];
+  }
+  function shade(rgbStr, k) {
+    const m = rgbStr.match(/\d+/g).map(Number);
+    return `rgb(${m.slice(0, 3).map(v => Math.round(v * k)).join(",")})`;
+  }
+  function schedule() { cancelAnimationFrame(frame); frame = requestAnimationFrame(draw); }
+  function draw() {
+    if (!root || root.hidden) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = tok("--surface"); ctx.fillRect(0, 0, W, H);
+    const a = view.az * Math.PI / 180, sa = Math.sin(a), ca = Math.cos(a);
+    // ground: province outlines
+    ctx.strokeStyle = tok("--baseline"); ctx.lineWidth = 1;
+    ground.forEach(r => { ctx.beginPath(); r.forEach(([x, y], i) => { const [sx, sy] = proj(x, y, 0); i ? ctx.lineTo(sx, sy) : ctx.moveTo(sx, sy); }); ctx.stroke(); });
+    // prisms back to front
+    const LIGHT = [0.45, -0.75];                              // light from the north-west
+    const order = prisms.map(p => ({ p, d: p.cx * sa + p.cy * ca })).sort((u, v) => v.d - u.d);
+    tops = [];
+    for (const { p } of order) {
+      const v = saAt(p.cell, state.tr, state.s, state.p);
+      if (!isFinite(v)) continue;
+      const z = v * hScale(), col = color(v, state.lo, state.hi);
+      const base = p.ring.map(([x, y]) => proj(x, y, 0)), top = p.ring.map(([x, y]) => proj(x, y, z));
+      if (!fast) {
+        for (let i = 0; i < p.ring.length; i++) {
+          const j = (i + 1) % p.ring.length, [x1, y1] = p.ring[i], [x2, y2] = p.ring[j];
+          const nx = y2 - y1, ny = -(x2 - x1), nyr = nx * sa + ny * ca;     // outward normal, view y
+          if (nyr >= 0) continue;                                          // faces away
+          const len = Math.hypot(nx, ny) || 1, lam = (nx * LIGHT[0] + ny * LIGHT[1]) / len;
+          ctx.fillStyle = shade(col, 0.62 + 0.22 * Math.max(-1, Math.min(1, lam)));
+          ctx.beginPath(); ctx.moveTo(base[i][0], base[i][1]); ctx.lineTo(base[j][0], base[j][1]);
+          ctx.lineTo(top[j][0], top[j][1]); ctx.lineTo(top[i][0], top[i][1]); ctx.closePath(); ctx.fill();
+        }
+      }
+      ctx.fillStyle = col; ctx.strokeStyle = col; ctx.lineWidth = 0.6;
+      ctx.beginPath(); top.forEach(([sx, sy], i) => i ? ctx.lineTo(sx, sy) : ctx.moveTo(sx, sy)); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      tops.push({ p, v, pts: top });
+    }
+    // pins and sites as needles
+    const needles = picks.filter(pk => pk.cell).map(pk => ({ lat: pk.lat, lng: pk.lng, cell: pk.cell, label: String(pk.id) }))
+      .concat(D.points.map(pt => ({ lat: pt.lat, lng: pt.lon, cell: cellAt(pt.lat, pt.lon), label: pt.label })));
+    needles.forEach(nd => {
+      if (!nd.cell) return;
+      const [x, y] = toKm([nd.lng, nd.lat]), v = saAt(nd.cell, state.tr, state.s, state.p), z = v * hScale();
+      const [gx, gy] = proj(x, y, z), [tx, ty] = proj(x, y, z + 30);   // rises from the prism top
+      ctx.strokeStyle = tok("--ink"); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(tx, ty); ctx.stroke();
+      ctx.fillStyle = tok("--ink"); ctx.beginPath(); ctx.arc(tx, ty, 9, 0, 2 * Math.PI); ctx.fill();
+      ctx.strokeStyle = tok("--surface"); ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = tok("--surface"); ctx.font = "600 10px system-ui, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(nd.label.length > 3 ? "•" : nd.label, tx, ty + 0.5);
+      if (nd.label.length > 3) { ctx.fillStyle = tok("--ink"); ctx.textAlign = "left"; ctx.fillText(nd.label, tx + 12, ty); }
+    });
+    // compass
+    const [ox, oy] = [W - 46, H - 46], nAng = -view.az * Math.PI / 180;
+    ctx.strokeStyle = tok("--muted"); ctx.fillStyle = tok("--ink-2"); ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.arc(ox, oy, 18, 0, 2 * Math.PI); ctx.stroke();
+    const nx = ox + 14 * Math.sin(-nAng), ny = oy - 14 * Math.cos(-nAng) * Math.sin(view.el * Math.PI / 180);
+    ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(nx, ny); ctx.stroke();
+    ctx.font = "600 10px system-ui, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("N", ox + 26 * Math.sin(-nAng), oy - 26 * Math.cos(-nAng) * Math.sin(view.el * Math.PI / 180));
+  }
+  function inPoly(x, y, pts) {
+    let ins = false;
+    for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+      const [xi, yi] = pts[i], [xj, yj] = pts[j];
+      if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) ins = !ins;
+    }
+    return ins;
+  }
+  function hover(e) {
+    const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    for (let i = tops.length - 1; i >= 0; i--) {                 // front-most first
+      if (inPoly(x, y, tops[i].pts)) {
+        tip.innerHTML = `<div class="tt"><div class="v">${fmt(tops[i].v, 2)} g</div><div class="c">cell ${esc(tops[i].p.cell.id)} · ${pLabel(PERIODS[state.p])} · ${state.tr} yr · ${STATS[state.s]}</div></div>`;
+        tip.hidden = false; tip.style.left = (e.clientX + 14) + "px"; tip.style.top = (e.clientY + 14) + "px";
+        return;
+      }
+    }
+    tip.hidden = true;
+  }
+  function caption() {
+    root.querySelector("#isocap").textContent = `${pLabel(PERIODS[state.p])} · TR ${state.tr} yr · ${STATS[state.s]} · height and color = Sa`;
+    root.querySelector("#isolegend").innerHTML = $("bar").outerHTML.replace('id="bar"', "") +
+      `<div class="cap">${pLabel(PERIODS[state.p])} [g]</div>`;
+  }
+  function open() {
+    if (!root) build();
+    vmax = Math.max(state.hi, 0.05);
+    root.hidden = false; size(); fit(); caption(); draw(); root.focus();
+  }
+  function close() { if (root) { root.hidden = true; tip.hidden = true; } }
+  return { open, close, isOpen: () => root && !root.hidden,
+           refresh: () => { if (root && !root.hidden) { vmax = Math.max(state.hi, 0.05); caption(); draw(); } } };
+})();
+$("iso").onclick = () => ISO.open();
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && ISO.isOpen()) ISO.close(); });
+$("pcopy").onclick = (e) => copyText(picksTsv(), e.currentTarget);
+
+restorePicks();   // before the first refresh(), whose saveState() would overwrite the stored pins
 applyTheme();
 })();
 </script>

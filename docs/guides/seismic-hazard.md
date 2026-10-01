@@ -156,12 +156,39 @@ hz.explore("hazard.html", points=["Quito", (-0.25, -78.45, "Proyecto")],
 - **Theme:** Auto follows the system setting; Light and Dark are remembered. The base
   map follows the theme.
 
-The page is self-contained: the map library (Leaflet, BSD-2-Clause) and all the data are
-embedded, so it also opens where external scripts are blocked, such as sandboxed file
-previews, mail or chat attachments, or offline. Only the base-map tiles come from the
-internet; without them the hazard and overlays still draw on a blank background. The
-file is about 2.9 MB. `inline_leaflet=False` loads Leaflet from a CDN (with integrity
-checks) instead, for a file about 150 kB smaller.
+#### Pick and point
+
+- **Pick on map** (or the `P` key) turns clicks into **numbered pins** at the exact
+  coordinate; `Esc` stops. **Pin this point** in any cell popup does the same once.
+- **Pins can be dragged**; their values follow the cell under them.
+- The **Picked points** list shows each pin's value at the current return period,
+  measure and statistic, and updates when you change them. Click a row to fly to the
+  pin; `×` removes it.
+- **Compare** overlays the pins' spectra, with one color per pin number, plus a table.
+- **Copy** puts the values on the clipboard as tab-separated text, ready to paste into
+  Excel or Sheets. Cell popups, pin popups and the Compare table have a Copy button too.
+- **CSV** downloads the same values. **Python** gives the `hz.uhs_at(...)` code that
+  reproduces the pins in apeQuake; capital cells use their digitized curves there.
+- **Copy link:** pins and settings live in the page address, so the link reopens the
+  same view. The pins are also remembered when the file is reopened.
+
+#### 3D view
+
+**3D view** shows the hazard as an isometric relief. Each cell is extruded from its
+real outline, with height and color both showing Sa for the current return period,
+measure and statistic. Drag to rotate, Shift+drag to pan, scroll to zoom, or use the
+arrow keys. **Height ×** sets the vertical exaggeration. Hover a prism for its value.
+Pins and sites stand as numbered needles, and province outlines mark the ground.
+
+#### Works offline and in file previews
+
+The page is self-contained: the map library (Leaflet, BSD-2-Clause), all the data and
+simplified **province outlines** are embedded. It also opens where external scripts and
+images are blocked, such as sandboxed file previews, mail or chat attachments, or
+offline. Only the background tiles (streets, terrain, satellite) come from the internet.
+When they can't load, the panel says so, and the province outlines still give the
+geography. The file is about 3 MB. `inline_leaflet=False` loads Leaflet from a CDN (with
+integrity checks) instead, for a file about 150 kB smaller.
 
 ### How the colors are chosen
 

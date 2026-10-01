@@ -193,3 +193,39 @@ def test_vendored_leaflet_matches_published_hashes():
         digest = base64.b64encode(hashlib.sha256(v.joinpath(name).read_bytes()).digest())
         assert f"sha256-{digest.decode()}" == sri
     assert "BSD 2-Clause" in v.joinpath("LICENSE").read_text(encoding="utf-8")
+
+
+# ---------------------------------------------------------------- pick, copy, underlay, 3D
+
+def test_sites_and_uhs_at_keep_labels(hz):
+    pts = [(-0.14557, -78.27484, "P1"), (-0.13184, -78.58521, "P2")]
+    assert [s.label for s in hz.sites(pts)] == ["P1", "P2"]
+    assert hz.uhs_at(pts, tr=2475).place.tolist() == ["P1", "P2"]
+
+
+def test_outline_underlay_is_embedded_and_simplified(hz):
+    from apeQuake.hazard import _data
+    from apeQuake.hazard.maps import _outlines, _simplify
+
+    o = _outlines()
+    n_simple = sum(len(r) for f in o["features"] for poly in f["geometry"]["coordinates"]
+                   for r in poly)
+    n_full = sum(len(r) for f in _data.geojson("admin_provinces.geojson.gz")["features"]
+                 for poly in (f["geometry"]["coordinates"]
+                              if f["geometry"]["type"] == "MultiPolygon"
+                              else [f["geometry"]["coordinates"]])
+                 for r in poly[:1])
+    assert len(o["features"]) == 25 and n_simple < 0.6 * n_full
+    ring = [[0, 0], [1, 0.001], [2, 0], [2, 2], [0, 2], [0, 0]]
+    out = _simplify(ring, 0.01)
+    assert out[0] == out[-1] and [1, 0.001] not in out          # closed, collinear point gone
+    assert len(explore_data(hz, catalogs=())["provinces"]["features"]) == 25
+
+
+def test_explore_page_has_pick_copy_and_3d(hz, tmp_path):
+    html = hz.explore(tmp_path / "p.html", catalogs=()).read_text(encoding="utf-8")
+    for needle in ('id="pick"', 'id="iso"', 'root.id = "isoview"', 'data-cp=', 'id="pcopy"',
+                   "Province outlines", "tileerror", "parseHash"):
+        assert needle in html, needle
+    # pins must be restored before the first refresh() saves state
+    assert html.index("restorePicks();   //") < html.rindex("applyTheme();")
