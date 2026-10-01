@@ -1,0 +1,42 @@
+{
+  "provider": "Instituto Geofísico - Escuela Politécnica Nacional (IG-EPN)",
+  "product": "Mapa Digital Interactivo del Peligro Sísmico Probabilístico para el Ecuador",
+  "url": "https://www.igepn.edu.ec/mapas/peligro-sismico/mapa-peligro-sismico.html",
+  "storymap": "https://storymaps.arcgis.com/stories/f885bc190d6442fa9fef91f8145d063e",
+  "feature_services": "https://services8.arcgis.com/WFUbp7xZ6MJpsSuI/arcgis/rest/services/",
+  "retrieved_utc": "2026-10-01T17:38:22Z",
+  "site_condition": "rock, Vs30 = 760 m/s",
+  "periods_s": [
+    0.0,
+    0.05,
+    0.07,
+    0.1,
+    0.2,
+    0.5,
+    1.0,
+    2.0
+  ],
+  "return_periods_yr": [
+    475,
+    2475
+  ],
+  "units": "g",
+  "txt_crosscheck_max_abs_err_g": 0.0,
+  "counts": {
+    "hazard_cells": 3146,
+    "hazard_grid_rows": 25168,
+    "capitals": 366,
+    "cabeceras_population": 223,
+    "sources_crust_interface": 13,
+    "sources_inslab": 0,
+    "faults": 8,
+    "sources_beauval2018": 22,
+    "catalog_shallow": 2502,
+    "catalog_deep": 2039,
+    "catalog_historical": 1967,
+    "admin_provinces": 25,
+    "admin_cantons": 224,
+    "admin_parishes": 1040,
+    "hc_images": 366
+  }
+}
