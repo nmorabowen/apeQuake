@@ -1,0 +1,3 @@
+# Vendored third-party files must stay byte-exact (their SRI hashes are tested):
+# no end-of-line conversion on checkout.
+src/apeQuake/hazard/templates/vendor/** -text

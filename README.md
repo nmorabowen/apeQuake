@@ -110,6 +110,8 @@ hz = EcuadorHazard()
 quito = hz.site("Quito")            # or hz.site(lat, lon)
 quito.uhs(975)                      # UHS at any return period
 quito.plot_hazard_curves()
+hz.plot_map(475, faults=True, catalog="historical", points=["Quito"])
+hz.explore("hazard.html", points=["Quito"])   # interactive map in the browser
 hz.inventory()                      # everything available
 print(hz.citation())                # please cite IG-EPN
 ```

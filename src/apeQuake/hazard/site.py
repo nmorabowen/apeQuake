@@ -257,74 +257,121 @@ class HazardSite:
     # ------------------------------------------------------------------ plots
 
     def plot_uhs(self, trs: Iterable[float] = (475, 2475), stat: Stat = "mean",
-                 band: bool = True, ax: "Axes | None" = None, logx: bool = False) -> "Axes":
+                 band: bool = True, ax: "Axes | None" = None, logx: bool = False,
+                 theme: Literal["light", "dark"] = "light") -> "Axes":
         """Plot UHS for the given return periods.
 
-        ``band`` shades the q16-q84 range for the published return periods.
+        Return periods are ordered, so they share one hue from light (short TR) to dark
+        (long TR). ``band`` adds the q16-q84 wash for the published return periods.
+        Extrapolated spectra (outside 475-2475 yr) are dashed. Up to four spectra are
+        labelled at their right end as well as in the legend.
         """
         import matplotlib.pyplot as plt
 
+        from . import _style
+
+        t = _style.theme(theme)
         if ax is None:
-            _, ax = plt.subplots(figsize=(7, 4.5))
+            _, ax = plt.subplots(figsize=(7.5, 4.6))
+        _style.style_axes(ax, t)
+        trs = sorted(float(v) for v in trs)
+        colors, _ = _style.ordinal(len(trs), t.name)
+        ends: list[tuple[float, float, str]] = []
         T = np.asarray(_data.PERIODS)
         x = np.where(T == 0, 0.01, T) if logx else T
-        for tr in trs:
+        for tr, col in zip(trs, colors):
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 u = self.uhs(tr, stat)
-            ls = "-" if (u.source != "fit-extrapolated").all() else "--"
-            (line,) = ax.plot(x, u.Sa, ls, marker="o", ms=4, label=f"TR = {tr:g} yr")
+            extrap = (u.source == "fit-extrapolated").any()
             if band and tr in _data.RETURN_PERIODS:
                 ax.fill_between(x, self.published(int(tr), "q16"),
-                                self.published(int(tr), "q84"),
-                                color=line.get_color(), alpha=0.15, lw=0)
+                                self.published(int(tr), "q84"), color=col, alpha=0.12, lw=0)
+            ax.plot(x, u.Sa, "--" if extrap else "-", color=col, lw=2,
+                    solid_capstyle="round", solid_joinstyle="round",
+                    label=f"{tr:g} yr" + (" (extrapolated)" if extrap else ""))
+            ax.plot(x, u.Sa, "o", ms=6, color=col, mec=t.surface, mew=1.6, zorder=3)
+            ends.append((x[-1], u.Sa.iloc[-1], f"{tr:g} yr"))
         if logx:
             ax.set_xscale("log")
-        ax.set_xlabel("Period T [s]" + (" (PGA at 0.01 s)" if logx else ""))
+        else:
+            ax.set_xlim(0, x[-1] * 1.16)
+        ax.set_ylim(0, None)
+        if len(trs) <= 4:                          # direct labels supplement the legend
+            _style.end_labels(ax, t, ends)
+        ax.set_xlabel("Period T [s]" + (" (PGA plotted at 0.01 s)" if logx else ""))
         ax.set_ylabel("Sa [g]")
-        title = f"UHS ({stat}), rock Vs30 = 760 m/s - {self.label}"
-        ax.set_title(title + ("\nshaded: q16-q84" if band else ""), fontsize=10)
-        ax.grid(True, alpha=0.3)
-        ax.legend()
+        sub = f"{stat}, rock Vs30 = 760 m/s" + (", shaded q16-q84" if band else "")
+        _style.title(ax, t, f"Uniform hazard spectra - {self.label}", sub)
+        _style.legend(ax, t, loc="upper right", title="Return period",
+                      title_fontsize=8).get_title().set_color(t.secondary)
         return ax
 
     def plot_hazard_curves(self, periods: Iterable[float] | None = None,
-                           ax: "Axes | None" = None, anchors: bool = True) -> "Axes":
-        """Plot mean hazard curves; digitized parts solid, fitted parts dashed.
+                           ax: "Axes | None" = None, anchors: bool = True,
+                           theme: Literal["light", "dark"] = "light") -> "Axes":
+        """Plot mean hazard curves.
 
+        Digitized IG-EPN curves are solid; the power-law fit is dashed (it is a model
+        between / beyond the two published points). Periods are ordered, so they share one
+        hue; the default shows five (PGA, 0.2, 0.5, 1 and 2 s). With more than five the
+        curves are also labelled at their ends, since one hue cannot separate them alone.
         ``anchors`` marks the published UHS points (1/475, 1/2475).
         """
         import matplotlib.pyplot as plt
+        from matplotlib.lines import Line2D
 
+        from . import _style
+
+        t = _style.theme(theme)
         if ax is None:
-            _, ax = plt.subplots(figsize=(7, 5))
-        periods = _data.PERIODS if periods is None else tuple(periods)
-        for T in periods:
+            _, ax = plt.subplots(figsize=(7.5, 5.2))
+        _style.style_axes(ax, t)
+        periods = (0.0, 0.2, 0.5, 1.0, 2.0) if periods is None else tuple(periods)
+        periods = tuple(sorted(periods))
+        colors, label_ends = _style.ordinal(len(periods), t.name)
+        ends: list[tuple[float, float, str]] = []
+        for T, col in zip(periods, colors):
             i = self._period_index(T)
-            lbl = "PGA" if T == 0 else f"T = {T:g} s"
-            c = self.hazard_curve(T)
-            dig = c[c.source == "digitized"]
-            color = None
-            if len(dig):
-                (ln,) = ax.loglog(dig.sa_g, dig.rate, "-", label=lbl)
-                color = ln.get_color()
+            lbl = "PGA" if T == 0 else f"{T:g} s"
             sa1, sa2 = self.published(_TR1)[i], self.published(_TR2)[i]
             fs = np.geomspace(sa1 / 3.0, sa2 * 2.0, 60)
             fc = self.hazard_curve(T, sa=fs, method="fit")
-            (ln,) = ax.loglog(fc.sa_g, fc.rate, "--", color=color, alpha=0.7,
-                              label=None if len(dig) else f"{lbl} (fit)")
+            dig = self.hazard_curve(T)
+            dig = dig[dig.source == "digitized"]
+            # the fit is context when a digitized curve exists: lighter, thinner
+            ax.loglog(fc.sa_g, fc.rate, linestyle=(0, (4, 3)), color=col,
+                      lw=1.0 if len(dig) else 1.6, alpha=0.55 if len(dig) else 1.0,
+                      label=None if len(dig) else lbl)
+            end = fc
+            if len(dig):
+                ax.loglog(dig.sa_g, dig.rate, "-", color=col, lw=2, label=lbl,
+                          solid_capstyle="round")
+                end = dig
             if anchors:
-                ax.plot([sa1, sa2], [1 / _TR1, 1 / _TR2], "o", mfc="none",
-                        color=ln.get_color())
+                ax.plot([sa1, sa2], [1 / _TR1, 1 / _TR2], "o", ms=6, color=col,
+                        mec=t.surface, mew=1.6, zorder=3)
+            ends.append((end.sa_g.iloc[-1], end.rate.iloc[-1], lbl))
+        ax.grid(True, which="minor", color=t.grid, linewidth=0.4, alpha=0.6)
         for tr in _data.RETURN_PERIODS:
-            ax.axhline(1 / tr, color="0.5", lw=0.6, ls=":")
-            ax.annotate(f"{tr} yr", (ax.get_xlim()[0], 1 / tr), fontsize=8, color="0.4",
-                        va="bottom")
+            ax.axhline(1 / tr, color=t.baseline, lw=0.8, zorder=1)
+            ax.annotate(f"{tr} yr", (1.0, 1 / tr), xycoords=("axes fraction", "data"),
+                        xytext=(-2, 3), textcoords="offset points", ha="right",
+                        fontsize=7.5, color=t.muted)
         ax.set_xlabel("Sa [g]")
         ax.set_ylabel("Annual rate of exceedance [1/yr]")
-        note = "solid: digitized IG-EPN, dashed: power-law fit" if self.has_digitized_curves \
-            else "power-law fit through published 475 / 2475 yr (no digitized curve here)"
-        ax.set_title(f"Mean hazard curves - {self.label}\n{note}", fontsize=10)
-        ax.grid(True, which="both", alpha=0.25)
-        ax.legend(fontsize=8)
+        src = ("solid: digitized IG-EPN curve, dashed: power-law fit"
+               if self.has_digitized_curves else
+               "power-law fit through the published 475 / 2475 yr values "
+               "(no digitized curve for this cell)")
+        _style.title(ax, t, f"Mean hazard curves - {self.label}", src)
+        handles, labels = ax.get_legend_handles_labels()
+        handles.append(Line2D([], [], ls="", marker="o", ms=6, color=t.secondary,
+                              mec=t.surface, mew=1.6))
+        labels.append("published UHS point")
+        _style.legend(ax, t, handles=handles, labels=labels, loc="lower left")
+        if label_ends:                             # > 5 periods: one hue is not enough
+            lo, hi = ax.get_xlim()
+            ax.set_xlim(lo, hi * 2.2)              # room for the labels
+            _style.end_labels(ax, t, ends)
         return ax

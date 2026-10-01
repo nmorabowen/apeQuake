@@ -98,10 +98,115 @@ curves bend down, so the fit overestimates the rate away from the two points.
 
 ## Maps
 
+`hazard_map()` returns the values behind every map, one row per cell. For return periods
+other than 475 / 2475 yr it uses the per-cell power-law fit:
+
 ```python
-hz.hazard_map(475, period=0.0)               # one row per cell
-hz.plot_map(975, period=0.2, faults=True)
+hz.hazard_map(975, period=0.2)               # cell_id, lat, lon, sa
 ```
+
+### Static maps with overlays
+
+`plot_map()` draws the hazard cells with matplotlib, with optional overlays. The result
+is ready for reports and notebooks:
+
+```python
+hz.plot_map(
+    475, period=0.0,
+    faults=True,                             # fault model
+    sources=["crustal", "interface"],        # also "inslab", "background", or True
+    catalog="historical", min_mw=6,          # or "shallow", "deep", a list, a DataFrame
+    capitals=True,
+    points=["Quito", (-0.95, -80.73, "Site A")],
+)
+hz.plot_map(975, period=0.2, points=[(-0.25, -78.45, "Proyecto")], extent="points")
+```
+
+`points` accepts place names, `(lat, lon)` or `(lat, lon, label)` tuples, `HazardSite`
+objects, or a DataFrame with `lat`, `lon` and an optional `label`. Each point is labelled
+with its value from `HazardSite.uhs`, so a capital cell uses its digitized curve.
+`extent="points"` zooms the map to them. `catalog` also takes the live events:
+`catalog=fetch_recent_events()`.
+
+### Interactive map
+
+`explore()` writes a standalone HTML page that runs in any browser (Leaflet), with the
+data embedded:
+
+```python
+hz.explore("hazard.html", points=["Quito", (-0.25, -78.45, "Proyecto")],
+           recent=True, open_browser=True)
+```
+
+- **Base maps:** light gray, OpenStreetMap, terrain and satellite.
+- **Layers you can toggle:** the hazard grid, faults, source zones by type, each catalog
+  (epicenters sized by Mw; `recent=True` adds the IG-EPN last 180 days), the cantonal
+  capitals and your points.
+- **Controls:** return period (presets or any value), period and statistic re-color the
+  map in the browser. Values at TR other than 475 / 2475 come from the power-law fit,
+  the same as `hazard_map()`.
+- **Click a cell** for its mean, q16 and q84 values and a UHS chart. **Click a point**
+  for its UHS at `point_trs`, computed by apeQuake.
+- **"Go to lat, lon"** finds the cell that contains any coordinate, with the same
+  point-in-polygon rule as `site()`.
+
+- **Hover a cell** for its value at a glance. **Minimum Mw** thins the earthquake
+  layers, and **Download map values (CSV)** exports exactly what the map shows (the
+  table view of the map).
+- **Theme:** Auto follows the system setting; Light and Dark are remembered. The base
+  map follows the theme.
+
+#### Pick and point
+
+- **Pick on map** (or the `P` key) turns clicks into **numbered pins** at the exact
+  coordinate; `Esc` stops. **Pin this point** in any cell popup does the same once.
+- **Pins can be dragged**; their values follow the cell under them.
+- The **Picked points** list shows each pin's value at the current return period,
+  measure and statistic, and updates when you change them. Click a row to fly to the
+  pin; `×` removes it.
+- **Compare** overlays the pins' spectra, with one color per pin number, plus a table.
+- **Copy** puts the values on the clipboard as tab-separated text, ready to paste into
+  Excel or Sheets. Cell popups, pin popups and the Compare table have a Copy button too.
+- **CSV** downloads the same values. **Python** gives the `hz.uhs_at(...)` code that
+  reproduces the pins in apeQuake; capital cells use their digitized curves there.
+- **Copy link:** pins and settings live in the page address, so the link reopens the
+  same view. The pins are also remembered when the file is reopened.
+
+#### 3D view
+
+**3D view** shows the hazard as an isometric relief. Each cell is extruded from its
+real outline, with height and color both showing Sa for the current return period,
+measure and statistic. Drag to rotate, Shift+drag to pan, scroll to zoom, or use the
+arrow keys. **Height ×** sets the vertical exaggeration. Hover a prism for its value.
+Pins and sites stand as numbered needles, and province outlines mark the ground.
+
+#### Works offline and in file previews
+
+The page is self-contained: the map library (Leaflet, BSD-2-Clause), all the data and
+simplified **province outlines** are embedded. It also opens where external scripts and
+images are blocked, such as sandboxed file previews, mail or chat attachments, or
+offline. Only the background tiles (streets, terrain, satellite) come from the internet.
+When they can't load, the panel says so, and the province outlines still give the
+geography. The file is about 3 MB. `inline_leaflet=False` loads Leaflet from a CDN (with
+integrity checks) instead, for a file about 150 kB smaller.
+
+### How the colors are chosen
+
+Every plot and map uses one set of design tokens, checked with a palette validator
+rather than chosen by eye:
+
+| What | Encoding | Why |
+|------|----------|-----|
+| Hazard (map cells) | one blue hue, light = low, dark = high | magnitude is sequential, and a one-hue ramp leaves room for overlays |
+| Return periods, spectral periods (lines) | steps of the same blue, short → long | they are ordered, not categories |
+| Source-zone types | orange, aqua, violet (background zones gray) | the only identity colors on a map; a map can carry at most three |
+| Faults, earthquakes, sites | ink with a thin surface-colored ring | readable on any hazard color |
+| Earthquake catalogs | fill and outline: shallow hollow, deep tinted, historical dashed, live solid | identity without spending a fourth color |
+
+A one-hue ramp separates about five ordered lines. That is why `plot_hazard_curves()`
+shows five periods by default (PGA, 0.2, 0.5, 1 and 2 s). Ask for more and the curves
+are also labelled at their ends. Every plot takes `theme="light"` or `"dark"`; in dark
+mode the hazard ramp flips, so low hazard recedes into the background.
 
 ## Sources and catalogs
 
