@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://nmorabowen.github.io/apeQuake/guides/records/">
+        <link rel="canonical" href="https://nmorabowen.github.io/apeQuake/guides/seismic-hazard/">
       
       
-        <link rel="prev" href="../quickstart/">
+        <link rel="prev" href="../nec-hazard/">
       
       
-        <link rel="next" href="../filtering/">
+        <link rel="next" href="../../api/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>The Record object - apeQuake</title>
+        <title>IG-EPN probabilistic hazard - apeQuake</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#the-record-object" class="md-skip">
+        <a href="#seismic-hazard-of-ecuador-ig-epn" class="md-skip">
           Skip to content
         </a>
       
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              The Record object
+              IG-EPN probabilistic hazard
             
           </span>
         </div>
@@ -388,37 +388,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    The Record object
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../records/" class="md-nav__link">
         
   
   
@@ -434,70 +407,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#construction" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Construction
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dt-detection-interpolation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        dt detection &amp; interpolation
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#accessing-the-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Accessing the data
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-composites" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The composites
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -647,10 +556,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../seismic-hazard/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IG-EPN probabilistic hazard
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -666,6 +602,103 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-in-the-database" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What is in the database
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hazard-at-a-site" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hazard at a site
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#uniform-hazard-spectra-at-any-return-period" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uniform hazard spectra at any return period
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hazard-curves" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hazard curves
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#maps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources-and-catalogs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sources and catalogs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#citing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Citing
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1049,10 +1082,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#construction" class="md-nav__link">
+  <a href="#what-is-in-the-database" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Construction
+        What is in the database
       
     </span>
   </a>
@@ -1060,10 +1093,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dt-detection-interpolation" class="md-nav__link">
+  <a href="#hazard-at-a-site" class="md-nav__link">
     <span class="md-ellipsis">
       
-        dt detection &amp; interpolation
+        Hazard at a site
       
     </span>
   </a>
@@ -1071,10 +1104,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#accessing-the-data" class="md-nav__link">
+  <a href="#uniform-hazard-spectra-at-any-return-period" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Accessing the data
+        Uniform hazard spectra at any return period
       
     </span>
   </a>
@@ -1082,10 +1115,43 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-composites" class="md-nav__link">
+  <a href="#hazard-curves" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The composites
+        Hazard curves
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#maps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sources-and-catalogs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sources and catalogs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#citing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Citing
       
     </span>
   </a>
@@ -1112,87 +1178,170 @@
   
 
 
-<h1 id="the-record-object">The Record object<a class="headerlink" href="#the-record-object" title="Permanent link">&para;</a></h1>
-<p><code>Record</code> is the single entry point. It stores 1–3 acceleration components on a
-<strong>uniform time grid</strong> as a canonical pandas DataFrame (<code>time | X | Y | Z</code>, only
-the present components included) and attaches every processor as a composite.</p>
-<h2 id="construction">Construction<a class="headerlink" href="#construction" title="Permanent link">&para;</a></h2>
-<p><code>Record</code> is keyword-only. Provide at least one component:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">apeQuake</span><span class="w"> </span><span class="kn">import</span> <span class="n">Record</span>
+<h1 id="seismic-hazard-of-ecuador-ig-epn">Seismic hazard of Ecuador (IG-EPN)<a class="headerlink" href="#seismic-hazard-of-ecuador-ig-epn" title="Permanent link">&para;</a></h1>
+<p><code>apeQuake.hazard</code> bundles the public products of the IG-EPN probabilistic seismic hazard
+model for Ecuador (Beauval et al., 2018) as an offline database: uniform hazard spectra
+for every 9 km cell of the country, hazard curves for the cantonal capitals, the seismic
+source model and the earthquake catalogs.</p>
+<div class="admonition warning">
+<p class="admonition-title">Reference values on rock</p>
+<p>All values are for a generic <strong>rock site (Vs30 = 760 m/s)</strong>. IG-EPN publishes them as
+reference values: they do not replace a site-specific study or the design spectrum
+of NEC-SE-DS, which adds site amplification (Fa, Fd, Fs) and its own zoning.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">IG-EPN model vs. NEC hazard curves</p>
+<p><a href="../nec-hazard/"><code>apeQuake.nec</code></a> holds the hazard curves printed in NEC-SE-DS (NEC-15)
+for 23 provincial capitals, which belong to the code. <code>apeQuake.hazard</code> holds the newer
+IG-EPN model (Beauval et al., 2018) on a 3146-cell grid, with logic-tree percentiles.
+The two models differ. Use the NEC curves for code work, and the IG-EPN model for
+site-specific studies and comparisons.</p>
+</div>
+<h2 id="what-is-in-the-database">What is in the database<a class="headerlink" href="#what-is-in-the-database" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">apeQuake.hazard</span><span class="w"> </span><span class="kn">import</span> <span class="n">EcuadorHazard</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># From dt (time generated as arange(npts) * dt)</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">rec</span> <span class="o">=</span> <span class="n">Record</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">acc</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># From an explicit time array</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">rec</span> <span class="o">=</span> <span class="n">Record</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">acc</span><span class="p">,</span> <span class="n">time_array</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="c1"># Multi-component, with a name</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">rec</span> <span class="o">=</span> <span class="n">Record</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">ay</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">az</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"Station 12"</span><span class="p">)</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">hz</span> <span class="o">=</span> <span class="n">EcuadorHazard</span><span class="p">()</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">hz</span><span class="o">.</span><span class="n">inventory</span><span class="p">()</span>
 </span></code></pre></div>
 <table>
 <thead>
 <tr>
-<th>Argument</th>
+<th>Dataset</th>
+<th style="text-align: right;">Rows</th>
+<th>Accessor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hazard grid (UHS)</td>
+<td style="text-align: right;">3146 cells × TR 475 / 2475 × mean, q16, q50, q84 × 8 periods</td>
+<td><code>site()</code>, <code>uhs_at()</code>, <code>hazard_map()</code></td>
+</tr>
+<tr>
+<td>Hazard curves (digitized)</td>
+<td style="text-align: right;">365 capital cells × 8 periods</td>
+<td><code>site(...).hazard_curve()</code></td>
+</tr>
+<tr>
+<td>Cantonal capitals</td>
+<td style="text-align: right;">366</td>
+<td><code>capitals()</code></td>
+</tr>
+<tr>
+<td>Capital population</td>
+<td style="text-align: right;">223</td>
+<td><code>population()</code></td>
+</tr>
+<tr>
+<td>Seismic sources / faults</td>
+<td style="text-align: right;">22 / 8</td>
+<td><code>sources()</code>, <code>faults()</code></td>
+</tr>
+<tr>
+<td>Catalogs</td>
+<td style="text-align: right;">2502 shallow, 2039 deep, 1967 historical</td>
+<td><code>catalog(kind)</code></td>
+</tr>
+<tr>
+<td>Provinces / cantons / parishes</td>
+<td style="text-align: right;">25 / 224 / 1040</td>
+<td><code>admin(level)</code></td>
+</tr>
+<tr>
+<td>Last 180 days of events</td>
+<td style="text-align: right;">live</td>
+<td><code>fetch_recent_events()</code></td>
+</tr>
+</tbody>
+</table>
+<p>Periods: PGA (0.0), 0.05, 0.07, 0.1, 0.2, 0.5, 1.0 and 2.0 s.</p>
+<h2 id="hazard-at-a-site">Hazard at a site<a class="headerlink" href="#hazard-at-a-site" title="Permanent link">&para;</a></h2>
+<p>By coordinates (lat, lon in degrees) or by place name; names are matched against
+capitals, parishes, cantons and provinces, ignoring accents and case:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">quito</span> <span class="o">=</span> <span class="n">hz</span><span class="o">.</span><span class="n">site</span><span class="p">(</span><span class="s2">"Quito"</span><span class="p">)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">gye</span>   <span class="o">=</span> <span class="n">hz</span><span class="o">.</span><span class="n">site</span><span class="p">(</span><span class="o">-</span><span class="mf">2.19</span><span class="p">,</span> <span class="o">-</span><span class="mf">79.89</span><span class="p">)</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">hz</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">"Baños"</span><span class="p">)</span>          <span class="c1"># list the candidates when a name is ambiguous</span>
+</span></code></pre></div>
+<p>The point is assigned to the IG-EPN cell whose polygon contains it (the cells are not a
+pure lattice; some are merged with a neighbour). Use <code>interp="bilinear"</code> to interpolate
+between the four surrounding cell centroids instead.</p>
+<h2 id="uniform-hazard-spectra-at-any-return-period">Uniform hazard spectra at any return period<a class="headerlink" href="#uniform-hazard-spectra-at-any-return-period" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">quito</span><span class="o">.</span><span class="n">uhs</span><span class="p">(</span><span class="mi">475</span><span class="p">)</span>                      <span class="c1"># published values</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">quito</span><span class="o">.</span><span class="n">uhs</span><span class="p">(</span><span class="mi">975</span><span class="p">)</span>                      <span class="c1"># from the hazard curve</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">quito</span><span class="o">.</span><span class="n">uhs</span><span class="p">(</span><span class="mi">2475</span><span class="p">,</span> <span class="n">stat</span><span class="o">=</span><span class="s2">"q84"</span><span class="p">)</span>         <span class="c1"># logic-tree percentile</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">quito</span><span class="o">.</span><span class="n">uhs_table</span><span class="p">([</span><span class="mi">72</span><span class="p">,</span> <span class="mi">225</span><span class="p">,</span> <span class="mi">475</span><span class="p">,</span> <span class="mi">975</span><span class="p">,</span> <span class="mi">2475</span><span class="p">])</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">quito</span><span class="o">.</span><span class="n">plot_uhs</span><span class="p">([</span><span class="mi">475</span><span class="p">,</span> <span class="mi">975</span><span class="p">,</span> <span class="mi">2475</span><span class="p">])</span>    <span class="c1"># q16-q84 band for the published TRs</span>
+</span></code></pre></div>
+<p>Probabilities of exceedance convert with <code>tr_from_poe</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">apeQuake.hazard</span><span class="w"> </span><span class="kn">import</span> <span class="n">tr_from_poe</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">tr_from_poe</span><span class="p">(</span><span class="mf">0.10</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>    <span class="c1"># 474.6 yr</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">tr_from_poe</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>    <span class="c1"># 974.8 yr</span>
+</span></code></pre></div>
+<p>Every output has a <code>source</code> column saying where each number comes from:</p>
+<table>
+<thead>
+<tr>
+<th><code>source</code></th>
 <th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>x</code>, <code>y</code>, <code>z</code></td>
-<td>Component arrays (≥1 required, equal length).</td>
+<td><code>published</code></td>
+<td>IG-EPN value at TR = 475 or 2475 yr</td>
 </tr>
 <tr>
-<td><code>time_array</code></td>
-<td>Optional time vector (same length as components).</td>
+<td><code>digitized</code></td>
+<td>read from the IG-EPN hazard curve of a capital cell</td>
 </tr>
 <tr>
-<td><code>dt</code></td>
-<td>Desired time step. Required if <code>time_array</code> is <code>None</code>.</td>
+<td><code>fit</code></td>
+<td>power law λ = k₀·Sa⁻ᵏ through the two published points (between 475 and 2475 yr)</td>
 </tr>
 <tr>
-<td><code>name</code></td>
-<td>Optional label, used in <code>repr</code> and plot titles.</td>
+<td><code>fit-extrapolated</code></td>
+<td>the same power law outside 475–2475 yr; a warning is issued</td>
 </tr>
 </tbody>
 </table>
-<h2 id="dt-detection-interpolation">dt detection &amp; interpolation<a class="headerlink" href="#dt-detection-interpolation" title="Permanent link">&para;</a></h2>
-<p>The constructor resolves the effective <code>dt</code> and decides whether to resample:</p>
-<ul>
-<li><strong><code>time_array=None</code></strong> → <code>dt</code> is required; time is <code>arange(npts) * dt</code>.</li>
-<li><strong><code>time_array</code> given, <code>dt=None</code></strong> → if the grid is uniform (within a small
-  tolerance), that spacing is used as-is; if it is non-uniform, the record is
-  linearly interpolated onto <code>dt = min(Δt)</code>.</li>
-<li><strong><code>time_array</code> given, <code>dt</code> given</strong> → if the grid already matches <code>dt</code> it is
-  used as-is; otherwise the record is interpolated onto the requested <code>dt</code>.</li>
-</ul>
-<p>Whether interpolation happened is recorded:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">_interpolation_flag</span>   <span class="c1"># True if the components were resampled</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">init_logs</span>             <span class="c1"># human-readable log of the construction decisions</span>
+<h2 id="hazard-curves">Hazard curves<a class="headerlink" href="#hazard-curves" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">quito</span><span class="o">.</span><span class="n">hazard_curve</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>            <span class="c1"># sa_g, rate [1/yr], tr [yr], source</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">quito</span><span class="o">.</span><span class="n">return_period</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>      <span class="c1"># TR of exceeding PGA = 0.5 g</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">quito</span><span class="o">.</span><span class="n">plot_hazard_curves</span><span class="p">()</span>
 </span></code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">Uniform grids from <code>np.arange</code> / <code>np.linspace</code></p>
-<p>Floating-point round-off in an otherwise-uniform grid is tolerated — such a
-grid is treated as uniform and <strong>not</strong> resampled.</p>
-</div>
-<h2 id="accessing-the-data">Accessing the data<a class="headerlink" href="#accessing-the-data" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">time</span>          <span class="c1"># 1D time vector</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">data</span>          <span class="c1"># (npts, ncomp) array of present components</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">rec</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">rec</span><span class="o">.</span><span class="n">z</span>   <span class="c1"># individual components (AttributeError if absent)</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">rec</span><span class="o">.</span><span class="n">components</span>    <span class="c1"># e.g. ('X', 'Y')</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">rec</span><span class="o">.</span><span class="n">dt</span>            <span class="c1"># effective time step</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">rec</span><span class="o">.</span><span class="n">df</span>            <span class="c1"># the canonical DataFrame (do not mutate)</span>
+<p>IG-EPN publishes hazard curves only as images, for the 365 cells that contain a cantonal
+capital. They were digitized and checked against the published UHS: the curve must give
+λ = 1/475 and 1/2475 at the published accelerations. The median error is 0.010 decades
+(about 2.5 % in rate), the maximum 0.065. The curves of other cells are the power-law
+fit, which is exact at both published points but straight in log-log space. Real hazard
+curves bend down, so the fit overestimates the rate away from the two points.</p>
+<h2 id="maps">Maps<a class="headerlink" href="#maps" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">hz</span><span class="o">.</span><span class="n">hazard_map</span><span class="p">(</span><span class="mi">475</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>               <span class="c1"># one row per cell</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">hz</span><span class="o">.</span><span class="n">plot_map</span><span class="p">(</span><span class="mi">975</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">faults</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span></code></pre></div>
-<h2 id="the-composites">The composites<a class="headerlink" href="#the-composites" title="Permanent link">&para;</a></h2>
-<p>Each <code>Record</code> exposes six processors. They read from <code>rec.df</code> (or a DataFrame
-you pass explicitly) and never mutate the baseline:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">filter</span>             <span class="c1"># signal filtering          → guides/filtering.md</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrum</span>           <span class="c1"># FFT amplitude spectra      → guides/spectra.md</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span>        <span class="c1"># time–frequency analysis    → guides/spectra.md</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span>   <span class="c1"># Newmark Sd / Sv / Sa       → guides/response-spectra.md</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">rec</span><span class="o">.</span><span class="n">intensity_measures</span> <span class="c1"># duration, Husid            → guides/intensity-measures.md</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">rec</span><span class="o">.</span><span class="n">plot_record</span>        <span class="c1"># time-history plotting</span>
+<h2 id="sources-and-catalogs">Sources and catalogs<a class="headerlink" href="#sources-and-catalogs" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">hz</span><span class="o">.</span><span class="n">sources</span><span class="p">()</span>                  <span class="c1"># a, b, rate of Mw &gt;= 4.5, Mmax, geometry (GeoJSON)</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">hz</span><span class="o">.</span><span class="n">faults</span><span class="p">()</span>                   <span class="c1"># slip rates, Mmax, dip</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">hz</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span><span class="s2">"historical"</span><span class="p">)</span>      <span class="c1"># 1587-2021</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">hz</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span><span class="s2">"shallow"</span><span class="p">)</span>         <span class="c1"># homogenized catalog used in the PSHA</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">apeQuake.hazard</span><span class="w"> </span><span class="kn">import</span> <span class="n">fetch_recent_events</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">fetch_recent_events</span><span class="p">()</span>         <span class="c1"># IG-EPN, last 180 days (needs internet)</span>
 </span></code></pre></div>
-<p>See the <a href="../../api/record/"><code>Record</code> API</a> for the full signature.</p>
+<h2 id="citing">Citing<a class="headerlink" href="#citing" title="Permanent link">&para;</a></h2>
+<p>The data belongs to IG-EPN. Cite the model and the provider:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">EcuadorHazard</span><span class="o">.</span><span class="n">citation</span><span class="p">())</span>
+</span></code></pre></div>
+<blockquote>
+<p>Beauval C. et al. (2018). A New Seismic Hazard Model for Ecuador.
+<em>Bull. Seismol. Soc. Am.</em> 108(3A), 1443–1464. doi:10.1785/0120170259</p>
+<p>Yepes H. et al. (2016). A new view for the geodynamics of Ecuador: Implication in
+seismogenic source definition and seismic hazard assessment. <em>Tectonics</em> 35,
+1249–1279. doi:10.1002/2015TC003941</p>
+</blockquote>
+<p>Provenance (URLs, retrieval date, record counts) is in <code>hz.manifest()</code>. The snapshot is
+regenerated with <code>scripts/igepn/fetch_igepn.py</code>, and the curves with
+<code>scripts/igepn/digitize_hazard_curves.py</code>.</p>
 
 
 
