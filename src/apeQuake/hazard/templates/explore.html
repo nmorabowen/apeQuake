@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IG-EPN Seismic Hazard Explorer</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root { --ink:#1d2433; --muted:#5b6475; --line:#d9dde5; --panel:rgba(255,255,255,.95);
+          --accent:#c0392b; }
+  html, body { height:100%; margin:0; background:#f4f1ea; color:var(--ink);
+               font:13px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  #map { position:absolute; inset:0; }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:8px;
+           padding:10px 12px; box-shadow:0 2px 10px rgba(0,0,0,.12); max-width:260px; }
+  .panel h1 { font-size:14px; margin:0 0 6px; cursor:pointer; user-select:none; }
+  .panel h1::after { content:" ▾"; color:var(--muted); font-weight:normal; }
+  .panel.collapsed h1 { margin:0; } .panel.collapsed h1::after { content:" ▸"; }
+  .panel.collapsed .body { display:none; }
+  .panel label { display:block; color:var(--muted); font-size:11px; margin-top:7px; }
+  .panel select, .panel input { width:100%; box-sizing:border-box; font:inherit;
+           padding:3px 5px; border:1px solid var(--line); border-radius:4px; background:#fff; }
+  .row { display:flex; gap:6px; } .row > * { flex:1; }
+  .note { color:var(--muted); font-size:11px; margin-top:6px; }
+  .legend .bar { height:10px; border-radius:3px; margin:4px 0 2px; }
+  .legend .ticks { display:flex; justify-content:space-between; font-size:11px;
+                   color:var(--muted); }
+  .popup table { border-collapse:collapse; font-size:12px; margin-top:4px; }
+  .popup th, .popup td { padding:1px 6px; text-align:right; border-bottom:1px solid #eee; }
+  .popup th:first-child, .popup td:first-child { text-align:left; }
+  .popup .src { color:var(--muted); font-size:11px; }
+  .coords { font-size:11px; color:var(--muted); }
+  button { font:inherit; padding:3px 8px; border:1px solid var(--line); border-radius:4px;
+           background:#fff; cursor:pointer; }
+  @media (max-width: 600px) { .panel { max-width:200px; padding:8px; } }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script id="hazard-data" type="application/json">/*__DATA__*/</script>
+<script>
+(function () {
+"use strict";
+const D = JSON.parse(document.getElementById("hazard-data").textContent);
+const PERIODS = D.periods, STATS = D.stats, TRS = D.trs;   // TRS = [475, 2475]
+
+// ------------------------------------------------------------------ helpers
+const fmt = (v, n = 3) => (v == null || !isFinite(v)) ? "–" : (+v).toFixed(n);
+const pLabel = (T) => T === 0 ? "PGA" : `Sa(${T} s)`;
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g,
+  (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+// v[tr][stat][period] flattened: index = (t * STATS.length + s) * PERIODS.length + p
+function published(cell, t, s, p) { return cell.v[(t * STATS.length + s) * PERIODS.length + p]; }
+
+// lambda = k0 Sa^-k through the two published points (same as apeQuake.hazard.curves)
+function saAt(cell, tr, s, p) {
+  const a = published(cell, 0, s, p), b = published(cell, 1, s, p);
+  if (tr === TRS[0]) return a;
+  if (tr === TRS[1]) return b;
+  const k = Math.log(TRS[1] / TRS[0]) / Math.log(b / a);
+  const k0 = (1 / TRS[0]) * Math.pow(a, k);
+  return Math.pow(k0 * tr, 1 / k);
+}
+
+// magma_r-like ramp
+const RAMP = ["#fcfdbf","#fec287","#fd9567","#f1605d","#cd4071","#9e2f7f","#721f81",
+              "#440f76","#180f3d","#000004"];
+function hex2rgb(h) { return [1,3,5].map(i => parseInt(h.slice(i, i + 2), 16)); }
+const RAMP_RGB = RAMP.map(hex2rgb);
+function color(x, lo, hi) {
+  if (!isFinite(x)) return "#999";
+  let t = (x - lo) / (hi - lo); t = Math.min(1, Math.max(0, t)) * (RAMP.length - 1);
+  const i = Math.min(RAMP.length - 2, Math.floor(t)), f = t - i;
+  const c = RAMP_RGB[i].map((v, j) => Math.round(v + f * (RAMP_RGB[i + 1][j] - v)));
+  return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
+
+// ------------------------------------------------------------------ state
+const state = { tr: D.init.tr, p: PERIODS.indexOf(D.init.period), s: STATS.indexOf(D.init.stat),
+                opacity: 0.7, lo: 0, hi: 1 };
+
+// ------------------------------------------------------------------ map + base layers
+const map = L.map("map", { preferCanvas: true, zoomSnap: 0.5 }).setView([-1.6, -78.6], 7);
+const canvas = L.canvas({ padding: 0.5 });
+const ESRI = "https://server.arcgisonline.com/ArcGIS/rest/services/";
+const bases = {
+  "Light gray (Esri)": L.tileLayer(ESRI + "Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+    { maxZoom: 16, attribution: "Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors" }),
+  "OpenStreetMap": L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    { maxZoom: 19, attribution: "&copy; OpenStreetMap contributors" }),
+  "Terrain (OpenTopoMap)": L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+    { maxZoom: 17, attribution: "&copy; OpenStreetMap contributors, SRTM | &copy; OpenTopoMap (CC-BY-SA)" }),
+  "Satellite (Esri)": L.tileLayer(ESRI + "World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    { maxZoom: 18, attribution: "Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics" }),
+};
+bases["Light gray (Esri)"].addTo(map);
+window.hazardMap = map;              // for scripting / debugging from the console
+map.attributionControl.addAttribution(
+  `Hazard: <a href="${esc(D.meta.url)}" target="_blank" rel="noopener">IG-EPN</a> (Beauval et al., 2018)`);
+
+// popups pan clear of the control panel (top right) instead of sliding under it
+// (Leaflet pads [left, top] and [right, bottom]; the right padding is the panel width)
+function popupOpts() {
+  const p = document.querySelector(".panel");
+  return { maxWidth: 290, autoPanPaddingTopLeft: [20, 20],
+           autoPanPaddingBottomRight: [p ? p.offsetWidth + 30 : 300, 20] };
+}
+
+// ------------------------------------------------------------------ hazard cells
+function currentValues() {
+  return D.cells.features.map(f => saAt(f.properties, state.tr, state.s, state.p));
+}
+function rescale() {
+  const v = currentValues().filter(isFinite).sort((a, b) => a - b);
+  state.lo = v[0]; state.hi = v[v.length - 1];
+}
+const hazard = L.geoJSON(D.cells, {
+  renderer: canvas,
+  style: (f) => ({ weight: 0, fillOpacity: state.opacity,
+                   fillColor: color(saAt(f.properties, state.tr, state.s, state.p),
+                                    state.lo, state.hi) }),
+  onEachFeature: (f, layer) => layer.on("click", (e) => openCell(f.properties, e.latlng)),
+});
+
+function uhsSvg(cell, tr) {
+  const W = 250, H = 140, m = { l: 34, r: 8, t: 8, b: 22 };
+  const xs = PERIODS, xmax = Math.max(...xs);
+  const series = [
+    { tr: TRS[0], col: "#2b6cb0" }, { tr: TRS[1], col: "#c0392b" },
+  ];
+  if (!TRS.includes(tr)) series.push({ tr, col: "#1d2433", dash: "4 3" });
+  const iMean = STATS.indexOf("mean"), iLo = STATS.indexOf("q16"), iHi = STATS.indexOf("q84");
+  let ymax = 0;
+  series.forEach(s => xs.forEach((_, p) => {
+    ymax = Math.max(ymax, saAt(cell, s.tr, iHi, p), saAt(cell, s.tr, iMean, p)); }));
+  ymax *= 1.08;
+  const X = (x) => m.l + (x / xmax) * (W - m.l - m.r);
+  const Y = (y) => H - m.b - (y / ymax) * (H - m.t - m.b);
+  const path = (vals) => vals.map((y, i) => `${i ? "L" : "M"}${X(xs[i]).toFixed(1)},${Y(y).toFixed(1)}`).join("");
+  let g = "";
+  series.forEach(s => {
+    if (TRS.includes(s.tr)) {
+      const lo = xs.map((_, p) => saAt(cell, s.tr, iLo, p));
+      const hi = xs.map((_, p) => saAt(cell, s.tr, iHi, p));
+      const band = path(hi) + lo.slice().reverse().map((y, i) =>
+        `L${X(xs[xs.length - 1 - i]).toFixed(1)},${Y(y).toFixed(1)}`).join("") + "Z";
+      g += `<path d="${band}" fill="${s.col}" opacity="0.13"/>`;
+    }
+    const mean = xs.map((_, p) => saAt(cell, s.tr, iMean, p));
+    g += `<path d="${path(mean)}" fill="none" stroke="${s.col}" stroke-width="1.6"` +
+         (s.dash ? ` stroke-dasharray="${s.dash}"` : "") + `/>`;
+  });
+  let axes = `<line x1="${m.l}" y1="${H - m.b}" x2="${W - m.r}" y2="${H - m.b}" stroke="#999"/>` +
+             `<line x1="${m.l}" y1="${m.t}" x2="${m.l}" y2="${H - m.b}" stroke="#999"/>`;
+  [0, 0.5, 1, 1.5, 2].forEach(t => axes +=
+    `<text x="${X(t)}" y="${H - 8}" font-size="9" text-anchor="middle" fill="#5b6475">${t}</text>`);
+  const yt = ymax > 1.5 ? 0.5 : ymax > 0.6 ? 0.2 : 0.1;
+  for (let y = 0; y <= ymax; y += yt) axes +=
+    `<text x="${m.l - 3}" y="${Y(y) + 3}" font-size="9" text-anchor="end" fill="#5b6475">${y.toFixed(1)}</text>`;
+  axes += `<text x="${W - m.r}" y="${H - 8}" font-size="9" text-anchor="end" fill="#5b6475">T [s]</text>`;
+  const key = series.map((s, i) =>
+    `<tspan fill="${s.col}" dx="${i ? 8 : 0}">${s.tr} yr</tspan>`).join("");
+  return `<svg width="${W}" height="${H}" role="img" aria-label="Uniform hazard spectrum">` +
+         `${axes}${g}<text x="${W - m.r}" y="${m.t + 8}" font-size="10" text-anchor="end">${key}</text></svg>`;
+}
+
+function openCell(cell, latlng) {
+  const fitNote = TRS.includes(state.tr) ? "published" :
+    (state.tr > TRS[0] && state.tr < TRS[1]) ? "power-law fit" : "power-law fit (extrapolated)";
+  const iMean = STATS.indexOf("mean"), iLo = STATS.indexOf("q16"), iHi = STATS.indexOf("q84");
+  const rows = PERIODS.map((T, p) =>
+    `<tr><td>${pLabel(T)}</td><td>${fmt(saAt(cell, state.tr, iMean, p))}</td>` +
+    `<td>${fmt(saAt(cell, state.tr, iLo, p))}</td><td>${fmt(saAt(cell, state.tr, iHi, p))}</td></tr>`).join("");
+  const html = `<div class="popup"><b>Cell ${esc(cell.id)}</b>
+    <div class="coords">centroid ${fmt(cell.lat, 2)}, ${fmt(cell.lon, 2)} · click at ${fmt(latlng.lat, 4)}, ${fmt(latlng.lng, 4)}</div>
+    <div style="margin-top:4px">TR = <b>${state.tr} yr</b> <span class="src">(${fitNote})</span></div>
+    <table><tr><th></th><th>mean</th><th>q16</th><th>q84</th></tr>${rows}</table>
+    ${uhsSvg(cell, state.tr)}
+    <div class="src">Sa in g, rock Vs30 = 760 m/s. Shaded: q16–q84.${cell.cap ?
+      "<br>Digitized hazard curves exist for this cell: <code>hz.site(lat, lon)</code>." : ""}</div></div>`;
+  L.popup(popupOpts()).setLatLng(latlng).setContent(html).openOn(map);
+}
+
+// ------------------------------------------------------------------ overlays
+const overlays = {};
+overlays["Hazard"] = hazard.addTo(map);
+
+overlays["Faults"] = L.geoJSON(D.faults, {
+  renderer: canvas, style: { color: "#1f6fb2", weight: 2.5 },
+  onEachFeature: (f, l) => { const p = f.properties; l.bindPopup(
+    `<b>Fault ${esc(p.Nombre)}</b><br>Mmax ${fmt(p.Mmax, 1)} · mechanism ${esc(p.MeFocal)}<br>` +
+    `slip geodetic ${fmt(p.Slip_Geod, 1)} mm/yr · geologic ${fmt(p.Slip_Geol, 1)} mm/yr<br>` +
+    `dip ${esc(p.Dip)}° · length ${esc(p.Longitud)} km`); } }).addTo(map);
+
+const SRC_STYLE = { "Crustal Sources": "#e67e22", "Interface Sources": "#c0392b",
+                    "In-slab sources": "#8e44ad", "Background sources": "#7f8c8d" };
+Object.entries(SRC_STYLE).forEach(([tipo, col]) => {
+  const fc = { type: "FeatureCollection",
+               features: D.sources.features.filter(f => f.properties.Tipo === tipo) };
+  overlays[`Sources: ${tipo.replace(" sources", "").replace(" Sources", "")}`] = L.geoJSON(fc, {
+    renderer: canvas, style: { color: col, weight: 1.5, dashArray: "6 4", fill: false },
+    onEachFeature: (f, l) => { const p = f.properties; l.bindPopup(
+      `<b>${esc(p.Nombre)}</b> <span class="src">${esc(p.Tipo)}</span><br>` +
+      `a = ${fmt(p.a, 2)}, b = ${fmt(p.b, 2)}<br>rate Mw≥4.5: ${fmt(p["λMw_45"], 3)} /yr<br>` +
+      `Mmax ${fmt(p.MMax, 1)} (obs. ${fmt(p.Mmax_obs, 1)}) · depth ${esc(p.Depth_range ?? `${p.DMin}-${p.DMax}`)} km`); } });
+});
+
+const CAT_COL = { shallow: "#1f77b4", deep: "#17a2b8", historical: "#2e8b57", recent: "#d35400" };
+function mwRadius(mw) { return Math.max(1.5, 1.6 * Math.pow(1.55, mw - 4)); }
+Object.entries(D.catalogs).forEach(([name, ev]) => {
+  const g = L.layerGroup();
+  ev.forEach(([lat, lon, mw, dep, t]) => L.circleMarker([lat, lon], {
+      renderer: canvas, radius: mwRadius(mw), color: CAT_COL[name] || "#555", weight: 1,
+      fillOpacity: 0.15 })
+    .bindPopup(`<b>Mw ${fmt(mw, 1)}</b> · ${esc(t)}<br>depth ${fmt(dep, 0)} km<br>` +
+               `<span class="src">${esc(name)} catalog</span>`).addTo(g));
+  overlays[`Catalog: ${name} (${ev.length})`] = g;
+});
+
+const caps = L.layerGroup();
+D.capitals.forEach(c => L.circleMarker([c.lat, c.lon], {
+    renderer: canvas, radius: c.prov ? 4 : 2.5, color: "#1d2433", weight: 1, fillColor: "#fff",
+    fillOpacity: 1 })
+  .bindPopup(`<b>${esc(c.name)}</b><br>${esc(c.canton)}, ${esc(c.province)}<br>` +
+             `PGA 475: ${fmt(c.pga475)} g · 2475: ${fmt(c.pga2475)} g` +
+             (c.pop ? `<br>population (2010): ${c.pop.toLocaleString()}` : ""))
+  .addTo(caps));
+overlays["Cantonal capitals"] = caps;
+
+const sites = L.layerGroup().addTo(map);
+D.points.forEach(pt => {
+  const rows = PERIODS.map((T, p) => `<tr><td>${pLabel(T)}</td>` +
+    pt.uhs.map(u => `<td>${fmt(u.sa[p])}</td>`).join("") + `</tr>`).join("");
+  const head = pt.uhs.map(u => `<th>${u.tr} yr</th>`).join("");
+  const srcs = pt.uhs.map(u => `${u.tr} yr: ${esc(u.source)}`).join(" · ");
+  L.marker([pt.lat, pt.lon], { title: pt.label }).bindPopup(
+    `<div class="popup"><b>${esc(pt.label)}</b><div class="coords">${fmt(pt.lat, 4)}, ${fmt(pt.lon, 4)} · cell ${esc(pt.cell_id)}</div>` +
+    `<table><tr><th></th>${head}</tr>${rows}</table>` +
+    `<div class="src">mean Sa [g] from apeQuake (${srcs})</div></div>`, { maxWidth: 300 })
+   .bindTooltip(pt.label, { direction: "top", offset: [0, -30] }).addTo(sites);
+});
+overlays[`Sites (${D.points.length})`] = sites;
+if (D.points.length) {
+  map.fitBounds(L.latLngBounds(D.points.map(p => [p.lat, p.lon])).pad(0.6), { maxZoom: 10 });
+}
+
+L.control.layers(bases, overlays, { collapsed: true }).addTo(map);
+L.control.scale({ imperial: false }).addTo(map);
+
+// ------------------------------------------------------------------ point lookup
+function inRing(x, y, ring) {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i], [xj, yj] = ring[j];
+    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside;
+  }
+  return inside;
+}
+function cellAt(lat, lon) {
+  for (const f of D.cells.features) {
+    const g = f.geometry, polys = g.type === "MultiPolygon" ? g.coordinates : [g.coordinates];
+    for (const poly of polys) {
+      if (inRing(lon, lat, poly[0]) && !poly.slice(1).some(h => inRing(lon, lat, h)))
+        return f.properties;
+    }
+  }
+  return null;
+}
+
+// ------------------------------------------------------------------ control panel
+const Panel = L.Control.extend({
+  options: { position: "topright" },
+  onAdd() {
+    const d = L.DomUtil.create("div", "panel");
+    L.DomEvent.disableClickPropagation(d); L.DomEvent.disableScrollPropagation(d);
+    const trOpts = [72, 225, 475, 975, 2475].map(t =>
+      `<option value="${t}">${t} yr${TRS.includes(t) ? "" : " (fit)"}</option>`).join("") +
+      `<option value="custom">other…</option>`;
+    if (window.innerWidth < 600) d.classList.add("collapsed");   // phones: start folded
+    d.innerHTML = `<h1 title="Show / hide controls">IG-EPN seismic hazard</h1><div class="body">
+      <div class="row"><div><label>Return period</label><select id="tr">${trOpts}</select></div>
+        <div id="trc" hidden><label>TR [yr]</label><input id="trv" type="number" min="10" step="1"></div></div>
+      <div class="row"><div><label>Measure</label><select id="per">${PERIODS.map((T, i) =>
+          `<option value="${i}">${pLabel(T)}</option>`).join("")}</select></div>
+        <div><label>Statistic</label><select id="stat">${STATS.map((s, i) =>
+          `<option value="${i}">${s}</option>`).join("")}</select></div></div>
+      <label>Opacity</label><input id="op" type="range" min="0" max="1" step="0.05" value="${state.opacity}">
+      <div class="legend"><div class="bar" style="background:linear-gradient(to right,${RAMP.join(",")})"></div>
+        <div class="ticks"><span id="lo"></span><span id="mid"></span><span id="hi"></span></div></div>
+      <div class="note" id="trnote"></div>
+      <label>Go to lat, lon</label><div class="row"><input id="ll" placeholder="-0.18, -78.47"><button id="go" style="flex:0">Go</button></div>
+      <div class="note">Rock, Vs30 = 760 m/s. Reference values; not a substitute for NEC-SE-DS
+        or a site study. Data: IG-EPN, retrieved ${esc(D.meta.retrieved)}.</div></div>`;
+    d.querySelector("h1").onclick = () => d.classList.toggle("collapsed");
+    return d;
+  },
+});
+new Panel().addTo(map);
+const $ = (id) => document.getElementById(id);
+
+function refresh() {
+  rescale();
+  hazard.setStyle((f) => ({ weight: 0, fillOpacity: state.opacity,
+    fillColor: color(saAt(f.properties, state.tr, state.s, state.p), state.lo, state.hi) }));
+  const u = `${pLabel(PERIODS[state.p])} [g]`;
+  $("lo").textContent = fmt(state.lo, 2); $("hi").textContent = `${fmt(state.hi, 2)} ${u}`;
+  $("mid").textContent = fmt((state.lo + state.hi) / 2, 2);
+  $("trnote").textContent = TRS.includes(state.tr) ? "Published IG-EPN values." :
+    `TR = ${state.tr} yr: power-law fit through the published 475 / 2475 yr values` +
+    ((state.tr < TRS[0] || state.tr > TRS[1]) ? " (extrapolated, use with care)." : ".");
+}
+
+const trPresets = [72, 225, 475, 975, 2475];
+$("tr").value = trPresets.includes(state.tr) ? String(state.tr) : "custom";
+if (!trPresets.includes(state.tr)) { $("trc").hidden = false; $("trv").value = state.tr; }
+$("per").value = String(state.p); $("stat").value = String(state.s);
+$("tr").onchange = (e) => {
+  const custom = e.target.value === "custom"; $("trc").hidden = !custom;
+  if (!custom) { state.tr = +e.target.value; refresh(); } else { $("trv").focus(); }
+};
+$("trv").onchange = (e) => { const v = +e.target.value; if (v > 0) { state.tr = v; refresh(); } };
+$("per").onchange = (e) => { state.p = +e.target.value; refresh(); };
+$("stat").onchange = (e) => { state.s = +e.target.value; refresh(); };
+$("op").oninput = (e) => { state.opacity = +e.target.value;
+  hazard.setStyle({ fillOpacity: state.opacity }); };
+function goTo() {
+  const m = $("ll").value.split(/[\s,;]+/).filter(Boolean).map(Number);
+  if (m.length !== 2 || m.some(isNaN)) { $("ll").style.borderColor = "#c0392b"; return; }
+  $("ll").style.borderColor = "";
+  const ll = L.latLng(m[0], m[1]); map.setView(ll, Math.max(map.getZoom(), 10));
+  const c = cellAt(m[0], m[1]);
+  if (c) openCell(c, ll);
+  else L.popup().setLatLng(ll).setContent("Outside the IG-EPN hazard grid.").openOn(map);
+}
+$("go").onclick = goTo;
+$("ll").onkeydown = (e) => { if (e.key === "Enter") goTo(); };
+
+map.on("click", (e) => {             // clicks that miss every cell (sea, abroad)
+  if (!cellAt(e.latlng.lat, e.latlng.lng)) L.popup().setLatLng(e.latlng)
+    .setContent(`<span class="coords">${fmt(e.latlng.lat, 4)}, ${fmt(e.latlng.lng, 4)}</span><br>Outside the IG-EPN hazard grid.`)
+    .openOn(map);
+});
+
+refresh();
+})();
+</script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import warnings
-from typing import TYPE_CHECKING, Any, Iterable, Literal
+from typing import TYPE_CHECKING, Any, Iterable, Literal, Sequence
 
 import numpy as np
 import pandas as pd
@@ -351,57 +351,85 @@ class EcuadorHazard:
         return out
 
     def plot_map(self, tr: float = 475, period: float = 0.0, stat: Stat = "mean",
-                 ax: "Axes | None" = None, provinces: bool = True, faults: bool = False,
-                 capitals: bool = False, cmap: str = "magma_r") -> "Axes":
-        """Map of the hazard grid (cells drawn as 0.08 deg squares)."""
-        import matplotlib.pyplot as plt
+                 ax: "Axes | None" = None, *, provinces: bool = True, faults: bool = False,
+                 sources: "bool | str | Sequence[str]" = False,
+                 catalog: "str | Sequence[str] | pd.DataFrame | None" = None,
+                 min_mw: float | None = None, capitals: bool = False, points=None,
+                 annotate: bool = True, extent: "str | Sequence[float] | None" = None,
+                 cmap: str = "magma_r", vmin: float | None = None, vmax: float | None = None,
+                 legend: bool = True) -> "Axes":
+        """Static map of the hazard grid with overlays.
 
-        m = self.hazard_map(tr, period, stat)
-        step = _data.GRID_STEP
-        lats = np.round(np.arange(m.lat.min(), m.lat.max() + step / 2, step), 2)
-        lons = np.round(np.arange(m.lon.min(), m.lon.max() + step / 2, step), 2)
-        Z = np.full((lats.size, lons.size), np.nan)
-        ii = np.round((m.lat - lats[0]) / step).astype(int)
-        jj = np.round((m.lon - lons[0]) / step).astype(int)
-        Z[ii, jj] = m.sa
-        if ax is None:
-            _, ax = plt.subplots(figsize=(7, 7))
-        pc = ax.pcolormesh(np.r_[lons - step / 2, lons[-1] + step / 2],
-                           np.r_[lats - step / 2, lats[-1] + step / 2], Z, cmap=cmap)
-        lbl = "PGA" if period == 0 else f"Sa({period:g} s)"
-        plt.colorbar(pc, ax=ax, label=f"{lbl} [g]", shrink=0.8)
-        if provinces:
-            self._draw_geojson(ax, "admin_provinces.geojson.gz", color="0.35", lw=0.4)
-        if faults:
-            self._draw_geojson(ax, "faults.geojson", color="tab:blue", lw=1.2)
-        if capitals:
-            c = _data.capitals()
-            prov = c[c.type == "CAPITAL PROVINCIAL"].drop_duplicates("canton")
-            ax.plot(prov.lon, prov.lat, "k.", ms=3)
-        ax.set_aspect("equal")
-        ax.set_xlim(lons[0] - step, lons[-1] + step)
-        ax.set_ylim(lats[0] - step, lats[-1] + step)
-        ax.set_xlabel("Longitude [deg]")
-        ax.set_ylabel("Latitude [deg]")
-        ax.set_title(f"{lbl}, TR = {tr:g} yr ({stat}), rock - IG-EPN", fontsize=10)
-        return ax
+        Parameters
+        ----------
+        tr, period, stat
+            What to color the 0.08 deg cells by (see :meth:`hazard_map`).
+        provinces, faults, capitals : bool
+            Province outlines, the fault model, the provincial capitals.
+        sources : bool, str or list of str
+            Area sources of Beauval et al. (2018): ``True`` for all, or any of
+            ``"crustal"``, ``"interface"``, ``"inslab"``, ``"background"`` (they overlap,
+            so picking types keeps the map readable).
+        catalog : str, list of str or DataFrame
+            Epicenters sized by magnitude: ``"shallow"``, ``"deep"``, ``"historical"``,
+            a list of them, or any DataFrame with ``lat``, ``lon`` and ``mw`` (or
+            ``magnitude``, e.g. :func:`fetch_recent_events`).
+        min_mw : float, optional
+            Only plot events with Mw >= ``min_mw``.
+        points
+            Sites to mark: names, ``(lat, lon)`` or ``(lat, lon, label)`` tuples,
+            HazardSite objects or a DataFrame with ``lat`` / ``lon`` [/ ``label``].
+        annotate : bool
+            Label the points with their value (from :meth:`HazardSite.uhs`).
+        extent : None, "points" or (lon_min, lon_max, lat_min, lat_max)
+            Map window; ``"points"`` zooms on the given points.
+        cmap, vmin, vmax, legend
+            Styling.
+        """
+        from .maps import plot_map
 
-    @staticmethod
-    def _draw_geojson(ax: "Axes", name: str, **kw) -> None:
-        for f in _data.geojson(name)["features"]:
-            g = f["geometry"]
-            if g is None:
-                continue
-            if g["type"] == "LineString":
-                lines = [g["coordinates"]]
-            elif g["type"] == "MultiLineString":
-                lines = g["coordinates"]
-            elif g["type"] == "Polygon":
-                lines = g["coordinates"]
-            elif g["type"] == "MultiPolygon":
-                lines = [ring for poly in g["coordinates"] for ring in poly]
-            else:
-                continue
-            for ln in lines:
-                xy = np.asarray(ln)
-                ax.plot(xy[:, 0], xy[:, 1], **kw)
+        return plot_map(self, tr, period, stat, ax, provinces=provinces, faults=faults,
+                        sources=sources, catalog=catalog, min_mw=min_mw, capitals=capitals,
+                        points=points, annotate=annotate, extent=extent, cmap=cmap,
+                        vmin=vmin, vmax=vmax, legend=legend)
+
+    def explore(self, path: str = "igepn_hazard_map.html", tr: float = 475,
+                period: float = 0.0, stat: Stat = "mean", points=None,
+                catalogs: Sequence[str] = ("shallow", "deep", "historical"),
+                recent: "bool | pd.DataFrame" = False,
+                point_trs: Sequence[float] = (475, 975, 2475),
+                open_browser: bool = False):
+        """Write an interactive hazard map (standalone HTML, Leaflet); return its path.
+
+        The page has street / terrain base maps and layers that can be switched on and
+        off: the hazard grid (re-colored in the browser for any return period, period and
+        statistic), faults, source zones by type, the earthquake catalogs (sized by
+        magnitude), the cantonal capitals and your points. Clicking a cell shows its
+        values and UHS; a "go to lat, lon" box finds the cell containing any point.
+
+        Parameters
+        ----------
+        path : str
+            Output file.
+        tr, period, stat
+            Initial map; all can be changed in the page. TR other than 475 / 2475 uses
+            the per-cell power-law fit, as in :meth:`hazard_map`.
+        points
+            Sites to mark (same forms as :meth:`plot_map`). Their popups show the mean
+            UHS from :meth:`HazardSite.uhs` (digitized curves where available) at
+            ``point_trs``.
+        catalogs : sequence of str
+            Bundled catalogs to include: ``"shallow"``, ``"deep"``, ``"historical"``.
+        recent : bool or DataFrame
+            ``True`` fetches the IG-EPN last-180-days events now (needs internet), or
+            pass a DataFrame from :func:`fetch_recent_events`.
+        open_browser : bool
+            Open the file in the default browser.
+
+        Viewing the page loads Leaflet and the base-map tiles from the internet; the
+        hazard data itself is embedded in the file.
+        """
+        from .maps import explore
+
+        return explore(self, path, tr, period, stat, points, catalogs, recent, point_trs,
+                       open_browser)
