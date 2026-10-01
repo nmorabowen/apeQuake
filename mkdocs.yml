@@ -106,6 +106,7 @@ nav:
       - Response spectra: guides/response-spectra.md
       - Intensity measures: guides/intensity-measures.md
       - NEC hazard curves: guides/nec-hazard.md
+      - IG-EPN probabilistic hazard: guides/seismic-hazard.md
   - API Reference:
       - Overview: api/index.md
       - Record: api/record.md
@@ -116,3 +117,4 @@ nav:
       - Intensity measures: api/intensity_measures.md
       - Plotting: api/plot_record.md
       - NEC hazard: api/nec.md
+      - IG-EPN hazard: api/hazard.md

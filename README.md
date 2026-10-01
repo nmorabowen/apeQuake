@@ -30,6 +30,7 @@ single, transparent **`Record`** object and a set of composable processors:
 | Response spectra | `rec.response_spectra` | Newmark SDOF Sd / Sv / Sa |
 | Intensity measures | `rec.intensity_measures` | Significant duration, Husid curve |
 | Plotting | `rec.plot_record` | Time histories & band-pass comparisons |
+| Seismic hazard (Ecuador) | `apeQuake.hazard` | IG-EPN UHS at any TR, hazard curves, sources, catalogs |
 
 All operations use DataFrames, support multi-component (X/Y/Z) records, and
 follow a transparent, reproducible design with **no hidden state** — the
@@ -94,6 +95,27 @@ d595 = rec.intensity_measures.significant_duration("X", p1=0.05, p2=0.95)
 
 See the [**documentation**](https://nmorabowen.github.io/apeQuake/) for the full
 guides and API reference.
+
+## Seismic hazard of Ecuador
+
+`apeQuake.hazard` ships the public IG-EPN probabilistic seismic hazard model
+(Beauval et al., 2018) as an offline database: UHS for 3146 cells (rock, TR 475 /
+2475, mean and percentiles), hazard curves digitized for the cantonal capitals, the
+source model and the earthquake catalogs.
+
+```python
+from apeQuake.hazard import EcuadorHazard
+
+hz = EcuadorHazard()
+quito = hz.site("Quito")            # or hz.site(lat, lon)
+quito.uhs(975)                      # UHS at any return period
+quito.plot_hazard_curves()
+hz.inventory()                      # everything available
+print(hz.citation())                # please cite IG-EPN
+```
+
+The hazard data belongs to IG-EPN and is redistributed with attribution; see
+[`src/apeQuake/hazard/data/igepn/README.md`](src/apeQuake/hazard/data/igepn/README.md).
 
 ## Composite architecture
 
