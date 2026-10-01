@@ -394,13 +394,45 @@ def explore_data(hz: "EcuadorHazard", tr: float = 475, period: float = 0.0,
     }
 
 
+# Leaflet 1.9.4 (BSD-2-Clause, templates/vendor/leaflet/LICENSE). The vendored files match
+# the Subresource Integrity hashes Leaflet publishes; the same hashes guard the CDN mode.
+_LEAFLET_CDN = "https://unpkg.com/leaflet@1.9.4/dist/"
+_LEAFLET_SRI = {"leaflet.js": "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=",
+                "leaflet.css": "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="}
+
+
+def _leaflet_tags(inline: bool) -> str:
+    """``<link>``/``<script>`` for Leaflet: embedded (default) or from the CDN.
+
+    Embedding makes the page work where external scripts are blocked (sandboxed file
+    previews, mail / chat attachments, offline). The layer-control icons, which the
+    stylesheet loads as separate files, become data URIs.
+    """
+    if not inline:
+        return (f'<link rel="stylesheet" href="{_LEAFLET_CDN}leaflet.css" '
+                f'integrity="{_LEAFLET_SRI["leaflet.css"]}" crossorigin="">\n'
+                f'<script src="{_LEAFLET_CDN}leaflet.js" '
+                f'integrity="{_LEAFLET_SRI["leaflet.js"]}" crossorigin=""></script>')
+    import base64
+    from importlib.resources import files
+
+    v = files("apeQuake.hazard").joinpath("templates", "vendor", "leaflet")
+    css = v.joinpath("leaflet.css").read_text("utf-8")
+    for icon in ("layers.png", "layers-2x.png"):
+        b64 = base64.b64encode(v.joinpath(icon).read_bytes()).decode("ascii")
+        css = css.replace(f"url(images/{icon})", f"url(data:image/png;base64,{b64})")
+    js = v.joinpath("leaflet.js").read_text("utf-8")
+    return (f"<style>/* Leaflet 1.9.4, BSD-2-Clause */\n{css}</style>\n"
+            f"<script>{js}</script>")
+
+
 def explore(hz: "EcuadorHazard", path: "str | os.PathLike[str]" = "igepn_hazard_map.html",
             tr: float = 475, period: float = 0.0, stat: str = "mean",
             points: PointsLike = None,
             catalogs: Sequence[str] = ("shallow", "deep", "historical"),
             recent: bool | pd.DataFrame = False,
             point_trs: Sequence[float] = (475, 975, 2475),
-            open_browser: bool = False) -> "Path":
+            open_browser: bool = False, inline_leaflet: bool = True) -> "Path":
     """Write the interactive map. See :meth:`EcuadorHazard.explore`."""
     import json
     import webbrowser
@@ -411,6 +443,7 @@ def explore(hz: "EcuadorHazard", path: "str | os.PathLike[str]" = "igepn_hazard_
     payload = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     payload = payload.replace("</", "<\\/")          # data can never close the <script>
     html = files("apeQuake.hazard").joinpath("templates", "explore.html").read_text("utf-8")
+    html = html.replace("<!--__LEAFLET__-->", _leaflet_tags(inline_leaflet), 1)
     out = Path(path)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html.replace("/*__DATA__*/", payload, 1), encoding="utf-8")

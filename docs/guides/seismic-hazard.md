@@ -156,8 +156,12 @@ hz.explore("hazard.html", points=["Quito", (-0.25, -78.45, "Proyecto")],
 - **Theme:** Auto follows the system setting; Light and Dark are remembered. The base
   map follows the theme.
 
-Viewing the page needs internet for Leaflet and the base-map tiles. The file itself is
-about 2.7 MB and can be shared as is.
+The page is self-contained: the map library (Leaflet, BSD-2-Clause) and all the data are
+embedded, so it also opens where external scripts are blocked, such as sandboxed file
+previews, mail or chat attachments, or offline. Only the base-map tiles come from the
+internet; without them the hazard and overlays still draw on a blank background. The
+file is about 2.9 MB. `inline_leaflet=False` loads Leaflet from a CDN (with integrity
+checks) instead, for a file about 150 kB smaller.
 
 ### How the colors are chosen
 

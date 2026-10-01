@@ -407,7 +407,7 @@ class EcuadorHazard:
                 catalogs: Sequence[str] = ("shallow", "deep", "historical"),
                 recent: "bool | pd.DataFrame" = False,
                 point_trs: Sequence[float] = (475, 975, 2475),
-                open_browser: bool = False):
+                open_browser: bool = False, inline_leaflet: bool = True):
         """Write an interactive hazard map (standalone HTML, Leaflet); return its path.
 
         The page has street / terrain base maps and layers that can be switched on and
@@ -434,11 +434,16 @@ class EcuadorHazard:
             pass a DataFrame from :func:`fetch_recent_events`.
         open_browser : bool
             Open the file in the default browser.
+        inline_leaflet : bool
+            Embed the Leaflet map library in the file (default, about +150 kB), so the
+            page also works where external scripts are blocked: sandboxed file previews,
+            mail or chat attachments, offline. ``False`` loads it from the unpkg CDN
+            with integrity checks, for a smaller file.
 
-        Viewing the page loads Leaflet and the base-map tiles from the internet; the
-        hazard data itself is embedded in the file.
+        Everything but the base-map tiles is embedded in the file: without internet
+        the hazard and all overlays still draw, on a blank background.
         """
         from .maps import explore
 
         return explore(self, path, tr, period, stat, points, catalogs, recent, point_trs,
-                       open_browser)
+                       open_browser, inline_leaflet)

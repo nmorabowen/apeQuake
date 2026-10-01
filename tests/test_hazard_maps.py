@@ -160,3 +160,36 @@ def test_explore_page_has_both_themes_and_table_view(hz, tmp_path):
     assert 'id="csv"' in html and 'id="mw"' in html                  # table view, Mw filter
     for hexcode in ("#eb6834", "#1baf7a", "#4a3aa7", "#d95926", "#199e70", "#9085e9"):
         assert hexcode in html                                      # validated zone hues
+
+
+# ---------------------------------------------------------------- self-contained page
+
+def test_explore_embeds_leaflet_by_default(hz, tmp_path):
+    html = hz.explore(tmp_path / "m.html", catalogs=()).read_text(encoding="utf-8")
+    # works where external scripts are blocked (file previews, attachments, offline)
+    assert not re.findall(r'<(?:script|link)[^>]+(?:src|href)="https?://', html)
+    assert "Leaflet 1.9.4" in html and "data:image/png;base64," in html
+    assert "if (!window.L)" in html                                 # graceful fallback
+
+
+def test_explore_cdn_mode_has_integrity(hz, tmp_path):
+    from apeQuake.hazard.maps import _LEAFLET_SRI
+
+    html = hz.explore(tmp_path / "c.html", catalogs=(), inline_leaflet=False).read_text(
+        encoding="utf-8")
+    for sri in _LEAFLET_SRI.values():
+        assert f'integrity="{sri}"' in html
+
+
+def test_vendored_leaflet_matches_published_hashes():
+    import base64
+    import hashlib
+    from importlib.resources import files
+
+    from apeQuake.hazard.maps import _LEAFLET_SRI
+
+    v = files("apeQuake.hazard").joinpath("templates", "vendor", "leaflet")
+    for name, sri in _LEAFLET_SRI.items():
+        digest = base64.b64encode(hashlib.sha256(v.joinpath(name).read_bytes()).digest())
+        assert f"sha256-{digest.decode()}" == sri
+    assert "BSD 2-Clause" in v.joinpath("LICENSE").read_text(encoding="utf-8")

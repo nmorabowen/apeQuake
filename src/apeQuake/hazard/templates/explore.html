@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>IG-EPN Seismic Hazard Explorer</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!--__LEAFLET__-->
 <style>
   /* Design tokens: reference data-viz palette. Every map color is a role below, so the
      light and dark sets swap in one place. Hazard = one-hue blue ramp (flips in dark);
@@ -131,6 +130,15 @@
 <script>
 (function () {
 "use strict";
+if (!window.L) {        // map library blocked (sandboxed viewer, or CDN mode offline)
+  document.getElementById("map").innerHTML =
+    '<div style="max-width:440px;margin:15vh auto;padding:16px 20px;border:1px solid var(--baseline);' +
+    'border-radius:10px;background:var(--surface);color:var(--ink)"><b>The map library did not load.</b>' +
+    '<p style="color:var(--ink-2)">This viewer blocked the Leaflet script. Open the file in a web browser, ' +
+    'or regenerate it with <code>hz.explore(..., inline_leaflet=True)</code> (the default), which embeds ' +
+    'the library in the file.</p></div>';
+  return;
+}
 const D = JSON.parse(document.getElementById("hazard-data").textContent);
 const PERIODS = D.periods, STATS = D.stats, TRS = D.trs;          // TRS = [475, 2475]
 const iMean = STATS.indexOf("mean"), iLo = STATS.indexOf("q16"), iHi = STATS.indexOf("q84");
