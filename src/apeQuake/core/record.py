@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from ..spectrogram.spectrogram import Spectrogram
     from ..response_spectra import ResponseSpectra
     from ..intensity_measures import IntensityMeasures
+    from ..code_spectrum import CodeSpectrum
     from ..core.record import Record
 
 
@@ -66,6 +67,7 @@ class Record:
         from ..spectrogram import Spectrogram
         from ..response_spectra import ResponseSpectra
         from ..intensity_measures import IntensityMeasures
+        from ..code_spectrum import CodeSpectrum
         from ..plot_record import PlotRecord
 
         self.filter: FilterType = Filter(self)
@@ -73,6 +75,7 @@ class Record:
         self.spectrogram: Spectrogram = Spectrogram(self)
         self.response_spectra: ResponseSpectra = ResponseSpectra(self)
         self.intensity_measures: IntensityMeasures = IntensityMeasures(self)
+        self.code_spectrum: CodeSpectrum = CodeSpectrum(self)
         self.plot_record: PlotRecord = PlotRecord(self)
 
     # -------------------------------------------------------------- #

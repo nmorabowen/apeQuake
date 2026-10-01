@@ -116,3 +116,4 @@ nav:
       - Intensity measures: api/intensity_measures.md
       - Plotting: api/plot_record.md
       - NEC hazard: api/nec.md
+      - Code spectrum: api/code_spectrum.md

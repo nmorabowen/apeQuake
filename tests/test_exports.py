@@ -14,6 +14,7 @@ import pytest
         ("apeQuake.spectrogram", "Spectrogram"),
         ("apeQuake.response_spectra", "ResponseSpectra"),
         ("apeQuake.intensity_measures", "IntensityMeasures"),
+        ("apeQuake.code_spectrum", "CodeSpectrum"),
         ("apeQuake.plot_record", "PlotRecord"),
     ],
 )
@@ -30,6 +31,7 @@ def test_public_symbol_importable(module, name):
         "apeQuake.spectrogram",
         "apeQuake.response_spectra",
         "apeQuake.intensity_measures",
+        "apeQuake.code_spectrum",
         "apeQuake.plot_record",
     ],
 )
