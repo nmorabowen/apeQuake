@@ -852,6 +852,84 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Maps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#static-maps-with-overlays" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static maps with overlays
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactive-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive map
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interactive map">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pick-and-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pick and point
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3d-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3D view
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#works-offline-and-in-file-previews" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Works offline and in file previews
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-the-colors-are-chosen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the colors are chosen
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1345,6 +1423,84 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Maps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#static-maps-with-overlays" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static maps with overlays
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interactive-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interactive map
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interactive map">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pick-and-point" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pick and point
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3d-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3D view
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#works-offline-and-in-file-previews" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Works offline and in file previews
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-the-colors-are-chosen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the colors are chosen
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1527,21 +1683,141 @@ capital. They were digitized and checked against the published UHS: the curve mu
 fit, which is exact at both published points but straight in log-log space. Real hazard
 curves bend down, so the fit overestimates the rate away from the two points.</p>
 <h2 id="maps">Maps<a class="headerlink" href="#maps" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">hz</span><span class="o">.</span><span class="n">hazard_map</span><span class="p">(</span><span class="mi">475</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>               <span class="c1"># one row per cell</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">hz</span><span class="o">.</span><span class="n">plot_map</span><span class="p">(</span><span class="mi">975</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">faults</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<p><code>hazard_map()</code> returns the values behind every map, one row per cell. For return periods
+other than 475 / 2475 yr it uses the per-cell power-law fit:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">hz</span><span class="o">.</span><span class="n">hazard_map</span><span class="p">(</span><span class="mi">975</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>               <span class="c1"># cell_id, lat, lon, sa</span>
 </span></code></pre></div>
+<h3 id="static-maps-with-overlays">Static maps with overlays<a class="headerlink" href="#static-maps-with-overlays" title="Permanent link">&para;</a></h3>
+<p><code>plot_map()</code> draws the hazard cells with matplotlib, with optional overlays. The result
+is ready for reports and notebooks:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">hz</span><span class="o">.</span><span class="n">plot_map</span><span class="p">(</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="mi">475</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="n">faults</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                             <span class="c1"># fault model</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s2">"crustal"</span><span class="p">,</span> <span class="s2">"interface"</span><span class="p">],</span>        <span class="c1"># also "inslab", "background", or True</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">catalog</span><span class="o">=</span><span class="s2">"historical"</span><span class="p">,</span> <span class="n">min_mw</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>          <span class="c1"># or "shallow", "deep", a list, a DataFrame</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="n">capitals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="s2">"Quito"</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.95</span><span class="p">,</span> <span class="o">-</span><span class="mf">80.73</span><span class="p">,</span> <span class="s2">"Site A"</span><span class="p">)],</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="p">)</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="n">hz</span><span class="o">.</span><span class="n">plot_map</span><span class="p">(</span><span class="mi">975</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="p">[(</span><span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">78.45</span><span class="p">,</span> <span class="s2">"Proyecto"</span><span class="p">)],</span> <span class="n">extent</span><span class="o">=</span><span class="s2">"points"</span><span class="p">)</span>
+</span></code></pre></div>
+<p><code>points</code> accepts place names, <code>(lat, lon)</code> or <code>(lat, lon, label)</code> tuples, <code>HazardSite</code>
+objects, or a DataFrame with <code>lat</code>, <code>lon</code> and an optional <code>label</code>. Each point is labelled
+with its value from <code>HazardSite.uhs</code>, so a capital cell uses its digitized curve.
+<code>extent="points"</code> zooms the map to them. <code>catalog</code> also takes the live events:
+<code>catalog=fetch_recent_events()</code>.</p>
+<h3 id="interactive-map">Interactive map<a class="headerlink" href="#interactive-map" title="Permanent link">&para;</a></h3>
+<p><code>explore()</code> writes a standalone HTML page that runs in any browser (Leaflet), with the
+data embedded:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">hz</span><span class="o">.</span><span class="n">explore</span><span class="p">(</span><span class="s2">"hazard.html"</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="s2">"Quito"</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">78.45</span><span class="p">,</span> <span class="s2">"Proyecto"</span><span class="p">)],</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>           <span class="n">recent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">open_browser</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></code></pre></div>
+<ul>
+<li><strong>Base maps:</strong> light gray, OpenStreetMap, terrain and satellite.</li>
+<li><strong>Layers you can toggle:</strong> the hazard grid, faults, source zones by type, each catalog
+  (epicenters sized by Mw; <code>recent=True</code> adds the IG-EPN last 180 days), the cantonal
+  capitals and your points.</li>
+<li><strong>Controls:</strong> return period (presets or any value), period and statistic re-color the
+  map in the browser. Values at TR other than 475 / 2475 come from the power-law fit,
+  the same as <code>hazard_map()</code>.</li>
+<li><strong>Click a cell</strong> for its mean, q16 and q84 values and a UHS chart. <strong>Click a point</strong>
+  for its UHS at <code>point_trs</code>, computed by apeQuake.</li>
+<li>
+<p><strong>"Go to lat, lon"</strong> finds the cell that contains any coordinate, with the same
+  point-in-polygon rule as <code>site()</code>.</p>
+</li>
+<li>
+<p><strong>Hover a cell</strong> for its value at a glance. <strong>Minimum Mw</strong> thins the earthquake
+  layers, and <strong>Download map values (CSV)</strong> exports exactly what the map shows (the
+  table view of the map).</p>
+</li>
+<li><strong>Theme:</strong> Auto follows the system setting; Light and Dark are remembered. The base
+  map follows the theme.</li>
+</ul>
+<h4 id="pick-and-point">Pick and point<a class="headerlink" href="#pick-and-point" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Pick on map</strong> (or the <code>P</code> key) turns clicks into <strong>numbered pins</strong> at the exact
+  coordinate; <code>Esc</code> stops. <strong>Pin this point</strong> in any cell popup does the same once.</li>
+<li><strong>Pins can be dragged</strong>; their values follow the cell under them.</li>
+<li>The <strong>Picked points</strong> list shows each pin's value at the current return period,
+  measure and statistic, and updates when you change them. Click a row to fly to the
+  pin; <code>×</code> removes it.</li>
+<li><strong>Compare</strong> overlays the pins' spectra, with one color per pin number, plus a table.</li>
+<li><strong>Copy</strong> puts the values on the clipboard as tab-separated text, ready to paste into
+  Excel or Sheets. Cell popups, pin popups and the Compare table have a Copy button too.</li>
+<li><strong>CSV</strong> downloads the same values. <strong>Python</strong> gives the <code>hz.uhs_at(...)</code> code that
+  reproduces the pins in apeQuake; capital cells use their digitized curves there.</li>
+<li><strong>Copy link:</strong> pins and settings live in the page address, so the link reopens the
+  same view. The pins are also remembered when the file is reopened.</li>
+</ul>
+<h4 id="3d-view">3D view<a class="headerlink" href="#3d-view" title="Permanent link">&para;</a></h4>
+<p><strong>3D view</strong> shows the hazard as an isometric relief. Each cell is extruded from its
+real outline, with height and color both showing Sa for the current return period,
+measure and statistic. Drag to rotate, Shift+drag to pan, scroll to zoom, or use the
+arrow keys. <strong>Height ×</strong> sets the vertical exaggeration. Hover a prism for its value.
+Pins and sites stand as numbered needles, and province outlines mark the ground.</p>
+<h4 id="works-offline-and-in-file-previews">Works offline and in file previews<a class="headerlink" href="#works-offline-and-in-file-previews" title="Permanent link">&para;</a></h4>
+<p>The page is self-contained: the map library (Leaflet, BSD-2-Clause), all the data and
+simplified <strong>province outlines</strong> are embedded. It also opens where external scripts and
+images are blocked, such as sandboxed file previews, mail or chat attachments, or
+offline. Only the background tiles (streets, terrain, satellite) come from the internet.
+When they can't load, the panel says so, and the province outlines still give the
+geography. The file is about 3 MB. <code>inline_leaflet=False</code> loads Leaflet from a CDN (with
+integrity checks) instead, for a file about 150 kB smaller.</p>
+<h3 id="how-the-colors-are-chosen">How the colors are chosen<a class="headerlink" href="#how-the-colors-are-chosen" title="Permanent link">&para;</a></h3>
+<p>Every plot and map uses one set of design tokens, checked with a palette validator
+rather than chosen by eye:</p>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Encoding</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hazard (map cells)</td>
+<td>one blue hue, light = low, dark = high</td>
+<td>magnitude is sequential, and a one-hue ramp leaves room for overlays</td>
+</tr>
+<tr>
+<td>Return periods, spectral periods (lines)</td>
+<td>steps of the same blue, short → long</td>
+<td>they are ordered, not categories</td>
+</tr>
+<tr>
+<td>Source-zone types</td>
+<td>orange, aqua, violet (background zones gray)</td>
+<td>the only identity colors on a map; a map can carry at most three</td>
+</tr>
+<tr>
+<td>Faults, earthquakes, sites</td>
+<td>ink with a thin surface-colored ring</td>
+<td>readable on any hazard color</td>
+</tr>
+<tr>
+<td>Earthquake catalogs</td>
+<td>fill and outline: shallow hollow, deep tinted, historical dashed, live solid</td>
+<td>identity without spending a fourth color</td>
+</tr>
+</tbody>
+</table>
+<p>A one-hue ramp separates about five ordered lines. That is why <code>plot_hazard_curves()</code>
+shows five periods by default (PGA, 0.2, 0.5, 1 and 2 s). Ask for more and the curves
+are also labelled at their ends. Every plot takes <code>theme="light"</code> or <code>"dark"</code>; in dark
+mode the hazard ramp flips, so low hazard recedes into the background.</p>
 <h2 id="sources-and-catalogs">Sources and catalogs<a class="headerlink" href="#sources-and-catalogs" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">hz</span><span class="o">.</span><span class="n">sources</span><span class="p">()</span>                  <span class="c1"># a, b, rate of Mw &gt;= 4.5, Mmax, geometry (GeoJSON)</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">hz</span><span class="o">.</span><span class="n">faults</span><span class="p">()</span>                   <span class="c1"># slip rates, Mmax, dip</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">hz</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span><span class="s2">"historical"</span><span class="p">)</span>      <span class="c1"># 1587-2021</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">hz</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span><span class="s2">"shallow"</span><span class="p">)</span>         <span class="c1"># homogenized catalog used in the PSHA</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">apeQuake.hazard</span><span class="w"> </span><span class="kn">import</span> <span class="n">fetch_recent_events</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">fetch_recent_events</span><span class="p">()</span>         <span class="c1"># IG-EPN, last 180 days (needs internet)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">hz</span><span class="o">.</span><span class="n">sources</span><span class="p">()</span>                  <span class="c1"># a, b, rate of Mw &gt;= 4.5, Mmax, geometry (GeoJSON)</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">hz</span><span class="o">.</span><span class="n">faults</span><span class="p">()</span>                   <span class="c1"># slip rates, Mmax, dip</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">hz</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span><span class="s2">"historical"</span><span class="p">)</span>      <span class="c1"># 1587-2021</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">hz</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span><span class="s2">"shallow"</span><span class="p">)</span>         <span class="c1"># homogenized catalog used in the PSHA</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">apeQuake.hazard</span><span class="w"> </span><span class="kn">import</span> <span class="n">fetch_recent_events</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="n">fetch_recent_events</span><span class="p">()</span>         <span class="c1"># IG-EPN, last 180 days (needs internet)</span>
 </span></code></pre></div>
 <h2 id="citing">Citing<a class="headerlink" href="#citing" title="Permanent link">&para;</a></h2>
 <p>The data belongs to IG-EPN. Cite the model and the provider:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">EcuadorHazard</span><span class="o">.</span><span class="n">citation</span><span class="p">())</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">EcuadorHazard</span><span class="o">.</span><span class="n">citation</span><span class="p">())</span>
 </span></code></pre></div>
 <blockquote>
 <p>Beauval C. et al. (2018). A New Seismic Hazard Model for Ecuador.
