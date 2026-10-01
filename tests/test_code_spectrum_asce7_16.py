@@ -35,7 +35,7 @@ FV_REF = {
     "B": [0.8] * 6,
     "C": [1.5, 1.5, 1.5, 1.5, 1.5, 1.4],
     "D": [2.4, 2.2, 2.0, 1.9, 1.8, 1.7],
-    "E": [4.2, 3.3, 2.8, 2.4, 2.2, 2.0],
+    "E": [4.2],  # S1 > 0.1: "See Section 11.4.8", no printed value
 }
 SS_COLS = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5]
 S1_COLS = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
@@ -49,7 +49,8 @@ def test_table_cells_match_reference():
         assert list(FA_TABLE[sc]) == FA_REF[sc]
     assert FA_TABLE["E"][3:] == (None, None, None)  # "see 11.4.8"
     for sc, row in FV_REF.items():
-        assert list(FV_TABLE[sc]) == row
+        assert list(FV_TABLE[sc][: len(row)]) == row
+    assert FV_TABLE["E"][1:] == (None,) * 5
 
 
 @pytest.mark.parametrize("sc", list("ABCD"))
@@ -169,10 +170,17 @@ def test_triggers_raise_by_default(ss, s1, sc, match):
 
 @pytest.mark.parametrize(
     "ss,s1,sc",
-    [(0.99, 0.19, "E"), (3.0, 0.19, "D"), (3.0, 3.0, "C"), (3.0, 3.0, "B"), (0.99, 0.19, "D")],
+    [(0.99, 0.1, "E"), (3.0, 0.19, "D"), (3.0, 3.0, "C"), (3.0, 3.0, "B"), (0.99, 0.19, "D")],
 )
 def test_untriggered_cases_do_not_raise(ss, s1, sc):
     ASCE7_16Spectrum(ss=ss, s1=s1, site_class=sc, tl=12.0)
+
+
+def test_site_e_between_0p1_and_0p2_has_no_printed_fv():
+    # Not a 11.4.8 trigger (S1 < 0.2), but Table 11.4-2 prints 4.2 only at S1 <= 0.1
+    # and "See Section 11.4.8" at 0.2, so there is nothing to interpolate to.
+    with pytest.raises(ValueError, match="no Fv for Site Class E"):
+        ASCE7_16Spectrum(ss=0.5, s1=0.15, site_class="E", tl=12.0)
 
 
 def test_exception_2_site_d_shape():
@@ -216,13 +224,12 @@ def test_exception_1_site_e_fa_as_site_class_c():
     np.testing.assert_allclose(m.sa(T), base.sa(T))
 
 
-def test_exception_3_site_e_s1_is_a_procedure_condition_only():
-    m = ASCE7_16Spectrum(ss=0.5, s1=0.3, site_class="E", tl=8.0, allow_exception=True)
-    assert m.fa == pytest.approx(1.7) and m.fv == pytest.approx(2.8)
-    assert m.sd1 == pytest.approx(2 / 3 * 2.8 * 0.3)
-    assert "T<=Ts and ELF only" in m.parameters()["exception_applied"]
-    base = ASCE7_16Spectrum.from_sds_sd1(m.sds, m.sd1, 8.0)
-    np.testing.assert_allclose(m.sa([0.1, 1.0, 3.0]), base.sa([0.1, 1.0, 3.0]))
+def test_site_e_with_s1_above_0p1_has_no_printed_fv_even_with_exception():
+    # Table 11.4-2 (p. 84): Site Class E, S1 > 0.1 -> "See Section 11.4.8", no value.
+    # Exception 3 waives the hazard analysis only for T <= Ts with the ELF
+    # procedure, where SDS alone governs, so no SD1 can be built from the table.
+    with pytest.raises(ValueError, match="no Fv for Site Class E"):
+        ASCE7_16Spectrum(ss=0.5, s1=0.3, site_class="E", tl=8.0, allow_exception=True)
 
 
 def test_e_between_0p75_and_1_uses_c_value_at_the_open_cell():
@@ -230,10 +237,9 @@ def test_e_between_0p75_and_1_uses_c_value_at_the_open_cell():
     assert site_coefficients(0.875, 0.1, "E")[0] == pytest.approx(1.25)
 
 
-def test_site_class_e_both_triggers_combine():
-    m = ASCE7_16Spectrum(ss=1.5, s1=0.5, site_class="E", tl=8.0, allow_exception=True)
-    assert m.fa == pytest.approx(1.2) and m.fv == pytest.approx(2.2)
-    assert m.exceptions == ("E_Ss", "E_S1")
+def test_site_class_e_both_triggers_still_need_site_specific_sd1():
+    with pytest.raises(ValueError, match="from_sds_sd1"):
+        ASCE7_16Spectrum(ss=1.5, s1=0.5, site_class="E", tl=8.0, allow_exception=True)
 
 
 # ----------------------------------------------------------- from_sds_sd1 ---

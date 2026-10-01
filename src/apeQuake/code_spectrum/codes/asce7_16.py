@@ -32,14 +32,16 @@ FA_TABLE: dict[str, tuple[float | None, ...]] = {
     "D": (1.6, 1.4, 1.2, 1.1, 1.0, 1.0),
     "E": (2.4, 1.7, 1.3, None, None, None),
 }
-#: Table 11.4-2, Fv.  D and E cells for S1 >= 0.2 carry the footnote "see
-#: 11.4.8" (site-specific study required unless an exception is used).
-FV_TABLE: dict[str, tuple[float, ...]] = {
+#: Table 11.4-2, Fv.  D cells for S1 >= 0.2 carry the footnote "see 11.4.8"
+#: (site-specific study required unless exception 2 is used).  ``None`` =
+#: "See Section 11.4.8": the standard prints no Fv for Site Class E with
+#: S1 > 0.1 (verified against the printed table, ASCE/SEI 7-16 p. 84).
+FV_TABLE: dict[str, tuple[float | None, ...]] = {
     "A": (0.8, 0.8, 0.8, 0.8, 0.8, 0.8),
     "B": (0.8, 0.8, 0.8, 0.8, 0.8, 0.8),
     "C": (1.5, 1.5, 1.5, 1.5, 1.5, 1.4),
     "D": (2.4, 2.2, 2.0, 1.9, 1.8, 1.7),
-    "E": (4.2, 3.3, 2.8, 2.4, 2.2, 2.0),
+    "E": (4.2, None, None, None, None, None),
 }
 
 #: 11.4.4: minimum Fa when Site Class D is the default class (11.4.3).
@@ -114,7 +116,18 @@ def site_coefficients(
         fa = _interp(ss, SS_COLUMNS, row)  # type: ignore[arg-type]
     if sc == "D" and default_class:
         fa = max(fa, FA_MIN_DEFAULT_D)
-    fv = _interp(s1, S1_COLUMNS, FV_TABLE[sc])
+    if sc == "E" and s1 > S1_COLUMNS[0]:
+        raise ValueError(
+            "ASCE 7-16 Table 11.4-2 gives no Fv for Site Class E with S1 > 0.1 "
+            "('See Section 11.4.8'): a site-specific ground motion hazard analysis "
+            "is required. Use ASCE7_16Spectrum.from_sds_sd1() with the site-specific "
+            "values (exception 3 only waives the analysis for T <= Ts with the "
+            "equivalent lateral force procedure, where SDS alone governs)"
+        )
+    if sc == "E":
+        fv = float(FV_TABLE["E"][0])  # S1 <= 0.1: the only printed value
+    else:
+        fv = _interp(s1, S1_COLUMNS, FV_TABLE[sc])  # type: ignore[arg-type]
     return fa, fv
 
 
