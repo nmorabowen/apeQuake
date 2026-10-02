@@ -917,6 +917,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#static-3d-view-no-browser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static 3D view (no browser)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#how-the-colors-are-chosen" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1518,6 +1529,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#static-3d-view-no-browser" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static 3D view (no browser)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#how-the-colors-are-chosen" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1793,6 +1815,24 @@ offline. Only the background tiles (streets, terrain, satellite) come from the i
 When they can't load, the panel says so, and the province outlines still give the
 geography. The file is about 3 MB. <code>inline_leaflet=False</code> loads Leaflet from a CDN (with
 integrity checks) instead, for a file about 150 kB smaller.</p>
+<h3 id="static-3d-view-no-browser">Static 3D view (no browser)<a class="headerlink" href="#static-3d-view-no-browser" title="Permanent link">&para;</a></h3>
+<p><code>plot_iso()</code> draws the same isometric relief as the explorer's <strong>3D view</strong> with matplotlib:
+each cell is extruded from its real outline, height and color both show Sa, province
+outlines lie on the ground, and sites stand as needles with a red <strong>x</strong> on top. It
+returns the <code>Axes3D</code>, takes the same <code>points</code> forms as <code>plot_map()</code>, and also accepts
+<code>theme="dark"</code>, <code>elev</code> / <code>azim</code> (camera) and <code>height_scale</code> (km of height per g).</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">site</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.94168</span><span class="p">,</span> <span class="o">-</span><span class="mf">80.73405</span><span class="p">,</span> <span class="s2">"Urban Tower"</span><span class="p">)</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">ax</span> <span class="o">=</span> <span class="n">hz</span><span class="o">.</span><span class="n">plot_iso</span><span class="p">(</span><span class="mi">475</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="n">site</span><span class="p">])</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># one call, no browser: the format follows the extension (.png, .pdf, .svg)</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">hz</span><span class="o">.</span><span class="n">export_iso</span><span class="p">(</span><span class="s2">"iso_pga.png"</span><span class="p">,</span> <span class="mi">475</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="n">site</span><span class="p">],</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="c1"># PGA, 0.2, 1 and 2 s side by side; colorbar="shared" puts them on one scale</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="n">hz</span><span class="o">.</span><span class="n">export_iso_periods</span><span class="p">(</span><span class="s2">"iso_periods.png"</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="n">points</span><span class="o">=</span><span class="p">[</span><span class="n">site</span><span class="p">])</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="n">fig</span> <span class="o">=</span> <span class="n">hz</span><span class="o">.</span><span class="n">plot_iso_periods</span><span class="p">(</span><span class="n">colorbar</span><span class="o">=</span><span class="s2">"shared"</span><span class="p">)</span>          <span class="c1"># the Figure, to adjust or save</span>
+</span></code></pre></div>
+<p>Side walls that face away from the camera are dropped when drawing, so set the view with
+<code>elev</code> / <code>azim</code> rather than rotating the axes afterwards.</p>
 <h3 id="how-the-colors-are-chosen">How the colors are chosen<a class="headerlink" href="#how-the-colors-are-chosen" title="Permanent link">&para;</a></h3>
 <p>Every plot and map uses one set of design tokens, checked with a palette validator
 rather than chosen by eye:</p>
@@ -1837,17 +1877,17 @@ shows five periods by default (PGA, 0.2, 0.5, 1 and 2 s). Ask for more and the c
 are also labelled at their ends. Every plot takes <code>theme="light"</code> or <code>"dark"</code>; in dark
 mode the hazard ramp flips, so low hazard recedes into the background.</p>
 <h2 id="sources-and-catalogs">Sources and catalogs<a class="headerlink" href="#sources-and-catalogs" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">hz</span><span class="o">.</span><span class="n">sources</span><span class="p">()</span>                  <span class="c1"># a, b, rate of Mw &gt;= 4.5, Mmax, geometry (GeoJSON)</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">hz</span><span class="o">.</span><span class="n">faults</span><span class="p">()</span>                   <span class="c1"># slip rates, Mmax, dip</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">hz</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span><span class="s2">"historical"</span><span class="p">)</span>      <span class="c1"># 1587-2021</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">hz</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span><span class="s2">"shallow"</span><span class="p">)</span>         <span class="c1"># homogenized catalog used in the PSHA</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">apeQuake.hazard</span><span class="w"> </span><span class="kn">import</span> <span class="n">fetch_recent_events</span>
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="n">fetch_recent_events</span><span class="p">()</span>         <span class="c1"># IG-EPN, last 180 days (needs internet)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">hz</span><span class="o">.</span><span class="n">sources</span><span class="p">()</span>                  <span class="c1"># a, b, rate of Mw &gt;= 4.5, Mmax, geometry (GeoJSON)</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">hz</span><span class="o">.</span><span class="n">faults</span><span class="p">()</span>                   <span class="c1"># slip rates, Mmax, dip</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">hz</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span><span class="s2">"historical"</span><span class="p">)</span>      <span class="c1"># 1587-2021</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">hz</span><span class="o">.</span><span class="n">catalog</span><span class="p">(</span><span class="s2">"shallow"</span><span class="p">)</span>         <span class="c1"># homogenized catalog used in the PSHA</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">apeQuake.hazard</span><span class="w"> </span><span class="kn">import</span> <span class="n">fetch_recent_events</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="n">fetch_recent_events</span><span class="p">()</span>         <span class="c1"># IG-EPN, last 180 days (needs internet)</span>
 </span></code></pre></div>
 <h2 id="citing">Citing<a class="headerlink" href="#citing" title="Permanent link">&para;</a></h2>
 <p>The data belongs to IG-EPN. Cite the model and the provider:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">EcuadorHazard</span><span class="o">.</span><span class="n">citation</span><span class="p">())</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">EcuadorHazard</span><span class="o">.</span><span class="n">citation</span><span class="p">())</span>
 </span></code></pre></div>
 <blockquote>
 <p>Beauval C. et al. (2018). A New Seismic Hazard Model for Ecuador.

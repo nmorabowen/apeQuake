@@ -1446,6 +1446,67 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#apeQuake.hazard.ecuador.EcuadorHazard.plot_iso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        plot_iso
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="plot_iso">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apeQuake.hazard.ecuador.EcuadorHazard.plot_iso--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apeQuake.hazard.ecuador.EcuadorHazard.plot_iso_periods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        plot_iso_periods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apeQuake.hazard.ecuador.EcuadorHazard.export_iso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        export_iso
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apeQuake.hazard.ecuador.EcuadorHazard.export_iso_periods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        export_iso_periods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#apeQuake.hazard.ecuador.EcuadorHazard.explore" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2071,6 +2132,67 @@
         
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apeQuake.hazard.ecuador.EcuadorHazard.plot_iso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        plot_iso
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="plot_iso">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apeQuake.hazard.ecuador.EcuadorHazard.plot_iso--parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apeQuake.hazard.ecuador.EcuadorHazard.plot_iso_periods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        plot_iso_periods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apeQuake.hazard.ecuador.EcuadorHazard.export_iso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        export_iso
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apeQuake.hazard.ecuador.EcuadorHazard.export_iso_periods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        export_iso_periods
+      
+    </span>
+  </a>
   
 </li>
         
@@ -3562,46 +3684,42 @@ live / custom solid.</p>
 <div class="doc doc-object doc-function">
 
 
-<h3 id="apeQuake.hazard.ecuador.EcuadorHazard.explore" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">explore</span>
+<h3 id="apeQuake.hazard.ecuador.EcuadorHazard.plot_iso" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">plot_iso</span>
 
 
-<a href="#apeQuake.hazard.ecuador.EcuadorHazard.explore" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">explore</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'igepn_hazard_map.html'</span><span class="p">,</span> <span class="n">tr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">475</span><span class="p">,</span> <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">stat</span><span class="p">:</span> <span class="n">Stat</span> <span class="o">=</span> <span class="s1">'mean'</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">catalogs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'shallow'</span><span class="p">,</span> <span class="s1">'deep'</span><span class="p">,</span> <span class="s1">'historical'</span><span class="p">),</span> <span class="n">recent</span><span class="p">:</span> <span class="s1">'bool | pd.DataFrame'</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">point_trs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">475</span><span class="p">,</span> <span class="mi">975</span><span class="p">,</span> <span class="mi">2475</span><span class="p">),</span> <span class="n">open_browser</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">inline_leaflet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<a href="#apeQuake.hazard.ecuador.EcuadorHazard.plot_iso" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">plot_iso</span><span class="p">(</span><span class="n">tr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">475</span><span class="p">,</span> <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">stat</span><span class="p">:</span> <span class="n">Stat</span> <span class="o">=</span> <span class="s1">'mean'</span><span class="p">,</span> <span class="n">ax</span><span class="p">:</span> <span class="s1">'Axes | None'</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">provinces</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">elev</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">35</span><span class="p">,</span> <span class="n">azim</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">50</span><span class="p">,</span> <span class="n">height_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vmin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">vmax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">theme</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">'light'</span><span class="p">,</span> <span class="s1">'dark'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'light'</span><span class="p">,</span> <span class="n">marker</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'x'</span><span class="p">,</span> <span class="n">colorbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">annotate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">zoom</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.15</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'Axes'</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
 
-        <p>Write an interactive hazard map (standalone HTML, Leaflet); return its path.</p>
-<p>The page has street / terrain base maps and layers that can be switched on and
-off: the hazard grid (re-colored in the browser for any return period, period and
-statistic), faults, source zones by type, the earthquake catalogs (sized by
-magnitude), the cantonal capitals and your points. Clicking a cell shows its
-values and UHS; a "go to lat, lon" box finds the cell containing any point.</p>
-<h5 id="apeQuake.hazard.ecuador.EcuadorHazard.explore--parameters">Parameters<a class="headerlink" href="#apeQuake.hazard.ecuador.EcuadorHazard.explore--parameters" title="Permanent link">&para;</a></h5>
-<p>path : str
-    Output file.
-tr, period, stat
-    Initial map; all can be changed in the page. TR other than 475 / 2475 uses
-    the per-cell power-law fit, as in :meth:<code>hazard_map</code>.
+        <p>Static isometric 3D relief of the hazard (no browser needed).</p>
+<p>The matplotlib twin of the explorer's <strong>3D view</strong>: every cell is extruded from its
+real outline, height and color both showing Sa; province outlines lie on the
+ground and sites stand as needles with a red marker on top. Returns the Axes3D.</p>
+<h5 id="apeQuake.hazard.ecuador.EcuadorHazard.plot_iso--parameters">Parameters<a class="headerlink" href="#apeQuake.hazard.ecuador.EcuadorHazard.plot_iso--parameters" title="Permanent link">&para;</a></h5>
+<p>tr, period, stat
+    What to show (see :meth:<code>hazard_map</code>).
+ax : Axes3D, optional
+    Existing 3D axes (<code>fig.add_subplot(projection="3d")</code>); a figure is created
+    if omitted.
 points
-    Sites to mark (same forms as :meth:<code>plot_map</code>). Their popups show the mean
-    UHS from :meth:<code>HazardSite.uhs</code> (digitized curves where available) at
-    <code>point_trs</code>.
-catalogs : sequence of str
-    Bundled catalogs to include: <code>"shallow"</code>, <code>"deep"</code>, <code>"historical"</code>.
-recent : bool or DataFrame
-    <code>True</code> fetches the IG-EPN last-180-days events now (needs internet), or
-    pass a DataFrame from :func:<code>fetch_recent_events</code>.
-open_browser : bool
-    Open the file in the default browser.
-inline_leaflet : bool
-    Embed the Leaflet map library in the file (default, about +150 kB), so the
-    page also works where external scripts are blocked: sandboxed file previews,
-    mail or chat attachments, offline. <code>False</code> loads it from the unpkg CDN
-    with integrity checks, for a smaller file.</p>
-<p>Everything but the base-map tiles is embedded in the file: without internet
-the hazard and all overlays still draw, on a blank background.</p>
+    Sites to mark (same forms as :meth:<code>plot_map</code>).
+provinces : bool
+    Province outlines on the ground.
+elev, azim : float
+    Camera angles [deg]. Side walls facing away are dropped at draw time, so
+    pass the angles here rather than rotating the axes afterwards.
+height_scale : float, optional
+    Vertical exaggeration as km of height per g (the horizontal unit is km).
+    Default makes the highest cell 140 km tall, as in the HTML view.
+cmap, vmin, vmax, theme
+    Styling, as in :meth:<code>plot_map</code>.
+marker : str
+    Matplotlib marker on top of each site needle (red <code>"x"</code> by default).
+colorbar, annotate, title : bool
+    Colorbar, site labels, title and subtitle.</p>
 
 
             <details class="mkdocstrings-source">
@@ -3648,53 +3766,330 @@ the hazard and all overlays still draw, on a blank background.</p>
 <span class="normal"><a href="#__codelineno-0-443">443</a></span>
 <span class="normal"><a href="#__codelineno-0-444">444</a></span>
 <span class="normal"><a href="#__codelineno-0-445">445</a></span>
-<span class="normal"><a href="#__codelineno-0-446">446</a></span>
-<span class="normal"><a href="#__codelineno-0-447">447</a></span>
-<span class="normal"><a href="#__codelineno-0-448">448</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-404"><a id="__codelineno-0-404" name="__codelineno-0-404"></a><span class="k">def</span><span class="w"> </span><span class="nf">explore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"igepn_hazard_map.html"</span><span class="p">,</span> <span class="n">tr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">475</span><span class="p">,</span>
-</span><span id="__span-0-405"><a id="__codelineno-0-405" name="__codelineno-0-405"></a>            <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">stat</span><span class="p">:</span> <span class="n">Stat</span> <span class="o">=</span> <span class="s2">"mean"</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-0-406"><a id="__codelineno-0-406" name="__codelineno-0-406"></a>            <span class="n">catalogs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"shallow"</span><span class="p">,</span> <span class="s2">"deep"</span><span class="p">,</span> <span class="s2">"historical"</span><span class="p">),</span>
-</span><span id="__span-0-407"><a id="__codelineno-0-407" name="__codelineno-0-407"></a>            <span class="n">recent</span><span class="p">:</span> <span class="s2">"bool | pd.DataFrame"</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span id="__span-0-408"><a id="__codelineno-0-408" name="__codelineno-0-408"></a>            <span class="n">point_trs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">475</span><span class="p">,</span> <span class="mi">975</span><span class="p">,</span> <span class="mi">2475</span><span class="p">),</span>
-</span><span id="__span-0-409"><a id="__codelineno-0-409" name="__codelineno-0-409"></a>            <span class="n">open_browser</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">inline_leaflet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-</span><span id="__span-0-410"><a id="__codelineno-0-410" name="__codelineno-0-410"></a><span class="w">    </span><span class="sd">"""Write an interactive hazard map (standalone HTML, Leaflet); return its path.</span>
-</span><span id="__span-0-411"><a id="__codelineno-0-411" name="__codelineno-0-411"></a>
-</span><span id="__span-0-412"><a id="__codelineno-0-412" name="__codelineno-0-412"></a><span class="sd">    The page has street / terrain base maps and layers that can be switched on and</span>
-</span><span id="__span-0-413"><a id="__codelineno-0-413" name="__codelineno-0-413"></a><span class="sd">    off: the hazard grid (re-colored in the browser for any return period, period and</span>
-</span><span id="__span-0-414"><a id="__codelineno-0-414" name="__codelineno-0-414"></a><span class="sd">    statistic), faults, source zones by type, the earthquake catalogs (sized by</span>
-</span><span id="__span-0-415"><a id="__codelineno-0-415" name="__codelineno-0-415"></a><span class="sd">    magnitude), the cantonal capitals and your points. Clicking a cell shows its</span>
-</span><span id="__span-0-416"><a id="__codelineno-0-416" name="__codelineno-0-416"></a><span class="sd">    values and UHS; a "go to lat, lon" box finds the cell containing any point.</span>
-</span><span id="__span-0-417"><a id="__codelineno-0-417" name="__codelineno-0-417"></a>
-</span><span id="__span-0-418"><a id="__codelineno-0-418" name="__codelineno-0-418"></a><span class="sd">    Parameters</span>
-</span><span id="__span-0-419"><a id="__codelineno-0-419" name="__codelineno-0-419"></a><span class="sd">    ----------</span>
-</span><span id="__span-0-420"><a id="__codelineno-0-420" name="__codelineno-0-420"></a><span class="sd">    path : str</span>
-</span><span id="__span-0-421"><a id="__codelineno-0-421" name="__codelineno-0-421"></a><span class="sd">        Output file.</span>
-</span><span id="__span-0-422"><a id="__codelineno-0-422" name="__codelineno-0-422"></a><span class="sd">    tr, period, stat</span>
-</span><span id="__span-0-423"><a id="__codelineno-0-423" name="__codelineno-0-423"></a><span class="sd">        Initial map; all can be changed in the page. TR other than 475 / 2475 uses</span>
-</span><span id="__span-0-424"><a id="__codelineno-0-424" name="__codelineno-0-424"></a><span class="sd">        the per-cell power-law fit, as in :meth:`hazard_map`.</span>
-</span><span id="__span-0-425"><a id="__codelineno-0-425" name="__codelineno-0-425"></a><span class="sd">    points</span>
-</span><span id="__span-0-426"><a id="__codelineno-0-426" name="__codelineno-0-426"></a><span class="sd">        Sites to mark (same forms as :meth:`plot_map`). Their popups show the mean</span>
-</span><span id="__span-0-427"><a id="__codelineno-0-427" name="__codelineno-0-427"></a><span class="sd">        UHS from :meth:`HazardSite.uhs` (digitized curves where available) at</span>
-</span><span id="__span-0-428"><a id="__codelineno-0-428" name="__codelineno-0-428"></a><span class="sd">        ``point_trs``.</span>
-</span><span id="__span-0-429"><a id="__codelineno-0-429" name="__codelineno-0-429"></a><span class="sd">    catalogs : sequence of str</span>
-</span><span id="__span-0-430"><a id="__codelineno-0-430" name="__codelineno-0-430"></a><span class="sd">        Bundled catalogs to include: ``"shallow"``, ``"deep"``, ``"historical"``.</span>
-</span><span id="__span-0-431"><a id="__codelineno-0-431" name="__codelineno-0-431"></a><span class="sd">    recent : bool or DataFrame</span>
-</span><span id="__span-0-432"><a id="__codelineno-0-432" name="__codelineno-0-432"></a><span class="sd">        ``True`` fetches the IG-EPN last-180-days events now (needs internet), or</span>
-</span><span id="__span-0-433"><a id="__codelineno-0-433" name="__codelineno-0-433"></a><span class="sd">        pass a DataFrame from :func:`fetch_recent_events`.</span>
-</span><span id="__span-0-434"><a id="__codelineno-0-434" name="__codelineno-0-434"></a><span class="sd">    open_browser : bool</span>
-</span><span id="__span-0-435"><a id="__codelineno-0-435" name="__codelineno-0-435"></a><span class="sd">        Open the file in the default browser.</span>
-</span><span id="__span-0-436"><a id="__codelineno-0-436" name="__codelineno-0-436"></a><span class="sd">    inline_leaflet : bool</span>
-</span><span id="__span-0-437"><a id="__codelineno-0-437" name="__codelineno-0-437"></a><span class="sd">        Embed the Leaflet map library in the file (default, about +150 kB), so the</span>
-</span><span id="__span-0-438"><a id="__codelineno-0-438" name="__codelineno-0-438"></a><span class="sd">        page also works where external scripts are blocked: sandboxed file previews,</span>
-</span><span id="__span-0-439"><a id="__codelineno-0-439" name="__codelineno-0-439"></a><span class="sd">        mail or chat attachments, offline. ``False`` loads it from the unpkg CDN</span>
-</span><span id="__span-0-440"><a id="__codelineno-0-440" name="__codelineno-0-440"></a><span class="sd">        with integrity checks, for a smaller file.</span>
-</span><span id="__span-0-441"><a id="__codelineno-0-441" name="__codelineno-0-441"></a>
-</span><span id="__span-0-442"><a id="__codelineno-0-442" name="__codelineno-0-442"></a><span class="sd">    Everything but the base-map tiles is embedded in the file: without internet</span>
-</span><span id="__span-0-443"><a id="__codelineno-0-443" name="__codelineno-0-443"></a><span class="sd">    the hazard and all overlays still draw, on a blank background.</span>
-</span><span id="__span-0-444"><a id="__codelineno-0-444" name="__codelineno-0-444"></a><span class="sd">    """</span>
-</span><span id="__span-0-445"><a id="__codelineno-0-445" name="__codelineno-0-445"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">.maps</span><span class="w"> </span><span class="kn">import</span> <span class="n">explore</span>
-</span><span id="__span-0-446"><a id="__codelineno-0-446" name="__codelineno-0-446"></a>
-</span><span id="__span-0-447"><a id="__codelineno-0-447" name="__codelineno-0-447"></a>    <span class="k">return</span> <span class="n">explore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">catalogs</span><span class="p">,</span> <span class="n">recent</span><span class="p">,</span> <span class="n">point_trs</span><span class="p">,</span>
-</span><span id="__span-0-448"><a id="__codelineno-0-448" name="__codelineno-0-448"></a>                   <span class="n">open_browser</span><span class="p">,</span> <span class="n">inline_leaflet</span><span class="p">)</span>
+<span class="normal"><a href="#__codelineno-0-446">446</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-404"><a id="__codelineno-0-404" name="__codelineno-0-404"></a><span class="k">def</span><span class="w"> </span><span class="nf">plot_iso</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">475</span><span class="p">,</span> <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">stat</span><span class="p">:</span> <span class="n">Stat</span> <span class="o">=</span> <span class="s2">"mean"</span><span class="p">,</span>
+</span><span id="__span-0-405"><a id="__codelineno-0-405" name="__codelineno-0-405"></a>             <span class="n">ax</span><span class="p">:</span> <span class="s2">"Axes | None"</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">provinces</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="__span-0-406"><a id="__codelineno-0-406" name="__codelineno-0-406"></a>             <span class="n">elev</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">35</span><span class="p">,</span> <span class="n">azim</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mi">50</span><span class="p">,</span> <span class="n">height_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-0-407"><a id="__codelineno-0-407" name="__codelineno-0-407"></a>             <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vmin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">vmax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-0-408"><a id="__codelineno-0-408" name="__codelineno-0-408"></a>             <span class="n">theme</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"light"</span><span class="p">,</span> <span class="s2">"dark"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"light"</span><span class="p">,</span> <span class="n">marker</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"x"</span><span class="p">,</span>
+</span><span id="__span-0-409"><a id="__codelineno-0-409" name="__codelineno-0-409"></a>             <span class="n">colorbar</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">annotate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="__span-0-410"><a id="__codelineno-0-410" name="__codelineno-0-410"></a>             <span class="n">zoom</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.15</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Axes"</span><span class="p">:</span>
+</span><span id="__span-0-411"><a id="__codelineno-0-411" name="__codelineno-0-411"></a><span class="w">    </span><span class="sd">"""Static isometric 3D relief of the hazard (no browser needed).</span>
+</span><span id="__span-0-412"><a id="__codelineno-0-412" name="__codelineno-0-412"></a>
+</span><span id="__span-0-413"><a id="__codelineno-0-413" name="__codelineno-0-413"></a><span class="sd">    The matplotlib twin of the explorer's **3D view**: every cell is extruded from its</span>
+</span><span id="__span-0-414"><a id="__codelineno-0-414" name="__codelineno-0-414"></a><span class="sd">    real outline, height and color both showing Sa; province outlines lie on the</span>
+</span><span id="__span-0-415"><a id="__codelineno-0-415" name="__codelineno-0-415"></a><span class="sd">    ground and sites stand as needles with a red marker on top. Returns the Axes3D.</span>
+</span><span id="__span-0-416"><a id="__codelineno-0-416" name="__codelineno-0-416"></a>
+</span><span id="__span-0-417"><a id="__codelineno-0-417" name="__codelineno-0-417"></a><span class="sd">    Parameters</span>
+</span><span id="__span-0-418"><a id="__codelineno-0-418" name="__codelineno-0-418"></a><span class="sd">    ----------</span>
+</span><span id="__span-0-419"><a id="__codelineno-0-419" name="__codelineno-0-419"></a><span class="sd">    tr, period, stat</span>
+</span><span id="__span-0-420"><a id="__codelineno-0-420" name="__codelineno-0-420"></a><span class="sd">        What to show (see :meth:`hazard_map`).</span>
+</span><span id="__span-0-421"><a id="__codelineno-0-421" name="__codelineno-0-421"></a><span class="sd">    ax : Axes3D, optional</span>
+</span><span id="__span-0-422"><a id="__codelineno-0-422" name="__codelineno-0-422"></a><span class="sd">        Existing 3D axes (``fig.add_subplot(projection="3d")``); a figure is created</span>
+</span><span id="__span-0-423"><a id="__codelineno-0-423" name="__codelineno-0-423"></a><span class="sd">        if omitted.</span>
+</span><span id="__span-0-424"><a id="__codelineno-0-424" name="__codelineno-0-424"></a><span class="sd">    points</span>
+</span><span id="__span-0-425"><a id="__codelineno-0-425" name="__codelineno-0-425"></a><span class="sd">        Sites to mark (same forms as :meth:`plot_map`).</span>
+</span><span id="__span-0-426"><a id="__codelineno-0-426" name="__codelineno-0-426"></a><span class="sd">    provinces : bool</span>
+</span><span id="__span-0-427"><a id="__codelineno-0-427" name="__codelineno-0-427"></a><span class="sd">        Province outlines on the ground.</span>
+</span><span id="__span-0-428"><a id="__codelineno-0-428" name="__codelineno-0-428"></a><span class="sd">    elev, azim : float</span>
+</span><span id="__span-0-429"><a id="__codelineno-0-429" name="__codelineno-0-429"></a><span class="sd">        Camera angles [deg]. Side walls facing away are dropped at draw time, so</span>
+</span><span id="__span-0-430"><a id="__codelineno-0-430" name="__codelineno-0-430"></a><span class="sd">        pass the angles here rather than rotating the axes afterwards.</span>
+</span><span id="__span-0-431"><a id="__codelineno-0-431" name="__codelineno-0-431"></a><span class="sd">    height_scale : float, optional</span>
+</span><span id="__span-0-432"><a id="__codelineno-0-432" name="__codelineno-0-432"></a><span class="sd">        Vertical exaggeration as km of height per g (the horizontal unit is km).</span>
+</span><span id="__span-0-433"><a id="__codelineno-0-433" name="__codelineno-0-433"></a><span class="sd">        Default makes the highest cell 140 km tall, as in the HTML view.</span>
+</span><span id="__span-0-434"><a id="__codelineno-0-434" name="__codelineno-0-434"></a><span class="sd">    cmap, vmin, vmax, theme</span>
+</span><span id="__span-0-435"><a id="__codelineno-0-435" name="__codelineno-0-435"></a><span class="sd">        Styling, as in :meth:`plot_map`.</span>
+</span><span id="__span-0-436"><a id="__codelineno-0-436" name="__codelineno-0-436"></a><span class="sd">    marker : str</span>
+</span><span id="__span-0-437"><a id="__codelineno-0-437" name="__codelineno-0-437"></a><span class="sd">        Matplotlib marker on top of each site needle (red ``"x"`` by default).</span>
+</span><span id="__span-0-438"><a id="__codelineno-0-438" name="__codelineno-0-438"></a><span class="sd">    colorbar, annotate, title : bool</span>
+</span><span id="__span-0-439"><a id="__codelineno-0-439" name="__codelineno-0-439"></a><span class="sd">        Colorbar, site labels, title and subtitle.</span>
+</span><span id="__span-0-440"><a id="__codelineno-0-440" name="__codelineno-0-440"></a><span class="sd">    """</span>
+</span><span id="__span-0-441"><a id="__codelineno-0-441" name="__codelineno-0-441"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">.iso</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_iso</span>
+</span><span id="__span-0-442"><a id="__codelineno-0-442" name="__codelineno-0-442"></a>
+</span><span id="__span-0-443"><a id="__codelineno-0-443" name="__codelineno-0-443"></a>    <span class="k">return</span> <span class="n">plot_iso</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">provinces</span><span class="o">=</span><span class="n">provinces</span><span class="p">,</span>
+</span><span id="__span-0-444"><a id="__codelineno-0-444" name="__codelineno-0-444"></a>                    <span class="n">elev</span><span class="o">=</span><span class="n">elev</span><span class="p">,</span> <span class="n">azim</span><span class="o">=</span><span class="n">azim</span><span class="p">,</span> <span class="n">height_scale</span><span class="o">=</span><span class="n">height_scale</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+</span><span id="__span-0-445"><a id="__codelineno-0-445" name="__codelineno-0-445"></a>                    <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="n">theme</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span>
+</span><span id="__span-0-446"><a id="__codelineno-0-446" name="__codelineno-0-446"></a>                    <span class="n">colorbar</span><span class="o">=</span><span class="n">colorbar</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="n">annotate</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">zoom</span><span class="p">)</span>
+</span></code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="apeQuake.hazard.ecuador.EcuadorHazard.plot_iso_periods" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">plot_iso_periods</span>
+
+
+<a href="#apeQuake.hazard.ecuador.EcuadorHazard.plot_iso_periods" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">plot_iso_periods</span><span class="p">(</span><span class="n">periods</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="n">tr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">475</span><span class="p">,</span> <span class="n">stat</span><span class="p">:</span> <span class="n">Stat</span> <span class="o">=</span> <span class="s1">'mean'</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ncols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">colorbar</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">'panel'</span><span class="p">,</span> <span class="s1">'shared'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'panel'</span><span class="p">,</span> <span class="n">figsize</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>One :meth:<code>plot_iso</code> panel per period; returns the Figure.</p>
+<p><code>colorbar="panel"</code> (default) gives each panel its own scale, so every period
+uses its full color range; <code>"shared"</code> uses one colorbar and one height scale
+for all panels, so heights compare across periods. Other keyword arguments
+(<code>points</code>, <code>theme</code>, <code>elev</code>, <code>azim</code>, ...) go to :meth:<code>plot_iso</code>.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/apeQuake/hazard/ecuador.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-448">448</a></span>
+<span class="normal"><a href="#__codelineno-0-449">449</a></span>
+<span class="normal"><a href="#__codelineno-0-450">450</a></span>
+<span class="normal"><a href="#__codelineno-0-451">451</a></span>
+<span class="normal"><a href="#__codelineno-0-452">452</a></span>
+<span class="normal"><a href="#__codelineno-0-453">453</a></span>
+<span class="normal"><a href="#__codelineno-0-454">454</a></span>
+<span class="normal"><a href="#__codelineno-0-455">455</a></span>
+<span class="normal"><a href="#__codelineno-0-456">456</a></span>
+<span class="normal"><a href="#__codelineno-0-457">457</a></span>
+<span class="normal"><a href="#__codelineno-0-458">458</a></span>
+<span class="normal"><a href="#__codelineno-0-459">459</a></span>
+<span class="normal"><a href="#__codelineno-0-460">460</a></span>
+<span class="normal"><a href="#__codelineno-0-461">461</a></span>
+<span class="normal"><a href="#__codelineno-0-462">462</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-448"><a id="__codelineno-0-448" name="__codelineno-0-448"></a><span class="k">def</span><span class="w"> </span><span class="nf">plot_iso_periods</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">periods</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span>
+</span><span id="__span-0-449"><a id="__codelineno-0-449" name="__codelineno-0-449"></a>                     <span class="n">tr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">475</span><span class="p">,</span> <span class="n">stat</span><span class="p">:</span> <span class="n">Stat</span> <span class="o">=</span> <span class="s2">"mean"</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ncols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-0-450"><a id="__codelineno-0-450" name="__codelineno-0-450"></a>                     <span class="n">colorbar</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"panel"</span><span class="p">,</span> <span class="s2">"shared"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"panel"</span><span class="p">,</span>
+</span><span id="__span-0-451"><a id="__codelineno-0-451" name="__codelineno-0-451"></a>                     <span class="n">figsize</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+</span><span id="__span-0-452"><a id="__codelineno-0-452" name="__codelineno-0-452"></a><span class="w">    </span><span class="sd">"""One :meth:`plot_iso` panel per period; returns the Figure.</span>
+</span><span id="__span-0-453"><a id="__codelineno-0-453" name="__codelineno-0-453"></a>
+</span><span id="__span-0-454"><a id="__codelineno-0-454" name="__codelineno-0-454"></a><span class="sd">    ``colorbar="panel"`` (default) gives each panel its own scale, so every period</span>
+</span><span id="__span-0-455"><a id="__codelineno-0-455" name="__codelineno-0-455"></a><span class="sd">    uses its full color range; ``"shared"`` uses one colorbar and one height scale</span>
+</span><span id="__span-0-456"><a id="__codelineno-0-456" name="__codelineno-0-456"></a><span class="sd">    for all panels, so heights compare across periods. Other keyword arguments</span>
+</span><span id="__span-0-457"><a id="__codelineno-0-457" name="__codelineno-0-457"></a><span class="sd">    (``points``, ``theme``, ``elev``, ``azim``, ...) go to :meth:`plot_iso`.</span>
+</span><span id="__span-0-458"><a id="__codelineno-0-458" name="__codelineno-0-458"></a><span class="sd">    """</span>
+</span><span id="__span-0-459"><a id="__codelineno-0-459" name="__codelineno-0-459"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">.iso</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_iso_periods</span>
+</span><span id="__span-0-460"><a id="__codelineno-0-460" name="__codelineno-0-460"></a>
+</span><span id="__span-0-461"><a id="__codelineno-0-461" name="__codelineno-0-461"></a>    <span class="k">return</span> <span class="n">plot_iso_periods</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">periods</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="n">ncols</span><span class="p">,</span> <span class="n">colorbar</span><span class="o">=</span><span class="n">colorbar</span><span class="p">,</span>
+</span><span id="__span-0-462"><a id="__codelineno-0-462" name="__codelineno-0-462"></a>                            <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</span></code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="apeQuake.hazard.ecuador.EcuadorHazard.export_iso" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">export_iso</span>
+
+
+<a href="#apeQuake.hazard.ecuador.EcuadorHazard.export_iso" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">export_iso</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">475</span><span class="p">,</span> <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">stat</span><span class="p">:</span> <span class="n">Stat</span> <span class="o">=</span> <span class="s1">'mean'</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">dpi</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">150</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Write :meth:<code>plot_iso</code> to a PNG, PDF or SVG file (by extension); return the Path.</p>
+<p>Needs no browser. <code>dpi</code> applies to PNG; other keyword arguments go to
+:meth:<code>plot_iso</code>. Other extensions raise <code>ValueError</code>.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/apeQuake/hazard/ecuador.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-464">464</a></span>
+<span class="normal"><a href="#__codelineno-0-465">465</a></span>
+<span class="normal"><a href="#__codelineno-0-466">466</a></span>
+<span class="normal"><a href="#__codelineno-0-467">467</a></span>
+<span class="normal"><a href="#__codelineno-0-468">468</a></span>
+<span class="normal"><a href="#__codelineno-0-469">469</a></span>
+<span class="normal"><a href="#__codelineno-0-470">470</a></span>
+<span class="normal"><a href="#__codelineno-0-471">471</a></span>
+<span class="normal"><a href="#__codelineno-0-472">472</a></span>
+<span class="normal"><a href="#__codelineno-0-473">473</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-464"><a id="__codelineno-0-464" name="__codelineno-0-464"></a><span class="k">def</span><span class="w"> </span><span class="nf">export_iso</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">475</span><span class="p">,</span> <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+</span><span id="__span-0-465"><a id="__codelineno-0-465" name="__codelineno-0-465"></a>               <span class="n">stat</span><span class="p">:</span> <span class="n">Stat</span> <span class="o">=</span> <span class="s2">"mean"</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">dpi</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">150</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+</span><span id="__span-0-466"><a id="__codelineno-0-466" name="__codelineno-0-466"></a><span class="w">    </span><span class="sd">"""Write :meth:`plot_iso` to a PNG, PDF or SVG file (by extension); return the Path.</span>
+</span><span id="__span-0-467"><a id="__codelineno-0-467" name="__codelineno-0-467"></a>
+</span><span id="__span-0-468"><a id="__codelineno-0-468" name="__codelineno-0-468"></a><span class="sd">    Needs no browser. ``dpi`` applies to PNG; other keyword arguments go to</span>
+</span><span id="__span-0-469"><a id="__codelineno-0-469" name="__codelineno-0-469"></a><span class="sd">    :meth:`plot_iso`. Other extensions raise ``ValueError``.</span>
+</span><span id="__span-0-470"><a id="__codelineno-0-470" name="__codelineno-0-470"></a><span class="sd">    """</span>
+</span><span id="__span-0-471"><a id="__codelineno-0-471" name="__codelineno-0-471"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">.iso</span><span class="w"> </span><span class="kn">import</span> <span class="n">export_iso</span>
+</span><span id="__span-0-472"><a id="__codelineno-0-472" name="__codelineno-0-472"></a>
+</span><span id="__span-0-473"><a id="__codelineno-0-473" name="__codelineno-0-473"></a>    <span class="k">return</span> <span class="n">export_iso</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</span></code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="apeQuake.hazard.ecuador.EcuadorHazard.export_iso_periods" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">export_iso_periods</span>
+
+
+<a href="#apeQuake.hazard.ecuador.EcuadorHazard.export_iso_periods" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">export_iso_periods</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">periods</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="n">tr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">475</span><span class="p">,</span> <span class="n">stat</span><span class="p">:</span> <span class="n">Stat</span> <span class="o">=</span> <span class="s1">'mean'</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">dpi</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">150</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Write :meth:<code>plot_iso_periods</code> to a PNG, PDF or SVG file; return the Path.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/apeQuake/hazard/ecuador.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-475">475</a></span>
+<span class="normal"><a href="#__codelineno-0-476">476</a></span>
+<span class="normal"><a href="#__codelineno-0-477">477</a></span>
+<span class="normal"><a href="#__codelineno-0-478">478</a></span>
+<span class="normal"><a href="#__codelineno-0-479">479</a></span>
+<span class="normal"><a href="#__codelineno-0-480">480</a></span>
+<span class="normal"><a href="#__codelineno-0-481">481</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-475"><a id="__codelineno-0-475" name="__codelineno-0-475"></a><span class="k">def</span><span class="w"> </span><span class="nf">export_iso_periods</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">periods</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span>
+</span><span id="__span-0-476"><a id="__codelineno-0-476" name="__codelineno-0-476"></a>                       <span class="n">tr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">475</span><span class="p">,</span> <span class="n">stat</span><span class="p">:</span> <span class="n">Stat</span> <span class="o">=</span> <span class="s2">"mean"</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+</span><span id="__span-0-477"><a id="__codelineno-0-477" name="__codelineno-0-477"></a>                       <span class="n">dpi</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">150</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+</span><span id="__span-0-478"><a id="__codelineno-0-478" name="__codelineno-0-478"></a><span class="w">    </span><span class="sd">"""Write :meth:`plot_iso_periods` to a PNG, PDF or SVG file; return the Path."""</span>
+</span><span id="__span-0-479"><a id="__codelineno-0-479" name="__codelineno-0-479"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">.iso</span><span class="w"> </span><span class="kn">import</span> <span class="n">export_iso_periods</span>
+</span><span id="__span-0-480"><a id="__codelineno-0-480" name="__codelineno-0-480"></a>
+</span><span id="__span-0-481"><a id="__codelineno-0-481" name="__codelineno-0-481"></a>    <span class="k">return</span> <span class="n">export_iso_periods</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">periods</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</span></code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="apeQuake.hazard.ecuador.EcuadorHazard.explore" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">explore</span>
+
+
+<a href="#apeQuake.hazard.ecuador.EcuadorHazard.explore" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">explore</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'igepn_hazard_map.html'</span><span class="p">,</span> <span class="n">tr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">475</span><span class="p">,</span> <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">stat</span><span class="p">:</span> <span class="n">Stat</span> <span class="o">=</span> <span class="s1">'mean'</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">catalogs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'shallow'</span><span class="p">,</span> <span class="s1">'deep'</span><span class="p">,</span> <span class="s1">'historical'</span><span class="p">),</span> <span class="n">recent</span><span class="p">:</span> <span class="s1">'bool | pd.DataFrame'</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">point_trs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">475</span><span class="p">,</span> <span class="mi">975</span><span class="p">,</span> <span class="mi">2475</span><span class="p">),</span> <span class="n">open_browser</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">inline_leaflet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Write an interactive hazard map (standalone HTML, Leaflet); return its path.</p>
+<p>The page has street / terrain base maps and layers that can be switched on and
+off: the hazard grid (re-colored in the browser for any return period, period and
+statistic), faults, source zones by type, the earthquake catalogs (sized by
+magnitude), the cantonal capitals and your points. Clicking a cell shows its
+values and UHS; a "go to lat, lon" box finds the cell containing any point.</p>
+<h5 id="apeQuake.hazard.ecuador.EcuadorHazard.explore--parameters">Parameters<a class="headerlink" href="#apeQuake.hazard.ecuador.EcuadorHazard.explore--parameters" title="Permanent link">&para;</a></h5>
+<p>path : str
+    Output file.
+tr, period, stat
+    Initial map; all can be changed in the page. TR other than 475 / 2475 uses
+    the per-cell power-law fit, as in :meth:<code>hazard_map</code>.
+points
+    Sites to mark (same forms as :meth:<code>plot_map</code>). Their popups show the mean
+    UHS from :meth:<code>HazardSite.uhs</code> (digitized curves where available) at
+    <code>point_trs</code>.
+catalogs : sequence of str
+    Bundled catalogs to include: <code>"shallow"</code>, <code>"deep"</code>, <code>"historical"</code>.
+recent : bool or DataFrame
+    <code>True</code> fetches the IG-EPN last-180-days events now (needs internet), or
+    pass a DataFrame from :func:<code>fetch_recent_events</code>.
+open_browser : bool
+    Open the file in the default browser.
+inline_leaflet : bool
+    Embed the Leaflet map library in the file (default, about +150 kB), so the
+    page also works where external scripts are blocked: sandboxed file previews,
+    mail or chat attachments, offline. <code>False</code> loads it from the unpkg CDN
+    with integrity checks, for a smaller file.</p>
+<p>Everything but the base-map tiles is embedded in the file: without internet
+the hazard and all overlays still draw, on a blank background.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/apeQuake/hazard/ecuador.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-483">483</a></span>
+<span class="normal"><a href="#__codelineno-0-484">484</a></span>
+<span class="normal"><a href="#__codelineno-0-485">485</a></span>
+<span class="normal"><a href="#__codelineno-0-486">486</a></span>
+<span class="normal"><a href="#__codelineno-0-487">487</a></span>
+<span class="normal"><a href="#__codelineno-0-488">488</a></span>
+<span class="normal"><a href="#__codelineno-0-489">489</a></span>
+<span class="normal"><a href="#__codelineno-0-490">490</a></span>
+<span class="normal"><a href="#__codelineno-0-491">491</a></span>
+<span class="normal"><a href="#__codelineno-0-492">492</a></span>
+<span class="normal"><a href="#__codelineno-0-493">493</a></span>
+<span class="normal"><a href="#__codelineno-0-494">494</a></span>
+<span class="normal"><a href="#__codelineno-0-495">495</a></span>
+<span class="normal"><a href="#__codelineno-0-496">496</a></span>
+<span class="normal"><a href="#__codelineno-0-497">497</a></span>
+<span class="normal"><a href="#__codelineno-0-498">498</a></span>
+<span class="normal"><a href="#__codelineno-0-499">499</a></span>
+<span class="normal"><a href="#__codelineno-0-500">500</a></span>
+<span class="normal"><a href="#__codelineno-0-501">501</a></span>
+<span class="normal"><a href="#__codelineno-0-502">502</a></span>
+<span class="normal"><a href="#__codelineno-0-503">503</a></span>
+<span class="normal"><a href="#__codelineno-0-504">504</a></span>
+<span class="normal"><a href="#__codelineno-0-505">505</a></span>
+<span class="normal"><a href="#__codelineno-0-506">506</a></span>
+<span class="normal"><a href="#__codelineno-0-507">507</a></span>
+<span class="normal"><a href="#__codelineno-0-508">508</a></span>
+<span class="normal"><a href="#__codelineno-0-509">509</a></span>
+<span class="normal"><a href="#__codelineno-0-510">510</a></span>
+<span class="normal"><a href="#__codelineno-0-511">511</a></span>
+<span class="normal"><a href="#__codelineno-0-512">512</a></span>
+<span class="normal"><a href="#__codelineno-0-513">513</a></span>
+<span class="normal"><a href="#__codelineno-0-514">514</a></span>
+<span class="normal"><a href="#__codelineno-0-515">515</a></span>
+<span class="normal"><a href="#__codelineno-0-516">516</a></span>
+<span class="normal"><a href="#__codelineno-0-517">517</a></span>
+<span class="normal"><a href="#__codelineno-0-518">518</a></span>
+<span class="normal"><a href="#__codelineno-0-519">519</a></span>
+<span class="normal"><a href="#__codelineno-0-520">520</a></span>
+<span class="normal"><a href="#__codelineno-0-521">521</a></span>
+<span class="normal"><a href="#__codelineno-0-522">522</a></span>
+<span class="normal"><a href="#__codelineno-0-523">523</a></span>
+<span class="normal"><a href="#__codelineno-0-524">524</a></span>
+<span class="normal"><a href="#__codelineno-0-525">525</a></span>
+<span class="normal"><a href="#__codelineno-0-526">526</a></span>
+<span class="normal"><a href="#__codelineno-0-527">527</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-483"><a id="__codelineno-0-483" name="__codelineno-0-483"></a><span class="k">def</span><span class="w"> </span><span class="nf">explore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"igepn_hazard_map.html"</span><span class="p">,</span> <span class="n">tr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">475</span><span class="p">,</span>
+</span><span id="__span-0-484"><a id="__codelineno-0-484" name="__codelineno-0-484"></a>            <span class="n">period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">stat</span><span class="p">:</span> <span class="n">Stat</span> <span class="o">=</span> <span class="s2">"mean"</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-0-485"><a id="__codelineno-0-485" name="__codelineno-0-485"></a>            <span class="n">catalogs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"shallow"</span><span class="p">,</span> <span class="s2">"deep"</span><span class="p">,</span> <span class="s2">"historical"</span><span class="p">),</span>
+</span><span id="__span-0-486"><a id="__codelineno-0-486" name="__codelineno-0-486"></a>            <span class="n">recent</span><span class="p">:</span> <span class="s2">"bool | pd.DataFrame"</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-0-487"><a id="__codelineno-0-487" name="__codelineno-0-487"></a>            <span class="n">point_trs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">475</span><span class="p">,</span> <span class="mi">975</span><span class="p">,</span> <span class="mi">2475</span><span class="p">),</span>
+</span><span id="__span-0-488"><a id="__codelineno-0-488" name="__codelineno-0-488"></a>            <span class="n">open_browser</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">inline_leaflet</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+</span><span id="__span-0-489"><a id="__codelineno-0-489" name="__codelineno-0-489"></a><span class="w">    </span><span class="sd">"""Write an interactive hazard map (standalone HTML, Leaflet); return its path.</span>
+</span><span id="__span-0-490"><a id="__codelineno-0-490" name="__codelineno-0-490"></a>
+</span><span id="__span-0-491"><a id="__codelineno-0-491" name="__codelineno-0-491"></a><span class="sd">    The page has street / terrain base maps and layers that can be switched on and</span>
+</span><span id="__span-0-492"><a id="__codelineno-0-492" name="__codelineno-0-492"></a><span class="sd">    off: the hazard grid (re-colored in the browser for any return period, period and</span>
+</span><span id="__span-0-493"><a id="__codelineno-0-493" name="__codelineno-0-493"></a><span class="sd">    statistic), faults, source zones by type, the earthquake catalogs (sized by</span>
+</span><span id="__span-0-494"><a id="__codelineno-0-494" name="__codelineno-0-494"></a><span class="sd">    magnitude), the cantonal capitals and your points. Clicking a cell shows its</span>
+</span><span id="__span-0-495"><a id="__codelineno-0-495" name="__codelineno-0-495"></a><span class="sd">    values and UHS; a "go to lat, lon" box finds the cell containing any point.</span>
+</span><span id="__span-0-496"><a id="__codelineno-0-496" name="__codelineno-0-496"></a>
+</span><span id="__span-0-497"><a id="__codelineno-0-497" name="__codelineno-0-497"></a><span class="sd">    Parameters</span>
+</span><span id="__span-0-498"><a id="__codelineno-0-498" name="__codelineno-0-498"></a><span class="sd">    ----------</span>
+</span><span id="__span-0-499"><a id="__codelineno-0-499" name="__codelineno-0-499"></a><span class="sd">    path : str</span>
+</span><span id="__span-0-500"><a id="__codelineno-0-500" name="__codelineno-0-500"></a><span class="sd">        Output file.</span>
+</span><span id="__span-0-501"><a id="__codelineno-0-501" name="__codelineno-0-501"></a><span class="sd">    tr, period, stat</span>
+</span><span id="__span-0-502"><a id="__codelineno-0-502" name="__codelineno-0-502"></a><span class="sd">        Initial map; all can be changed in the page. TR other than 475 / 2475 uses</span>
+</span><span id="__span-0-503"><a id="__codelineno-0-503" name="__codelineno-0-503"></a><span class="sd">        the per-cell power-law fit, as in :meth:`hazard_map`.</span>
+</span><span id="__span-0-504"><a id="__codelineno-0-504" name="__codelineno-0-504"></a><span class="sd">    points</span>
+</span><span id="__span-0-505"><a id="__codelineno-0-505" name="__codelineno-0-505"></a><span class="sd">        Sites to mark (same forms as :meth:`plot_map`). Their popups show the mean</span>
+</span><span id="__span-0-506"><a id="__codelineno-0-506" name="__codelineno-0-506"></a><span class="sd">        UHS from :meth:`HazardSite.uhs` (digitized curves where available) at</span>
+</span><span id="__span-0-507"><a id="__codelineno-0-507" name="__codelineno-0-507"></a><span class="sd">        ``point_trs``.</span>
+</span><span id="__span-0-508"><a id="__codelineno-0-508" name="__codelineno-0-508"></a><span class="sd">    catalogs : sequence of str</span>
+</span><span id="__span-0-509"><a id="__codelineno-0-509" name="__codelineno-0-509"></a><span class="sd">        Bundled catalogs to include: ``"shallow"``, ``"deep"``, ``"historical"``.</span>
+</span><span id="__span-0-510"><a id="__codelineno-0-510" name="__codelineno-0-510"></a><span class="sd">    recent : bool or DataFrame</span>
+</span><span id="__span-0-511"><a id="__codelineno-0-511" name="__codelineno-0-511"></a><span class="sd">        ``True`` fetches the IG-EPN last-180-days events now (needs internet), or</span>
+</span><span id="__span-0-512"><a id="__codelineno-0-512" name="__codelineno-0-512"></a><span class="sd">        pass a DataFrame from :func:`fetch_recent_events`.</span>
+</span><span id="__span-0-513"><a id="__codelineno-0-513" name="__codelineno-0-513"></a><span class="sd">    open_browser : bool</span>
+</span><span id="__span-0-514"><a id="__codelineno-0-514" name="__codelineno-0-514"></a><span class="sd">        Open the file in the default browser.</span>
+</span><span id="__span-0-515"><a id="__codelineno-0-515" name="__codelineno-0-515"></a><span class="sd">    inline_leaflet : bool</span>
+</span><span id="__span-0-516"><a id="__codelineno-0-516" name="__codelineno-0-516"></a><span class="sd">        Embed the Leaflet map library in the file (default, about +150 kB), so the</span>
+</span><span id="__span-0-517"><a id="__codelineno-0-517" name="__codelineno-0-517"></a><span class="sd">        page also works where external scripts are blocked: sandboxed file previews,</span>
+</span><span id="__span-0-518"><a id="__codelineno-0-518" name="__codelineno-0-518"></a><span class="sd">        mail or chat attachments, offline. ``False`` loads it from the unpkg CDN</span>
+</span><span id="__span-0-519"><a id="__codelineno-0-519" name="__codelineno-0-519"></a><span class="sd">        with integrity checks, for a smaller file.</span>
+</span><span id="__span-0-520"><a id="__codelineno-0-520" name="__codelineno-0-520"></a>
+</span><span id="__span-0-521"><a id="__codelineno-0-521" name="__codelineno-0-521"></a><span class="sd">    Everything but the base-map tiles is embedded in the file: without internet</span>
+</span><span id="__span-0-522"><a id="__codelineno-0-522" name="__codelineno-0-522"></a><span class="sd">    the hazard and all overlays still draw, on a blank background.</span>
+</span><span id="__span-0-523"><a id="__codelineno-0-523" name="__codelineno-0-523"></a><span class="sd">    """</span>
+</span><span id="__span-0-524"><a id="__codelineno-0-524" name="__codelineno-0-524"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">.maps</span><span class="w"> </span><span class="kn">import</span> <span class="n">explore</span>
+</span><span id="__span-0-525"><a id="__codelineno-0-525" name="__codelineno-0-525"></a>
+</span><span id="__span-0-526"><a id="__codelineno-0-526" name="__codelineno-0-526"></a>    <span class="k">return</span> <span class="n">explore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">stat</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">catalogs</span><span class="p">,</span> <span class="n">recent</span><span class="p">,</span> <span class="n">point_trs</span><span class="p">,</span>
+</span><span id="__span-0-527"><a id="__codelineno-0-527" name="__codelineno-0-527"></a>                   <span class="n">open_browser</span><span class="p">,</span> <span class="n">inline_leaflet</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
