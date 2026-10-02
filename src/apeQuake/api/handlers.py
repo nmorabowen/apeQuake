@@ -216,3 +216,42 @@ def map_layer(args: dict[str, Any]) -> dict[str, Any]:
         return L.igepn_hazard(int(tr), float(period), stat)
     return {"faults": L.faults, "sourceZones": L.source_zones, "capitals": L.capitals,
             "provinces": L.provinces}[layer]()
+
+
+# ------------------------------------------------------------------------ report
+_REPORT_FIELDS = ("title", "project", "client", "documentCode", "revision", "date", "siteName")
+
+
+def _report_meta(x: object):
+    from ..report import ReportMeta
+
+    r = c.obj(x, "args.report", optional=(*_REPORT_FIELDS, "authors"))
+    kw: dict[str, Any] = {}
+    names = {"documentCode": "document_code", "siteName": "site_name"}
+    for k in _REPORT_FIELDS:
+        if k in r:
+            kw[names.get(k, k)] = c.string(r[k], f"args.report.{k}")
+    if "authors" in r:
+        if not isinstance(r["authors"], list) or len(r["authors"]) > 10:
+            raise c.ArgError("args.report.authors: expected a list of at most 10 authors")
+        authors = []
+        for i, a in enumerate(r["authors"]):
+            a = c.obj(a, f"args.report.authors[{i}]", required=("name",),
+                      optional=("email", "affiliation"))
+            authors.append({k: c.string(v, f"args.report.authors[{i}].{k}") for k, v in a.items()})
+        kw["authors"] = authors
+    return ReportMeta(**kw)
+
+
+def report_build(args: dict[str, Any]) -> dict[str, Any]:
+    import base64
+
+    from ..report import build_report
+
+    c.obj(args, "args", required=("lat", "lon"), optional=(*_ASSESS_OPTIONAL, "report"))
+    meta = _report_meta(args["report"]) if "report" in args else None
+    kw = site_assess_args({k: v for k, v in args.items() if k != "report"})
+    rep = build_report(assess_site(**kw), meta)
+    assert rep.pdf is not None
+    return {"pdfBase64": base64.b64encode(rep.pdf).decode("ascii"), "typ": rep.typ,
+            "figures": dict(rep.figures), "fileName": "informe-sismico.pdf"}

@@ -1,7 +1,11 @@
 # Typst site report: `apeQuake.report`
 
-Merged in apeQuake#13 (2026-10-01) with the **sample sections only** (Resumen ejecutivo,
-Introducción, Comparación de espectros). The rest waits for the owner's tone approval.
+apeQuake#13 (sample sections) and the full chapter set (2026-10-02): Resumen ejecutivo,
+Introducción, Ubicación y zonificación sísmica (map), Parámetros en roca (Ss/S1 derivation),
+Espectros NEC (uses `txt-espectro-intro`), Espectros ASCE/SEI 7 (7-16 with substitutions and the
+11.4.8 exception; 7-22 approximate), Peligro IG-EPN (UHS table with fractiles), Comparación,
+Conclusiones, Supuestos y limitaciones (fixed limitations + every notice in Spanish via
+`report.chapters.notice_es`). Chapters live in `report/chapters.py`.
 
 ```python
 from apeQuake.report import ReportMeta, build_report, compile_typst, TypstError
@@ -31,13 +35,19 @@ rep.pdf        # bytes, or None with compile=False
 Install by copying `ape-informes/package/*` to
 `%APPDATA%\typst\packages\local\ape-informes\0.1.0\` (what `install-package.ps1` does; its
 per-user font registration is not needed because the report passes `--font-path`).
-**Gotcha:** the ape-informes repo `.gitignore` excludes `*.png`, so `images/APE_LOGO.png` is not
-in git; copy it from `ape-ofertas/package/images/APE_LOGO.png` or the default logo fails.
-Also: `txt-espectro-intro(fuente: "nec")` in ape-informes states the NEC spectrum with T0
-where Tc belongs (fix in progress, separate session) — the site report does not use it.
+The logo is tracked since ape-informes#2 and the NEC spectrum text (`txt-espectro-intro`,
+plateau to T_C) was fixed in ape-informes#1; reinstall the package after pulling.
 
-## Remaining chapters (planned)
+## API: `report.build` (apeQuake/1 1.3.0)
 
-Ubicación y zonificación (with `fig-ubicacion.svg`), Definición de S_S y S_1, Parámetros NEC y
-ASCE, Peligro IG-EPN (UHS with fractiles), Conclusiones, Supuestos y limitaciones (all
-`warnings`), then `report.build` in the API (PDF base64 + `.typ` + figures; never a path).
+Args = `site.assess` args + optional `report` {title, project, client, documentCode, revision,
+date, siteName, authors[{name, email?, affiliation?}]}. Result {pdfBase64, typ, figures
+{name: svg}, fileName}. `report_unavailable` when the typst CLI or the local package is
+missing (`TypstError`); a failing compile of the document is `internal_error`
+(`TypstCompileError`). Author dicts are padded with empty email/affiliation (the cover needs them).
+
+## Lint status
+
+Two findings remain and are not report defects: "Conclusiones" flagged as unaccented (linter
+false positive, the plural has no accent; fix queued for ape-workflow) and ASCE 7-16 + 7-22
+edition drift (pending owner decision). Placeholders for missing values are "no aplica", never "—".

@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/report.build.args.json",
+  "title": "report.build args",
+  "type": "object",
+  "properties": {
+    "lat": {
+      "type": "number",
+      "minimum": -90,
+      "maximum": 90,
+      "description": "Latitude, decimal degrees (WGS-84)."
+    },
+    "lon": {
+      "type": "number",
+      "minimum": -180,
+      "maximum": 180,
+      "description": "Longitude, decimal degrees (WGS-84)."
+    },
+    "vs30": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 5000,
+      "description": "Vs30 [m/s]; each code classifies it with its own table."
+    },
+    "siteClass": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "description": "One site class used by all codes."
+    },
+    "method": {
+      "enum": [
+        "nec",
+        "igepn",
+        "manual"
+      ],
+      "default": "nec",
+      "description": "How Ss and S1 (rock) are obtained."
+    },
+    "ss": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 10,
+      "description": "Ss [g], method manual only."
+    },
+    "s1": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 10,
+      "description": "S1 [g], method manual only."
+    },
+    "z": {
+      "type": "number",
+      "minimum": 0.15,
+      "maximum": 0.5,
+      "description": "Override of the NEC zone factor Z [g]."
+    },
+    "region": {
+      "$ref": "common.json#/$defs/region",
+      "description": "Override of the NEC region (sets eta)."
+    },
+    "tlAsce": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 20,
+      "description": "TL for the ASCE spectra [s]; default the NEC TL."
+    },
+    "report": {
+      "type": "object",
+      "description": "Cover data of the report (all optional).",
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project": {
+          "type": "string",
+          "minLength": 1
+        },
+        "client": {
+          "type": "string",
+          "minLength": 1
+        },
+        "documentCode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "date": {
+          "type": "string",
+          "minLength": 1
+        },
+        "siteName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authors": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "email": {
+                "type": "string",
+                "minLength": 1
+              },
+              "affiliation": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "lat",
+    "lon"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "oneOf": [
+        {
+          "required": [
+            "vs30"
+          ]
+        },
+        {
+          "required": [
+            "siteClass"
+          ]
+        }
+      ]
+    },
+    {
+      "if": {
+        "properties": {
+          "method": {
+            "const": "manual"
+          }
+        },
+        "required": [
+          "method"
+        ]
+      },
+      "then": {
+        "required": [
+          "ss",
+          "s1"
+        ]
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "ss"
+              ]
+            },
+            {
+              "required": [
+                "s1"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

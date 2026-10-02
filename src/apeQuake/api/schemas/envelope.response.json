@@ -42,6 +42,7 @@
                 "unknown_command",
                 "out_of_area",
                 "value_error",
+                "report_unavailable",
                 "internal_error"
               ]
             },

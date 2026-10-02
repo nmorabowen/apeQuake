@@ -8,15 +8,16 @@ from . import checks as c
 from . import handlers as h
 from .schema_files import COMMON, ENVELOPE, load_schema
 from ..nec.zoning import OutsideEcuadorError
+from ..report import TypstError
 
 API = "apeQuake/1"
 """Contract identifier carried by every request and response."""
 
-API_VERSION = "1.2.0"
+API_VERSION = "1.3.0"
 """Semantic version of the ``apeQuake/1`` contract (additive changes bump the minor)."""
 
 ErrorCode = Literal["bad_request", "unknown_command", "out_of_area", "value_error",
-                    "internal_error"]
+                    "report_unavailable", "internal_error"]
 ERROR_CODES: tuple[ErrorCode, ...] = get_args(ErrorCode)
 
 _MAX_MESSAGE = 600
@@ -25,6 +26,7 @@ _MAX_MESSAGE = 600
 _ERROR_MAP: tuple[tuple[type[Exception], ErrorCode], ...] = (
     (c.ArgError, "bad_request"),
     (OutsideEcuadorError, "out_of_area"),
+    (TypstError, "report_unavailable"),
     (ValueError, "value_error"),
 )
 
@@ -59,6 +61,10 @@ REGISTRY: dict[str, h.Command] = {
                   "One map layer: NEC zones (grid), IG-EPN hazard cells for a TR / period / "
                   "statistic, faults, source zones, cantonal capitals or provinces.",
                   h.map_layer),
+        h.Command("report.build",
+                  "Typst report of site.assess on @local/ape-informes: PDF (base64), the .typ "
+                  "source and the SVG figures. Needs the typst CLI on the host.",
+                  h.report_build),
     )
 }
 

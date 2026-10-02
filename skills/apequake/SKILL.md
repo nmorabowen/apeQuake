@@ -83,8 +83,7 @@ Same through the API: `dispatch({"api": "apeQuake/1", "command": "site.assess", 
 
 ## Status of PLAN-002 (ape-tools "sismo" module), 2026-10-01
 
-Merged in apeQuake: #10 zoning, #11 `assess_site`, #12 JSON API, #13 report (sample sections:
-Resumen ejecutivo, Introducción, Comparación de espectros). Pending: the remaining report chapters
-and `report.build` (API 1.3.0) after the owner approves the sample tone; the ASCE 7-16/7-22
-edition-drift rule (tone standard rule 11); ape-tools T1 (pin, type generation, registry) and T2
-(screens). Plan: `ape-tools/docs/plans/PLAN-002-sismo.md`.
+Merged in apeQuake: #10 zoning, #11 `assess_site`, #12 JSON API, #13 report sample, #15/#16
+type-generator fixes, #18 `map.layer`, #19 notices, then the full report + `report.build` (1.3.0).
+ape-tools: #13 Sismo module (map layers), #14 Spanish notices; report button next. Pending owner
+decisions: the ASCE 7-16/7-22 edition-drift rule (tone standard rule 11). Plan: `ape-tools/docs/plans/PLAN-002-sismo.md`.

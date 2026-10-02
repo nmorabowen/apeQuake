@@ -21,6 +21,19 @@ referencing = pytest.importorskip("referencing")
 QUITO = {"lat": -0.22, "lon": -78.51}
 
 
+def _has_report_toolchain() -> bool:
+    import os
+    import shutil
+    from pathlib import Path
+
+    pkg = Path(os.environ.get("APPDATA", "")) / "typst" / "packages" / "local" / "ape-informes" / "0.1.0"
+    return shutil.which("typst") is not None and (pkg / "images" / "APE_LOGO.png").is_file()
+
+
+needs_typst = pytest.mark.skipif(not _has_report_toolchain(),
+                                 reason="typst CLI or @local/ape-informes not installed")
+
+
 @pytest.fixture(scope="module")
 def registry():
     from referencing.jsonschema import DRAFT202012
@@ -92,6 +105,10 @@ VALID = [
     ("map.layer", {"layer": "sourceZones"}),
     ("map.layer", {"layer": "capitals"}),
     ("map.layer", {"layer": "provinces"}),
+    pytest.param("report.build", {**QUITO, "siteClass": "D",
+                                  "report": {"project": "Prueba", "siteName": "Quito",
+                                             "authors": [{"name": "N. Mora"}]}},
+                 marks=needs_typst),
 ]
 
 
@@ -141,6 +158,10 @@ BAD_ARGS = [
     ("map.layer", {"layer": "igepnHazard", "period": 0.3}),
     ("map.layer", {"layer": "igepnHazard", "stat": "max"}),
     ("map.layer", {"layer": "igepnHazard", "tr": True}),
+    ("report.build", {**QUITO}),
+    ("report.build", {**QUITO, "siteClass": "D", "report": {"projet": "x"}}),
+    ("report.build", {**QUITO, "siteClass": "D", "report": {"authors": [{"email": "a@b"}]}}),
+    ("report.build", {**QUITO, "siteClass": "D", "report": {"project": ""}}),
 ]
 
 
@@ -238,3 +259,20 @@ def test_hazard_layer_matches_hazard_map():
     f = r["features"]["features"][0]["properties"]
     assert f["sa"] == pytest.approx(df.loc[f["cellId"], "sa"], abs=1e-4)
     assert r["min"] <= f["sa"] <= r["max"]
+
+
+def test_report_unavailable_without_typst(monkeypatch):
+    import apeQuake.report as rep
+
+    monkeypatch.setattr(rep.shutil, "which", lambda _name: None)
+    r = dispatch(req("report.build", {**QUITO, "siteClass": "D"}))
+    assert r["ok"] is False and r["error"]["code"] == "report_unavailable"
+
+
+@needs_typst
+def test_report_pdf_is_a_pdf():
+    import base64
+
+    r = dispatch(req("report.build", {**QUITO, "siteClass": "F"}))["result"]
+    assert base64.b64decode(r["pdfBase64"])[:5] == b"%PDF-"
+    assert "fig-sitio.svg" not in r["figures"] and r["typ"].startswith("#import")
