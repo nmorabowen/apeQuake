@@ -123,4 +123,5 @@ nav:
       - Plotting: api/plot_record.md
       - NEC hazard: api/nec.md
       - Code spectrum: api/code_spectrum.md
+      - JSON API: api/json-api.md
       - IG-EPN hazard: api/hazard.md

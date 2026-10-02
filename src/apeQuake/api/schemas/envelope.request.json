@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/envelope.request.json",
+  "title": "apeQuake/1 request",
+  "type": "object",
+  "properties": {
+    "api": {
+      "const": "apeQuake/1"
+    },
+    "command": {
+      "type": "string",
+      "minLength": 1
+    },
+    "args": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "api",
+    "command"
+  ],
+  "additionalProperties": false
+}

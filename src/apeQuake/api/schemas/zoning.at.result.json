@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/zoning.at.result.json",
+  "title": "zoning.at result",
+  "$ref": "common.json#/$defs/zone"
+}

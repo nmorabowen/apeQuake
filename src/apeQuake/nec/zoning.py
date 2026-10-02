@@ -33,6 +33,7 @@ from ..hazard import _data
 
 __all__ = [
     "ZONE_NAMES",
+    "OutsideEcuadorError",
     "ListedTown",
     "NECZone",
     "zone_at",
@@ -63,6 +64,10 @@ _REGION_BY_PROVINCE: dict[str, Region] = {
                      "ZAMORA CHINCHIPE"], "oriente"),
     "GALAPAGOS": "galapagos",
 }
+
+
+class OutsideEcuadorError(ValueError):
+    """The point is outside Ecuador (or outside the digitized NEC zone map)."""
 
 
 @dataclass(frozen=True)
@@ -157,7 +162,7 @@ def region_at(lat: float, lon: float) -> tuple[str, Region]:
     """
     prov = _province_at(lat, lon)
     if prov is None:
-        raise ValueError(f"({lat:.4f}, {lon:.4f}) is outside Ecuador")
+        raise OutsideEcuadorError(f"({lat:.4f}, {lon:.4f}) is outside Ecuador")
     return prov, _REGION_BY_PROVINCE.get(prov, "costa")
 
 
@@ -199,7 +204,7 @@ def zone_at(lat: float, lon: float) -> NECZone:
         dist = _km(lats[ii] - lat, lons[jj] - lon, lat)
         inside = win != _OUTSIDE
         if not inside.any() or dist[inside].min() > _SNAP_KM:
-            raise ValueError(f"({lat:.4f}, {lon:.4f}) is not covered by the NEC zone map")
+            raise OutsideEcuadorError(f"({lat:.4f}, {lon:.4f}) is not covered by the NEC zone map")
         k = int(win[inside][dist[inside].argmin()])
         z, src = float(zv[k]), "figura-1"
         other = inside & (win != k)

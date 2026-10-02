@@ -43,6 +43,7 @@ allow-direct-references = true
 [project.optional-dependencies]
 dev = [
   "pytest>=7.0",
+  "jsonschema>=4.18",
   "ruff>=0.5",
   "black>=24.0",
   "mypy>=1.7",

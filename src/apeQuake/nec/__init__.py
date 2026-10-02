@@ -5,7 +5,15 @@ from .hazard import (
     HazardDatabase,
     load_hazard_database,
 )
-from .zoning import ZONE_NAMES, ListedTown, NECZone, region_at, table19, zone_at
+from .zoning import (
+    ZONE_NAMES,
+    ListedTown,
+    NECZone,
+    OutsideEcuadorError,
+    region_at,
+    table19,
+    zone_at,
+)
 
 __all__ = [
     "NEC_RETURN_PERIODS",
@@ -16,6 +24,7 @@ __all__ = [
     "ZONE_NAMES",
     "ListedTown",
     "NECZone",
+    "OutsideEcuadorError",
     "region_at",
     "table19",
     "zone_at",

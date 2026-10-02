@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/api.describe.result.json",
+  "title": "api.describe result",
+  "type": "object",
+  "properties": {
+    "api": {
+      "const": "apeQuake/1"
+    },
+    "version": {
+      "type": "string"
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "argsSchema": {
+            "type": "object"
+          },
+          "resultSchema": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "name",
+          "summary",
+          "argsSchema",
+          "resultSchema"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "common": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "api",
+    "version",
+    "commands",
+    "common"
+  ],
+  "additionalProperties": false
+}

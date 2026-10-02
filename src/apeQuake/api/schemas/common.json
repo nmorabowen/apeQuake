@@ -1,0 +1,359 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/common.json",
+  "title": "apeQuake/1 shared definitions",
+  "$defs": {
+    "curve": {
+      "type": "object",
+      "properties": {
+        "t": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "Periods [s]."
+        },
+        "sa": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "Spectral acceleration [g]."
+        }
+      },
+      "required": [
+        "t",
+        "sa"
+      ],
+      "additionalProperties": false,
+      "description": "A spectrum: Sa(T) at the listed periods."
+    },
+    "region": {
+      "enum": [
+        "costa",
+        "sierra",
+        "oriente",
+        "esmeraldas",
+        "galapagos"
+      ]
+    },
+    "listedTown": {
+      "type": "object",
+      "properties": {
+        "town": {
+          "type": "string"
+        },
+        "parish": {
+          "type": "string"
+        },
+        "canton": {
+          "type": "string"
+        },
+        "province": {
+          "type": "string"
+        },
+        "z": {
+          "type": "number"
+        },
+        "distanceKm": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "town",
+        "parish",
+        "canton",
+        "province",
+        "z",
+        "distanceKm"
+      ],
+      "additionalProperties": false,
+      "description": "A NEC-SE-DS Tabla 19 entry, located at its parish point."
+    },
+    "zone": {
+      "type": "object",
+      "properties": {
+        "lat": {
+          "type": "number"
+        },
+        "lon": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number",
+          "description": "Zone factor Z [g]."
+        },
+        "zone": {
+          "enum": [
+            "I",
+            "II",
+            "III",
+            "IV",
+            "V",
+            "VI"
+          ]
+        },
+        "province": {
+          "type": "string"
+        },
+        "region": {
+          "$ref": "#/$defs/region"
+        },
+        "eta": {
+          "type": "number"
+        },
+        "boundaryKm": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Distance to the nearest point with another Z [km]; null when none within ~20 km."
+        },
+        "zAcrossBoundary": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "nearestListed": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/listedTown"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "enum": [
+            "figura-1",
+            "galapagos"
+          ]
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "z",
+        "zone",
+        "province",
+        "region",
+        "eta",
+        "boundaryKm",
+        "zAcrossBoundary",
+        "nearestListed",
+        "source",
+        "warnings"
+      ],
+      "additionalProperties": false
+    },
+    "necParameters": {
+      "type": "object",
+      "properties": {
+        "z": {
+          "type": "number"
+        },
+        "eta": {
+          "type": "number"
+        },
+        "fa": {
+          "type": "number"
+        },
+        "fd": {
+          "type": "number"
+        },
+        "fs": {
+          "type": "number"
+        },
+        "r": {
+          "type": "number"
+        },
+        "t0": {
+          "type": "number"
+        },
+        "tc": {
+          "type": "number"
+        },
+        "tl": {
+          "type": "number"
+        },
+        "siteClass": {
+          "type": "string"
+        },
+        "region": {
+          "$ref": "#/$defs/region"
+        }
+      },
+      "required": [
+        "z",
+        "eta",
+        "fa",
+        "fd",
+        "fs",
+        "r",
+        "t0",
+        "tc",
+        "tl",
+        "siteClass",
+        "region"
+      ],
+      "additionalProperties": false
+    },
+    "asce716Parameters": {
+      "type": "object",
+      "properties": {
+        "ss": {
+          "type": "number"
+        },
+        "s1": {
+          "type": "number"
+        },
+        "fa": {
+          "type": "number"
+        },
+        "fv": {
+          "type": "number"
+        },
+        "sms": {
+          "type": "number"
+        },
+        "sm1": {
+          "type": "number"
+        },
+        "sds": {
+          "type": "number"
+        },
+        "sd1": {
+          "type": "number"
+        },
+        "t0": {
+          "type": "number"
+        },
+        "ts": {
+          "type": "number"
+        },
+        "tl": {
+          "type": "number"
+        },
+        "siteClass": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ss",
+        "s1",
+        "siteClass",
+        "fa",
+        "fv",
+        "sms",
+        "sm1",
+        "sds",
+        "sd1",
+        "t0",
+        "ts",
+        "tl"
+      ],
+      "additionalProperties": false
+    },
+    "asce722Parameters": {
+      "type": "object",
+      "properties": {
+        "siteClass": {
+          "type": "string"
+        },
+        "sms": {
+          "type": "number"
+        },
+        "sm1": {
+          "type": "number"
+        },
+        "sds": {
+          "type": "number"
+        },
+        "sd1": {
+          "type": "number"
+        },
+        "t0": {
+          "type": "number"
+        },
+        "ts": {
+          "type": "number"
+        },
+        "tl": {
+          "type": "number"
+        },
+        "fa716": {
+          "type": "number"
+        },
+        "fv716": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "siteClass",
+        "sms",
+        "sm1",
+        "sds",
+        "sd1",
+        "t0",
+        "ts",
+        "tl",
+        "fa716",
+        "fv716"
+      ],
+      "additionalProperties": false
+    },
+    "ssS1": {
+      "type": "object",
+      "properties": {
+        "ss": {
+          "type": "number"
+        },
+        "s1": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "ss",
+        "s1"
+      ],
+      "additionalProperties": false
+    },
+    "uhsStats": {
+      "type": "object",
+      "properties": {
+        "mean": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "q16": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "q84": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      },
+      "required": [
+        "mean",
+        "q16",
+        "q84"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

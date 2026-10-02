@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/envelope.response.json",
+  "title": "apeQuake/1 response",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "api": {
+          "const": "apeQuake/1"
+        },
+        "ok": {
+          "const": true
+        },
+        "result": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "api",
+        "ok",
+        "result"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "api": {
+          "const": "apeQuake/1"
+        },
+        "ok": {
+          "const": false
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "enum": [
+                "bad_request",
+                "unknown_command",
+                "out_of_area",
+                "value_error",
+                "internal_error"
+              ]
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "api",
+        "ok",
+        "error"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}
