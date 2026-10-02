@@ -10,9 +10,14 @@ dispatch({"api": "apeQuake/1", "command": "zoning.at", "args": {"lat": -0.22, "l
 # {"api": "apeQuake/1", "ok": true, "result": {...}}  |  {"ok": false, "error": {"code", "message"}}
 ```
 
-- `API_VERSION = "1.0.2"` (1.0.1: envelope branches titled Ok / Error, `py.typed`; 1.0.2: every `$ref` names its file, `common.json#/...`, even inside common.json, for json-schema-ref-parser); additive changes bump the minor (`report.build` → 1.1.0).
+- `API_VERSION = "1.1.0"`. History: 1.0.1 envelope branches titled Ok / Error and `py.typed`; 1.0.2 every `$ref` names its file (`common.json#/...`, even inside common.json, for json-schema-ref-parser); 1.1.0 `map.layer`. Additive changes bump the minor (`report.build` → 1.2.0).
 - Commands: `api.describe` (version, commands, schemas, `common`), `zoning.at` {lat, lon},
-  `site.assess` {lat, lon, vs30 | siteClass, method?, ss?, s1?, z?, region?, tlAsce?}.
+  `site.assess` {lat, lon, vs30 | siteClass, method?, ss?, s1?, z?, region?, tlAsce?},
+  `map.layer` {layer: necZones | igepnHazard | faults | sourceZones | capitals | provinces;
+  tr? 475|2475, period?, stat? only with igepnHazard}. Results by `kind`: `grid` (necZones:
+  lon0/dlon/lat0/dlat, nx/ny, `rows` of [code, count] runs north→south, `classes`), `geojson`
+  (FeatureCollection; hazard properties {cellId, sa}, plus min/max), `points` (capitals).
+  Layer builders live in `api/layers.py`; `nec.zone_grid()` is the public raster accessor.
 - Error codes: `bad_request`, `unknown_command`, `out_of_area` (`OutsideEcuadorError`),
   `value_error`, `internal_error` (message = exception type only).
 - `dispatch` never raises; results must pass `json.dumps(allow_nan=False)`.

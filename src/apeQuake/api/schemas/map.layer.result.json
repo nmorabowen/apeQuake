@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/map.layer.result.json",
+  "title": "map.layer result",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "layer": {
+          "const": "necZones"
+        },
+        "kind": {
+          "const": "grid"
+        },
+        "lon0": {
+          "type": "number"
+        },
+        "dlon": {
+          "type": "number"
+        },
+        "lat0": {
+          "type": "number"
+        },
+        "dlat": {
+          "type": "number"
+        },
+        "nx": {
+          "type": "integer"
+        },
+        "ny": {
+          "type": "integer"
+        },
+        "noData": {
+          "type": "integer"
+        },
+        "classes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "integer"
+              },
+              "z": {
+                "type": "number"
+              },
+              "zone": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "z",
+              "zone"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "rows": {
+          "type": "array",
+          "description": "Row i (latitude lat0 + i*dlat, north to south) as runs [code, count] west to east.",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        },
+        "galapagosZ": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "layer",
+        "kind",
+        "lon0",
+        "dlon",
+        "lat0",
+        "dlat",
+        "nx",
+        "ny",
+        "noData",
+        "classes",
+        "rows",
+        "galapagosZ"
+      ],
+      "additionalProperties": false,
+      "title": "NecZonesLayer"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "layer": {
+          "const": "igepnHazard"
+        },
+        "kind": {
+          "const": "geojson"
+        },
+        "tr": {
+          "enum": [
+            475,
+            2475
+          ]
+        },
+        "period": {
+          "type": "number"
+        },
+        "stat": {
+          "type": "string"
+        },
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "features": {
+          "$ref": "common.json#/$defs/featureCollection"
+        }
+      },
+      "required": [
+        "layer",
+        "kind",
+        "tr",
+        "period",
+        "stat",
+        "min",
+        "max",
+        "features"
+      ],
+      "additionalProperties": false,
+      "title": "IgepnHazardLayer",
+      "description": "Features carry properties {cellId, sa [g]}."
+    },
+    {
+      "type": "object",
+      "properties": {
+        "layer": {
+          "enum": [
+            "faults",
+            "sourceZones",
+            "provinces"
+          ]
+        },
+        "kind": {
+          "const": "geojson"
+        },
+        "features": {
+          "$ref": "common.json#/$defs/featureCollection"
+        }
+      },
+      "required": [
+        "layer",
+        "kind",
+        "features"
+      ],
+      "additionalProperties": false,
+      "title": "GeojsonLayer",
+      "description": "faults: {name, mmax, dip, slipMmYr}; sourceZones: {name, type, mmax}; provinces: {name}."
+    },
+    {
+      "type": "object",
+      "properties": {
+        "layer": {
+          "const": "capitals"
+        },
+        "kind": {
+          "const": "points"
+        },
+        "points": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "canton": {
+                "type": "string"
+              },
+              "province": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "lat": {
+                "type": "number"
+              },
+              "lon": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "name",
+              "canton",
+              "province",
+              "type",
+              "lat",
+              "lon"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "layer",
+        "kind",
+        "points"
+      ],
+      "additionalProperties": false,
+      "title": "PointsLayer"
+    }
+  ]
+}

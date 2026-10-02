@@ -85,6 +85,13 @@ VALID = [
     ("site.assess", {"lat": -2.19, "lon": -79.89, "siteClass": "E"}),         # no ASCE site
     ("site.assess", {**QUITO, "siteClass": "F"}),                             # rock only
     ("site.assess", {**QUITO, "siteClass": "C", "z": 0.35, "region": "costa", "tlAsce": 4}),
+    ("map.layer", {"layer": "necZones"}),
+    ("map.layer", {"layer": "igepnHazard"}),
+    ("map.layer", {"layer": "igepnHazard", "tr": 2475, "period": 0.2, "stat": "q84"}),
+    ("map.layer", {"layer": "faults"}),
+    ("map.layer", {"layer": "sourceZones"}),
+    ("map.layer", {"layer": "capitals"}),
+    ("map.layer", {"layer": "provinces"}),
 ]
 
 
@@ -127,6 +134,13 @@ BAD_ARGS = [
     ("site.assess", {**QUITO, "siteClass": "D", "tlAsce": -1}),
     ("site.assess", {**QUITO, "siteClass": "D", "siteclass": "D"}),
     ("api.describe", {"x": 1}),
+    ("map.layer", {}),
+    ("map.layer", {"layer": "roads"}),
+    ("map.layer", {"layer": "faults", "tr": 475}),
+    ("map.layer", {"layer": "igepnHazard", "tr": 975}),
+    ("map.layer", {"layer": "igepnHazard", "period": 0.3}),
+    ("map.layer", {"layer": "igepnHazard", "stat": "max"}),
+    ("map.layer", {"layer": "igepnHazard", "tr": True}),
 ]
 
 
@@ -195,3 +209,32 @@ def test_cli_ok_and_errors():
     assert p.returncode == 1 and json.loads(p.stdout)["error"]["code"] == "bad_request"
     p = _cli('{"api": "apeQuake/1", "command": "zoning.at", "args": {"lat": NaN, "lon": 0}}')
     assert p.returncode == 1 and json.loads(p.stdout)["error"]["code"] == "bad_request"
+
+
+def test_nec_zone_grid_decodes_to_the_zone_map():
+    from apeQuake.nec import zone_at, zone_grid
+
+    g = dispatch(req("map.layer", {"layer": "necZones"}))["result"]
+    zone, lon, lat, _ = zone_grid()
+    assert (g["ny"], g["nx"]) == zone.shape
+    assert all(sum(n for _, n in row) == g["nx"] for row in g["rows"])
+    # decode the row through Quito and compare with zone_at
+    i = round((-0.22 - g["lat0"]) / g["dlat"])
+    j = round((-78.51 - g["lon0"]) / g["dlon"])
+    k, seen = None, 0
+    for code, n in g["rows"][i]:
+        if seen + n > j:
+            k = code
+            break
+        seen += n
+    assert g["classes"][k]["z"] == zone_at(-0.22, -78.51).z
+
+
+def test_hazard_layer_matches_hazard_map():
+    from apeQuake.hazard import EcuadorHazard
+
+    r = dispatch(req("map.layer", {"layer": "igepnHazard", "tr": 475, "period": 0.0}))["result"]
+    df = EcuadorHazard.hazard_map(475, 0.0).set_index("cell_id")
+    f = r["features"]["features"][0]["properties"]
+    assert f["sa"] == pytest.approx(df.loc[f["cellId"], "sa"], abs=1e-4)
+    assert r["min"] <= f["sa"] <= r["max"]

@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/map.layer.args.json",
+  "title": "map.layer args",
+  "type": "object",
+  "properties": {
+    "layer": {
+      "enum": [
+        "necZones",
+        "igepnHazard",
+        "faults",
+        "sourceZones",
+        "capitals",
+        "provinces"
+      ],
+      "description": "Which layer."
+    },
+    "tr": {
+      "enum": [
+        475,
+        2475
+      ],
+      "default": 475,
+      "description": "Return period [yr], igepnHazard only."
+    },
+    "period": {
+      "enum": [
+        0.0,
+        0.05,
+        0.07,
+        0.1,
+        0.2,
+        0.5,
+        1.0,
+        2.0
+      ],
+      "default": 0.0,
+      "description": "Spectral period [s] (0 = PGA), igepnHazard only."
+    },
+    "stat": {
+      "enum": [
+        "mean",
+        "q16",
+        "q50",
+        "q84"
+      ],
+      "default": "mean",
+      "description": "Logic-tree statistic, igepnHazard only."
+    }
+  },
+  "required": [
+    "layer"
+  ],
+  "additionalProperties": false,
+  "if": {
+    "not": {
+      "properties": {
+        "layer": {
+          "const": "igepnHazard"
+        }
+      }
+    }
+  },
+  "then": {
+    "not": {
+      "anyOf": [
+        {
+          "required": [
+            "tr"
+          ]
+        },
+        {
+          "required": [
+            "period"
+          ]
+        },
+        {
+          "required": [
+            "stat"
+          ]
+        }
+      ]
+    }
+  }
+}

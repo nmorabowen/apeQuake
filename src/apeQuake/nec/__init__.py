@@ -13,6 +13,7 @@ from .zoning import (
     region_at,
     table19,
     zone_at,
+    zone_grid,
 )
 
 __all__ = [
@@ -28,4 +29,5 @@ __all__ = [
     "region_at",
     "table19",
     "zone_at",
+    "zone_grid",
 ]
