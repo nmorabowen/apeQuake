@@ -12,7 +12,7 @@ from ..nec.zoning import OutsideEcuadorError
 API = "apeQuake/1"
 """Contract identifier carried by every request and response."""
 
-API_VERSION = "1.0.2"
+API_VERSION = "1.1.0"
 """Semantic version of the ``apeQuake/1`` contract (additive changes bump the minor)."""
 
 ErrorCode = Literal["bad_request", "unknown_command", "out_of_area", "value_error",
@@ -55,6 +55,10 @@ REGISTRY: dict[str, h.Command] = {
         h.Command("site.assess",
                   "NEC-SE-DS vs ASCE 7-16 / 7-22 (approximate) vs IG-EPN at a point: "
                   "parameters, spectra and rock / site comparisons.", h.site_assess),
+        h.Command("map.layer",
+                  "One map layer: NEC zones (grid), IG-EPN hazard cells for a TR / period / "
+                  "statistic, faults, source zones, cantonal capitals or provinces.",
+                  h.map_layer),
     )
 }
 

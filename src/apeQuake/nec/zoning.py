@@ -39,6 +39,7 @@ __all__ = [
     "zone_at",
     "region_at",
     "table19",
+    "zone_grid",
 ]
 
 Region = Literal["costa", "sierra", "oriente", "esmeraldas", "galapagos"]
@@ -112,6 +113,15 @@ def _zone_map() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     raw = resources.files("apeQuake.nec").joinpath("data", "nec_zone_map.npz").read_bytes()
     with np.load(io.BytesIO(raw)) as f:
         return f["zone"], f["lon"], f["lat"], f["z_values"]
+
+
+def zone_grid() -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    """The digitized Figura 1: ``(zone, lon, lat, z_values)``.
+
+    ``zone[i, j]`` is the class index (255 = outside continental Ecuador) at
+    ``lat[i]`` (north to south) and ``lon[j]``; ``z_values[k]`` is Z of class ``k``.
+    """
+    return _zone_map()
 
 
 @lru_cache(maxsize=1)

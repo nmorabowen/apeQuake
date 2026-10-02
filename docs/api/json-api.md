@@ -16,6 +16,7 @@ dispatch({"api": "apeQuake/1", "command": "site.assess",
 |---|---|
 | `api.describe` | The version, the commands, and their schemas. |
 | `zoning.at` | NEC Z, zone, province, region, η, distance to the nearest zone boundary, and the nearest Tabla 19 town. |
+| `map.layer` | One map layer: `necZones` (run-length encoded grid of Figura 1), `igepnHazard` (cell polygons with Sa for `tr` 475/2475, `period`, `stat`), `faults`, `sourceZones`, `capitals`, `provinces`. |
 | `site.assess` | The NEC-SE-DS, ASCE 7-16, ASCE 7-22 (approximate) and IG-EPN comparison: parameters, spectra, the rock and site views, and warnings. |
 
 **Error codes:**

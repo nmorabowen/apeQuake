@@ -187,3 +187,30 @@ def site_assess(args: dict[str, Any]) -> dict[str, Any]:
     result = assessment_payload(assess_site(**kw).to_dict())
     result["input"] = {k: v for k, v in args.items()}
     return result
+
+
+# --------------------------------------------------------------------- map layers
+_PERIODS = (0.0, 0.05, 0.07, 0.1, 0.2, 0.5, 1.0, 2.0)
+
+
+def map_layer(args: dict[str, Any]) -> dict[str, Any]:
+    from . import layers as L
+
+    c.obj(args, "args", required=("layer",), optional=("tr", "period", "stat"))
+    layer = c.enum(args["layer"], "args.layer", L.LAYERS)
+    extra = [k for k in ("tr", "period", "stat") if k in args]
+    if layer != "igepnHazard" and extra:
+        raise c.ArgError(f"args: «{extra[0]}» is only accepted with layer «igepnHazard»")
+    if layer == "necZones":
+        return L.nec_zones()
+    if layer == "igepnHazard":
+        tr = args.get("tr", 475)
+        if isinstance(tr, bool) or tr not in (475, 2475):
+            raise c.ArgError("args.tr: expected one of 475, 2475")
+        period = c.number(args.get("period", 0.0), "args.period")
+        if not any(abs(period - p) < 1e-9 for p in _PERIODS):
+            raise c.ArgError("args.period: expected one of " + ", ".join(f"{p:g}" for p in _PERIODS))
+        stat = c.enum(args.get("stat", "mean"), "args.stat", ("mean", "q16", "q50", "q84"))
+        return L.igepn_hazard(int(tr), float(period), stat)
+    return {"faults": L.faults, "sourceZones": L.source_zones, "capitals": L.capitals,
+            "provinces": L.provinces}[layer]()
