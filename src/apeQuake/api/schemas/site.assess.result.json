@@ -1,0 +1,540 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/site.assess.result.json",
+  "title": "site.assess result",
+  "type": "object",
+  "properties": {
+    "input": {
+      "type": "object",
+      "description": "The request args, echoed."
+    },
+    "zone": {
+      "type": "object",
+      "properties": {
+        "lat": {
+          "type": "number"
+        },
+        "lon": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number",
+          "description": "Zone factor Z [g]."
+        },
+        "zone": {
+          "enum": [
+            "I",
+            "II",
+            "III",
+            "IV",
+            "V",
+            "VI"
+          ]
+        },
+        "province": {
+          "type": "string"
+        },
+        "region": {
+          "$ref": "common.json#/$defs/region"
+        },
+        "eta": {
+          "type": "number"
+        },
+        "boundaryKm": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Distance to the nearest point with another Z [km]; null when none within ~20 km."
+        },
+        "zAcrossBoundary": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "nearestListed": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/listedTown"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "enum": [
+            "figura-1",
+            "galapagos"
+          ]
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "zUsed": {
+          "type": "number"
+        },
+        "regionUsed": {
+          "$ref": "common.json#/$defs/region"
+        },
+        "etaUsed": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "z",
+        "zone",
+        "province",
+        "region",
+        "eta",
+        "boundaryKm",
+        "zAcrossBoundary",
+        "nearestListed",
+        "source",
+        "warnings",
+        "zUsed",
+        "regionUsed",
+        "etaUsed"
+      ],
+      "additionalProperties": false
+    },
+    "siteClasses": {
+      "type": "object",
+      "properties": {
+        "nec": {
+          "type": "string"
+        },
+        "asce716": {
+          "type": "string"
+        },
+        "asce722": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "nec",
+        "asce716",
+        "asce722"
+      ],
+      "additionalProperties": false
+    },
+    "ssS1": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "enum": [
+            "nec",
+            "igepn",
+            "manual"
+          ]
+        },
+        "ss": {
+          "type": "number"
+        },
+        "s1": {
+          "type": "number"
+        },
+        "candidates": {
+          "type": "object",
+          "properties": {
+            "nec": {
+              "$ref": "common.json#/$defs/ssS1"
+            },
+            "igepn": {
+              "$ref": "common.json#/$defs/ssS1"
+            },
+            "manual": {
+              "$ref": "common.json#/$defs/ssS1"
+            }
+          },
+          "required": [
+            "nec",
+            "igepn"
+          ],
+          "additionalProperties": false
+        },
+        "necRule": {
+          "type": "object",
+          "properties": {
+            "factor": {
+              "type": "number"
+            },
+            "saB02": {
+              "type": "number"
+            },
+            "saB10": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "factor",
+            "saB02",
+            "saB10"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "method",
+        "ss",
+        "s1",
+        "candidates",
+        "necRule"
+      ],
+      "additionalProperties": false
+    },
+    "nec": {
+      "type": "object",
+      "properties": {
+        "parameters": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/necParameters"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rockParameters": {
+          "$ref": "common.json#/$defs/necParameters"
+        },
+        "spectrum": {
+          "anyOf": [
+            {
+              "$ref": "common.json#/$defs/curve"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rockSpectrum": {
+          "$ref": "common.json#/$defs/curve"
+        }
+      },
+      "required": [
+        "parameters",
+        "rockParameters",
+        "spectrum",
+        "rockSpectrum"
+      ],
+      "additionalProperties": false
+    },
+    "necUhs": {
+      "type": "object",
+      "properties": {
+        "city": {
+          "type": "string"
+        },
+        "distanceKm": {
+          "type": "number"
+        },
+        "tr475": {
+          "$ref": "common.json#/$defs/curve"
+        },
+        "tr2500": {
+          "$ref": "common.json#/$defs/curve"
+        }
+      },
+      "required": [
+        "city",
+        "distanceKm",
+        "tr475",
+        "tr2500"
+      ],
+      "additionalProperties": false
+    },
+    "asce716": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "$ref": "common.json#/$defs/asce716Parameters"
+            },
+            "exceptions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tlSource": {
+              "type": "string"
+            },
+            "spectrum": {
+              "$ref": "common.json#/$defs/curve"
+            }
+          },
+          "required": [
+            "parameters",
+            "exceptions",
+            "tlSource",
+            "spectrum"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "asce722": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "parameters": {
+              "$ref": "common.json#/$defs/asce722Parameters"
+            },
+            "approximate": {
+              "const": true
+            },
+            "note": {
+              "type": "string"
+            },
+            "spectrum": {
+              "$ref": "common.json#/$defs/curve"
+            }
+          },
+          "required": [
+            "parameters",
+            "approximate",
+            "note",
+            "spectrum"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "igepn": {
+      "type": "object",
+      "properties": {
+        "cellId": {
+          "type": "string"
+        },
+        "distanceKm": {
+          "type": "number"
+        },
+        "periods": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "uhs": {
+          "type": "object",
+          "properties": {
+            "tr475": {
+              "$ref": "common.json#/$defs/uhsStats"
+            },
+            "tr2475": {
+              "$ref": "common.json#/$defs/uhsStats"
+            }
+          },
+          "required": [
+            "tr475",
+            "tr2475"
+          ],
+          "additionalProperties": false
+        },
+        "siteScaledNote": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "cellId",
+        "distanceKm",
+        "periods",
+        "uhs",
+        "siteScaledNote"
+      ],
+      "additionalProperties": false
+    },
+    "rock": {
+      "type": "object",
+      "properties": {
+        "nec475": {
+          "$ref": "common.json#/$defs/curve"
+        },
+        "asceDesign": {
+          "$ref": "common.json#/$defs/curve"
+        },
+        "igepn475": {
+          "$ref": "common.json#/$defs/curve"
+        },
+        "igepn2475x23": {
+          "$ref": "common.json#/$defs/curve"
+        },
+        "necUhs475": {
+          "$ref": "common.json#/$defs/curve"
+        }
+      },
+      "required": [
+        "nec475",
+        "asceDesign",
+        "igepn475",
+        "igepn2475x23",
+        "necUhs475"
+      ],
+      "additionalProperties": false
+    },
+    "site": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "nec": {
+              "$ref": "common.json#/$defs/curve"
+            },
+            "asce716": {
+              "anyOf": [
+                {
+                  "$ref": "common.json#/$defs/curve"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "asce722": {
+              "anyOf": [
+                {
+                  "$ref": "common.json#/$defs/curve"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "igepn475Scaled": {
+              "$ref": "common.json#/$defs/curve"
+            },
+            "igepn2475x23Scaled": {
+              "$ref": "common.json#/$defs/curve"
+            },
+            "necAmplification": {
+              "$ref": "common.json#/$defs/curve"
+            }
+          },
+          "required": [
+            "nec",
+            "asce716",
+            "asce722",
+            "igepn475Scaled",
+            "igepn2475x23Scaled",
+            "necAmplification"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "comparison": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "t": {
+            "type": "number"
+          },
+          "rock": {
+            "type": "object",
+            "properties": {
+              "nec475": {
+                "type": "number"
+              },
+              "asceDesign": {
+                "type": "number"
+              },
+              "igepn475": {
+                "type": "number"
+              },
+              "igepn2475x23": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "nec475",
+              "asceDesign",
+              "igepn475",
+              "igepn2475x23"
+            ],
+            "additionalProperties": false
+          },
+          "site": {
+            "type": "object",
+            "properties": {
+              "nec": {
+                "type": "number"
+              },
+              "asce716": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "asce722": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "igepn475Scaled": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "nec",
+              "asce716",
+              "asce722",
+              "igepn475Scaled"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "t",
+          "rock"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "input",
+    "zone",
+    "siteClasses",
+    "ssS1",
+    "nec",
+    "necUhs",
+    "asce716",
+    "asce722",
+    "igepn",
+    "rock",
+    "site",
+    "comparison",
+    "warnings"
+  ],
+  "additionalProperties": false
+}

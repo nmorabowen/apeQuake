@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/api.describe.args.json",
+  "title": "api.describe args",
+  "type": "object",
+  "properties": {},
+  "required": [],
+  "additionalProperties": false
+}
