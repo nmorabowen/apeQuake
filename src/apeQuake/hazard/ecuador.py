@@ -401,6 +401,85 @@ class EcuadorHazard:
                         points=points, annotate=annotate, extent=extent, cmap=cmap,
                         vmin=vmin, vmax=vmax, legend=legend, theme=theme)
 
+    def plot_iso(self, tr: float = 475, period: float = 0.0, stat: Stat = "mean",
+                 ax: "Axes | None" = None, *, points=None, provinces: bool = True,
+                 elev: float = 35, azim: float = -50, height_scale: float | None = None,
+                 cmap=None, vmin: float | None = None, vmax: float | None = None,
+                 theme: Literal["light", "dark"] = "light", marker: str = "x",
+                 colorbar: bool = True, annotate: bool = True, title: bool = True,
+                 zoom: float = 1.15) -> "Axes":
+        """Static isometric 3D relief of the hazard (no browser needed).
+
+        The matplotlib twin of the explorer's **3D view**: every cell is extruded from its
+        real outline, height and color both showing Sa; province outlines lie on the
+        ground and sites stand as needles with a red marker on top. Returns the Axes3D.
+
+        Parameters
+        ----------
+        tr, period, stat
+            What to show (see :meth:`hazard_map`).
+        ax : Axes3D, optional
+            Existing 3D axes (``fig.add_subplot(projection="3d")``); a figure is created
+            if omitted.
+        points
+            Sites to mark (same forms as :meth:`plot_map`).
+        provinces : bool
+            Province outlines on the ground.
+        elev, azim : float
+            Camera angles [deg]. Side walls facing away are dropped at draw time, so
+            pass the angles here rather than rotating the axes afterwards.
+        height_scale : float, optional
+            Vertical exaggeration as km of height per g (the horizontal unit is km).
+            Default makes the highest cell 140 km tall, as in the HTML view.
+        cmap, vmin, vmax, theme
+            Styling, as in :meth:`plot_map`.
+        marker : str
+            Matplotlib marker on top of each site needle (red ``"x"`` by default).
+        colorbar, annotate, title : bool
+            Colorbar, site labels, title and subtitle.
+        """
+        from .iso import plot_iso
+
+        return plot_iso(self, tr, period, stat, ax, points=points, provinces=provinces,
+                        elev=elev, azim=azim, height_scale=height_scale, cmap=cmap,
+                        vmin=vmin, vmax=vmax, theme=theme, marker=marker,
+                        colorbar=colorbar, annotate=annotate, title=title, zoom=zoom)
+
+    def plot_iso_periods(self, periods: Sequence[float] = (0.0, 0.2, 1.0, 2.0),
+                         tr: float = 475, stat: Stat = "mean", *, ncols: int = 2,
+                         colorbar: Literal["panel", "shared"] = "panel",
+                         figsize: tuple[float, float] | None = None, **kw):
+        """One :meth:`plot_iso` panel per period; returns the Figure.
+
+        ``colorbar="panel"`` (default) gives each panel its own scale, so every period
+        uses its full color range; ``"shared"`` uses one colorbar and one height scale
+        for all panels, so heights compare across periods. Other keyword arguments
+        (``points``, ``theme``, ``elev``, ``azim``, ...) go to :meth:`plot_iso`.
+        """
+        from .iso import plot_iso_periods
+
+        return plot_iso_periods(self, periods, tr, stat, ncols=ncols, colorbar=colorbar,
+                                figsize=figsize, **kw)
+
+    def export_iso(self, path: str, tr: float = 475, period: float = 0.0,
+                   stat: Stat = "mean", points=None, *, dpi: int = 150, **kw):
+        """Write :meth:`plot_iso` to a PNG, PDF or SVG file (by extension); return the Path.
+
+        Needs no browser. ``dpi`` applies to PNG; other keyword arguments go to
+        :meth:`plot_iso`. Other extensions raise ``ValueError``.
+        """
+        from .iso import export_iso
+
+        return export_iso(self, path, tr, period, stat, points, dpi=dpi, **kw)
+
+    def export_iso_periods(self, path: str, periods: Sequence[float] = (0.0, 0.2, 1.0, 2.0),
+                           tr: float = 475, stat: Stat = "mean", points=None, *,
+                           dpi: int = 150, **kw):
+        """Write :meth:`plot_iso_periods` to a PNG, PDF or SVG file; return the Path."""
+        from .iso import export_iso_periods
+
+        return export_iso_periods(self, path, periods, tr, stat, points, dpi=dpi, **kw)
+
     def explore(self, path: str = "igepn_hazard_map.html", tr: float = 475,
                 period: float = 0.0, stat: Stat = "mean", points=None,
                 catalogs: Sequence[str] = ("shallow", "deep", "historical"),

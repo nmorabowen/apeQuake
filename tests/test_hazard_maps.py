@@ -229,3 +229,59 @@ def test_explore_page_has_pick_copy_and_3d(hz, tmp_path):
         assert needle in html, needle
     # pins must be restored before the first refresh() saves state
     assert html.index("restorePicks();   //") < html.rindex("applyTheme();")
+
+
+# ---------------------------------------------------------------- static isometric view
+
+def test_plot_iso_returns_axes3d_with_site(hz):
+    import matplotlib.pyplot as plt
+    from mpl_toolkits.mplot3d import Axes3D
+
+    ax = hz.plot_iso(points=[(-0.94168, -80.73405, "Urban Tower")])
+    texts = [t.get_text() for t in ax.texts]
+    assert isinstance(ax, Axes3D)
+    assert "Urban Tower" in texts and "PGA, TR = 475 yr (mean)" in texts
+    assert any(ln.get_marker() == "x" for ln in ax.lines)
+    plt.close(ax.figure)
+
+
+def test_plot_iso_dark_odd_tr_and_point_forms(hz):
+    import matplotlib.pyplot as plt
+
+    ax = hz.plot_iso(1000, 0.2, theme="dark", points=["Quito", hz.site("Manta")],
+                     provinces=False, elev=25, azim=-120)
+    assert "Sa(0.2 s), TR = 1000 yr (mean)" in [t.get_text() for t in ax.texts]
+    assert ax.figure.get_facecolor()[:3] != (1.0, 1.0, 1.0)
+    plt.close(ax.figure)
+    fig = plt.figure()
+    with pytest.raises(ValueError):
+        hz.plot_iso(ax=fig.add_subplot())                      # not a 3D axes
+    plt.close(fig)
+
+
+def test_plot_iso_periods_panels(hz):
+    import matplotlib.pyplot as plt
+
+    fig = hz.plot_iso_periods((0.0, 1.0), colorbar="shared", points=[(-0.25, -78.45)])
+    assert sum(a.name == "3d" for a in fig.axes) == 2 and len(fig.axes) == 3
+    plt.close(fig)
+    with pytest.raises(ValueError):
+        hz.plot_iso_periods(colorbar="none")
+
+
+@pytest.mark.parametrize("ext", [".png", ".pdf", ".svg", ".PNG"])
+def test_export_iso_writes_file(hz, tmp_path, ext):
+    out = hz.export_iso(tmp_path / "sub" / f"iso{ext}", 475, 0.2, dpi=60,
+                        points=[(-0.94168, -80.73405, "Urban Tower")])
+    assert out.exists() and out.stat().st_size > 1000 and out.suffix == ext
+    if ext.lower() == ".png":
+        assert out.read_bytes()[1:4] == b"PNG"
+
+
+def test_export_iso_periods_and_bad_extension(hz, tmp_path):
+    out = hz.export_iso_periods(tmp_path / "p.png", (0.0, 0.2), dpi=50)
+    assert out.exists() and out.stat().st_size > 1000
+    for fn in (hz.export_iso, hz.export_iso_periods):
+        with pytest.raises(ValueError, match="extension"):
+            fn(tmp_path / "bad.gif")
+    assert not (tmp_path / "bad.gif").exists()

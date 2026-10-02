@@ -190,6 +190,29 @@ When they can't load, the panel says so, and the province outlines still give th
 geography. The file is about 3 MB. `inline_leaflet=False` loads Leaflet from a CDN (with
 integrity checks) instead, for a file about 150 kB smaller.
 
+### Static 3D view (no browser)
+
+`plot_iso()` draws the same isometric relief as the explorer's **3D view** with matplotlib:
+each cell is extruded from its real outline, height and color both show Sa, province
+outlines lie on the ground, and sites stand as needles with a red **x** on top. It
+returns the `Axes3D`, takes the same `points` forms as `plot_map()`, and also accepts
+`theme="dark"`, `elev` / `azim` (camera) and `height_scale` (km of height per g).
+
+```python
+site = (-0.94168, -80.73405, "Urban Tower")
+ax = hz.plot_iso(475, period=0.2, points=[site])
+
+# one call, no browser: the format follows the extension (.png, .pdf, .svg)
+hz.export_iso("iso_pga.png", 475, 0.0, points=[site], dpi=200)
+
+# PGA, 0.2, 1 and 2 s side by side; colorbar="shared" puts them on one scale
+hz.export_iso_periods("iso_periods.png", (0.0, 0.2, 1.0, 2.0), points=[site])
+fig = hz.plot_iso_periods(colorbar="shared")          # the Figure, to adjust or save
+```
+
+Side walls that face away from the camera are dropped when drawing, so set the view with
+`elev` / `azim` rather than rotating the axes afterwards.
+
 ### How the colors are chosen
 
 Every plot and map uses one set of design tokens, checked with a palette validator
