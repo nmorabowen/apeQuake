@@ -97,7 +97,7 @@
           "type": "string"
         },
         "region": {
-          "$ref": "#/$defs/region"
+          "$ref": "common.json#/$defs/region"
         },
         "eta": {
           "type": "number"
@@ -118,7 +118,7 @@
         "nearestListed": {
           "anyOf": [
             {
-              "$ref": "#/$defs/listedTown"
+              "$ref": "common.json#/$defs/listedTown"
             },
             {
               "type": "null"
@@ -188,7 +188,7 @@
           "type": "string"
         },
         "region": {
-          "$ref": "#/$defs/region"
+          "$ref": "common.json#/$defs/region"
         }
       },
       "required": [

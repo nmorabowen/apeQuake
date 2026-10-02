@@ -48,6 +48,18 @@ def test_every_schema_is_valid_draft_2020_12():
         assert s["$id"].endswith(f"/{name}.json")
 
 
+def test_refs_name_their_file():
+    """Every $ref names its file (``common.json#/...``), even inside common.json.
+
+    A bare ``#/$defs/x`` in common.json is valid JSON Schema, but the TypeScript
+    generator in ape-tools (json-schema-ref-parser) resolves it against the schema
+    that pulled common.json in. apeLoads writes its refs the same way.
+    """
+    for name in schema_names():
+        text = json.dumps(schema(name))
+        assert '"$ref": "#' not in text, name
+
+
 def test_schema_names_cover_commands():
     for cmd in commands():
         assert f"{cmd}.args" in schema_names() and f"{cmd}.result" in schema_names()
