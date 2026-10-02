@@ -30,6 +30,7 @@ import pandas as pd
 
 from ..code_spectrum.codes.nec import ETA_BY_REGION
 from ..hazard import _data
+from ..notices import Notice
 
 __all__ = [
     "ZONE_NAMES",
@@ -99,9 +100,11 @@ class NECZone:
     nearest_listed: ListedTown | None
     source: Literal["figura-1", "galapagos"]
     warnings: tuple[str, ...] = ()
+    notices: tuple[Notice, ...] = ()
 
     def to_dict(self) -> dict:
         d = dict(self.__dict__)
+        d["notices"] = [n.to_dict() for n in self.notices]
         d["nearest_listed"] = None if self.nearest_listed is None else dict(self.nearest_listed.__dict__)
         d["boundary_km"] = None if np.isinf(self.boundary_km) else self.boundary_km
         d["warnings"] = list(self.warnings)
@@ -198,7 +201,7 @@ def zone_at(lat: float, lon: float) -> NECZone:
     province, region = region_at(lat, lon)
     eta = ETA_BY_REGION[region]
     listed = _nearest_listed(lat, lon)
-    warnings: list[str] = []
+    notes: list[Notice] = []
 
     if region == "galapagos":
         z, src, bkm, zx = GALAPAGOS_Z, "galapagos", float("inf"), None
@@ -224,18 +227,24 @@ def zone_at(lat: float, lon: float) -> NECZone:
         else:
             bkm, zx = float("inf"), None
         if bkm <= BOUNDARY_WARN_KM:
-            warnings.append(
+            notes.append(Notice(
+                "near_boundary",
                 f"Point is {bkm:.1f} km from the Z = {zx:.2f} zone; the digitized map is "
-                f"~1.5 km/px, check Tabla 19 or the nearest listed town."
-            )
+                f"~1.5 km/px, check Tabla 19 or the nearest listed town.",
+                {"boundaryKm": round(bkm, 2), "zAcross": zx},
+            ))
 
     if listed is not None and listed.distance_km <= LISTED_WARN_KM and listed.z != z:
-        warnings.append(
+        notes.append(Notice(
+            "table19_differs",
             f"Tabla 19 lists {listed.town} ({listed.canton}), {listed.distance_km:.1f} km away, "
-            f"with Z = {listed.z:.2f}; the map gives Z = {z:.2f}."
-        )
+            f"with Z = {listed.z:.2f}; the map gives Z = {z:.2f}.",
+            {"town": listed.town, "canton": listed.canton,
+             "distanceKm": round(listed.distance_km, 2), "zTable": listed.z, "zMap": z},
+        ))
     if province == "ZONA NO DELIMITADA":
-        warnings.append("Point is in a 'zona no delimitada'; region set to costa, confirm eta.")
+        notes.append(Notice("zona_no_delimitada",
+                            "Point is in a 'zona no delimitada'; region set to costa, confirm eta."))
 
     return NECZone(lat, lon, z, ZONE_NAMES[round(z, 2)], province, region, eta,
-                   bkm, zx, listed, src, tuple(warnings))
+                   bkm, zx, listed, src, tuple(n.text for n in notes), tuple(notes))

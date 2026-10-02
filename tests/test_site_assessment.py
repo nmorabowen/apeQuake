@@ -129,3 +129,20 @@ def test_bad_inputs(kw):
 def test_outside_ecuador():
     with pytest.raises(ValueError):
         assess_site(-12.05, -77.04, site_class="D")
+
+
+def test_notices_are_structured_and_match_warnings():
+    from apeQuake.notices import CODES
+
+    r = assess_site(-2.1347, -79.5872, site_class="E")         # Milagro, class E
+    assert [n.text for n in r.notices] == r.warnings
+    codes = [n.code for n in r.notices]
+    assert set(codes) <= set(CODES)
+    assert {"near_boundary", "table19_differs", "asce_unavailable"} <= set(codes)
+    una = next(n for n in r.notices if n.code == "asce_unavailable")
+    assert una.params["reason"] == "class_e_no_fv"
+    trig = assess_site(*QUITO, site_class="D").notices
+    assert any(n.code == "asce716_trigger" and n.params["triggers"] == ["D_S1"] for n in trig)
+    d = r.to_dict()
+    json.dumps(d["notices"], allow_nan=False)
+    assert d["notices"][0]["code"] == codes[0]

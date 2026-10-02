@@ -53,6 +53,7 @@ def _zone_payload(z: dict[str, Any]) -> dict[str, Any]:
         "boundaryKm": z["boundary_km"], "zAcrossBoundary": z["z_across_boundary"],
         "nearestListed": _listed(z["nearest_listed"]), "source": z["source"],
         "warnings": list(z["warnings"]),
+        "notices": list(z.get("notices", [])),
     }
 
 
@@ -138,6 +139,7 @@ def assessment_payload(d: dict[str, Any]) -> dict[str, Any]:
             "necAmplification": _curve(site["nec_amplification"])},
         "comparison": [_comparison_row(r) for r in d["comparison"]],
         "warnings": list(d["warnings"]),
+        "notices": list(d.get("notices", [])),
     }
 
 

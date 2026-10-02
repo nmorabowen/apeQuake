@@ -136,6 +136,12 @@
           "items": {
             "type": "string"
           }
+        },
+        "notices": {
+          "type": "array",
+          "items": {
+            "$ref": "common.json#/$defs/notice"
+          }
         }
       },
       "required": [
@@ -150,7 +156,8 @@
         "zAcrossBoundary",
         "nearestListed",
         "source",
-        "warnings"
+        "warnings",
+        "notices"
       ],
       "additionalProperties": false
     },
@@ -405,6 +412,41 @@
       "required": [
         "type",
         "features"
+      ],
+      "additionalProperties": false
+    },
+    "notice": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "enum": [
+            "near_boundary",
+            "table19_differs",
+            "zona_no_delimitada",
+            "site_class_f",
+            "z_override",
+            "region_override",
+            "igepn_note",
+            "nec_city_far",
+            "asce_unavailable",
+            "asce716_trigger",
+            "asce716_exception3"
+          ],
+          "description": "Stable notice code; see apeQuake.notices."
+        },
+        "params": {
+          "type": "object",
+          "description": "Values the client needs to render the notice."
+        },
+        "text": {
+          "type": "string",
+          "description": "English text, the fallback for unknown codes."
+        }
+      },
+      "required": [
+        "code",
+        "params",
+        "text"
       ],
       "additionalProperties": false
     }
