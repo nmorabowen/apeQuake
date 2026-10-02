@@ -10,7 +10,7 @@ dispatch({"api": "apeQuake/1", "command": "zoning.at", "args": {"lat": -0.22, "l
 # {"api": "apeQuake/1", "ok": true, "result": {...}}  |  {"ok": false, "error": {"code", "message"}}
 ```
 
-- `API_VERSION = "1.1.0"`. History: 1.0.1 envelope branches titled Ok / Error and `py.typed`; 1.0.2 every `$ref` names its file (`common.json#/...`, even inside common.json, for json-schema-ref-parser); 1.1.0 `map.layer`. Additive changes bump the minor (`report.build` → 1.2.0).
+- `API_VERSION = "1.2.0"`. History: 1.0.1 envelope branches titled Ok / Error and `py.typed`; 1.0.2 every `$ref` names its file (`common.json#/...`, even inside common.json, for json-schema-ref-parser); 1.1.0 `map.layer`; 1.2.0 `notices` (structured warnings). Additive changes bump the minor (`report.build` → 1.3.0).
 - Commands: `api.describe` (version, commands, schemas, `common`), `zoning.at` {lat, lon},
   `site.assess` {lat, lon, vs30 | siteClass, method?, ss?, s1?, z?, region?, tlAsce?},
   `map.layer` {layer: necZones | igepnHazard | faults | sourceZones | capitals | provinces;
@@ -20,6 +20,9 @@ dispatch({"api": "apeQuake/1", "command": "zoning.at", "args": {"lat": -0.22, "l
   Layer builders live in `api/layers.py`; `nec.zone_grid()` is the public raster accessor.
 - Error codes: `bad_request`, `unknown_command`, `out_of_area` (`OutsideEcuadorError`),
   `value_error`, `internal_error` (message = exception type only).
+- `notices` (in `zoning.at`, `site.assess` and its `zone`): `{code, params, text}` per warning,
+  codes in `apeQuake.notices.CODES`; `warnings` stays as the list of `text`. Clients render
+  code + params in their language and fall back to `text`.
 - `dispatch` never raises; results must pass `json.dumps(allow_nan=False)`.
 - Payloads are **camelCase**, built explicitly in `api/handlers.py` (`assessment_payload`,
   `_zone_payload`), not dumped from `to_dict()`. Units: degrees, g, s, m/s, km.

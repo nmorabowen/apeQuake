@@ -83,6 +83,12 @@
         },
         "etaUsed": {
           "type": "number"
+        },
+        "notices": {
+          "type": "array",
+          "items": {
+            "$ref": "common.json#/$defs/notice"
+          }
         }
       },
       "required": [
@@ -100,7 +106,8 @@
         "warnings",
         "zUsed",
         "regionUsed",
-        "etaUsed"
+        "etaUsed",
+        "notices"
       ],
       "additionalProperties": false
     },
@@ -519,6 +526,12 @@
       "items": {
         "type": "string"
       }
+    },
+    "notices": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/$defs/notice"
+      }
     }
   },
   "required": [
@@ -534,7 +547,8 @@
     "rock",
     "site",
     "comparison",
-    "warnings"
+    "warnings",
+    "notices"
   ],
   "additionalProperties": false
 }

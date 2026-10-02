@@ -114,3 +114,13 @@ def test_to_dict_is_json_ready():
     d = zone_at(-2.1347, -79.5872).to_dict()
     json.dumps(d)
     assert d["z"] == 0.30 and isinstance(d["warnings"], list)
+
+
+def test_zone_notices_carry_params():
+    r = zone_at(-2.1347, -79.5872)                               # Milagro
+    assert [n.text for n in r.notices] == list(r.warnings)
+    nb = next(n for n in r.notices if n.code == "near_boundary")
+    assert nb.params["zAcross"] == r.z_across_boundary
+    t19 = next(n for n in r.notices if n.code == "table19_differs")
+    assert (t19.params["zTable"], t19.params["zMap"]) == (0.35, 0.30)
+    assert r.to_dict()["notices"][0]["code"] in {"near_boundary", "table19_differs"}

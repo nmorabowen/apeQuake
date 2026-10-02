@@ -28,7 +28,8 @@ d = a.to_dict()       # strict JSON (NaN/inf -> None)
 | `rock` | curves `nec_475`, `asce_design`, `igepn_475`, `igepn_2475_x2_3`, `nec_uhs_475` |
 | `site` | curves `nec`, `asce7_16`, `asce7_22`, `igepn_475_scaled`, `igepn_2475_x2_3_scaled`, `nec_amplification`; `None` for F |
 | `comparison` | rows at T = 0.2 and 1.0 s with `rock` and `site` values |
-| `warnings` | zoning + IG-EPN + ASCE 11.4.8 + overrides + far NEC city (> 25 km) |
+| `warnings` | zoning + IG-EPN + ASCE 11.4.8 + overrides + far NEC city (> 25 km), English text |
+| `notices` | the same as `Notice(code, text, params)` (`apeQuake.notices`); `asce_unavailable.reason` = `class_e_no_fv` or `other` |
 
 Curves are `{"T": [...], "Sa": [...]}`; code spectra on `PERIODS` (0-4 s every 0.02 s + 0.05, 0.07).
 

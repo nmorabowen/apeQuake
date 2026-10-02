@@ -12,7 +12,7 @@ from ..nec.zoning import OutsideEcuadorError
 API = "apeQuake/1"
 """Contract identifier carried by every request and response."""
 
-API_VERSION = "1.1.0"
+API_VERSION = "1.2.0"
 """Semantic version of the ``apeQuake/1`` contract (additive changes bump the minor)."""
 
 ErrorCode = Literal["bad_request", "unknown_command", "out_of_area", "value_error",

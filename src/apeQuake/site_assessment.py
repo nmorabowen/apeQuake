@@ -46,6 +46,7 @@ from .code_spectrum.codes.nec import NECSpectrum
 from .hazard import EcuadorHazard
 from .nec import load_hazard_database, zone_at
 from .nec.zoning import _km
+from .notices import Notice
 
 __all__ = [
     "SsS1Method",
@@ -96,6 +97,7 @@ class SiteAssessment:
     site: dict[str, Any] | None
     comparison: list[dict[str, Any]]
     warnings: list[str] = field(default_factory=list)
+    notices: list[Notice] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         """JSON-ready dict (numpy arrays become lists)."""
@@ -103,6 +105,8 @@ class SiteAssessment:
 
 
 def _jsonable(x: Any) -> Any:
+    if isinstance(x, Notice):
+        return _jsonable(x.to_dict())
     if isinstance(x, dict):
         return {k: _jsonable(v) for k, v in x.items()}
     if isinstance(x, (list, tuple)):
@@ -159,7 +163,7 @@ def assess_site(
         raise ValueError(f"method must be 'nec', 'igepn' or 'manual', got {method!r}")
     if method == "manual" and (ss is None or s1 is None):
         raise ValueError("method='manual' needs ss and s1")
-    warns: list[str] = []
+    notes: list[Notice] = []
 
     # --- site classes --------------------------------------------------------
     if vs30 is not None:
@@ -174,18 +178,22 @@ def assess_site(
         classes = {"nec": sc, "asce7_16": sc, "asce7_22": sc}
     is_f = classes["nec"] == "F"
     if is_f:
-        warns.append("Site class F: a site response analysis is required (NEC-SE-DS 3.2; "
-                     "ASCE 7 11.4.7 / 21.1). Only the rock comparison is reported.")
+        notes.append(Notice("site_class_f",
+                            "Site class F: a site response analysis is required (NEC-SE-DS 3.2; "
+                            "ASCE 7 11.4.7 / 21.1). Only the rock comparison is reported."))
 
     # --- NEC zoning ----------------------------------------------------------
     zn = zone_at(lat, lon)
-    warns += list(zn.warnings)
+    notes += list(zn.notices)
     z_used = float(z) if z is not None else zn.z
     region_used = region if region is not None else zn.region
     if z is not None and z != zn.z:
-        warns.append(f"Z overridden: {z_used:.2f} (map gives {zn.z:.2f}).")
+        notes.append(Notice("z_override", f"Z overridden: {z_used:.2f} (map gives {zn.z:.2f}).",
+                            {"z": z_used, "zMap": zn.z}))
     if region is not None and region != zn.region:
-        warns.append(f"Region overridden: {region_used} (province gives {zn.region}).")
+        notes.append(Notice("region_override",
+                            f"Region overridden: {region_used} (province gives {zn.region}).",
+                            {"region": region_used, "regionMap": zn.region}))
 
     nec_rock = NECSpectrum(z=z_used, site_class="B", region=region_used)
     nec_site = None if is_f else NECSpectrum(z=z_used, site_class=classes["nec"], region=region_used)
@@ -194,7 +202,8 @@ def assess_site(
     with _warnings.catch_warnings(record=True) as caught:
         _warnings.simplefilter("always")
         ig = EcuadorHazard().site(lat, lon, interp="bilinear")
-    warns += [f"IG-EPN: {w.message}" for w in caught]
+    notes += [Notice("igepn_note", f"IG-EPN: {w.message}", {"message": str(w.message)})
+              for w in caught]
     ig_T = np.asarray(ig.periods, float)
     ig_uhs = {f"{tr}": {s: ig.published(tr, s) for s in ("mean", "q16", "q84")} for tr in (475, 2475)}
 
@@ -221,8 +230,10 @@ def assess_site(
         T_, sa_ = city.uhs(tr)
         nec_uhs[str(tr)] = _curve(T_, sa_)
     if nec_uhs["distance_km"] > 25:
-        warns.append(f"NEC hazard curves exist only for capitals; using {city.name}, "
-                     f"{nec_uhs['distance_km']:.0f} km away.")
+        notes.append(Notice("nec_city_far",
+                            f"NEC hazard curves exist only for capitals; using {city.name}, "
+                            f"{nec_uhs['distance_km']:.0f} km away.",
+                            {"city": city.name, "distanceKm": round(nec_uhs["distance_km"], 1)}))
 
     # --- ASCE -----------------------------------------------------------------
     tl_rock = float(tl_asce) if tl_asce is not None else float(nec_rock.tl)
@@ -235,14 +246,21 @@ def assess_site(
             s16 = ASCE7_16Spectrum(ss_used, s1_used, classes["asce7_16"], tl_site,
                                    allow_exception=True, vs_measured=vs30 is not None)
         except ValueError as exc:      # e.g. class E with S1 > 0.1: Table 11.4-2 has no Fv
-            warns.append(f"ASCE 7-16 / 7-22 site spectra not available: {exc}")
+            no_fv = classes["asce7_16"] == "E" and s1_used > 0.1
+            notes.append(Notice("asce_unavailable",
+                                f"ASCE 7-16 / 7-22 site spectra not available: {exc}",
+                                {"reason": "class_e_no_fv" if no_fv else "other",
+                                 "message": str(exc)}))
     if s16 is not None:
         if s16.exceptions:
-            warns.append("ASCE 7-16 11.4.8 requires a site-specific analysis "
-                         f"({', '.join(s16.exceptions)}); the 11.4.8 exception was applied.")
+            notes.append(Notice("asce716_trigger",
+                                "ASCE 7-16 11.4.8 requires a site-specific analysis "
+                                f"({', '.join(s16.exceptions)}); the 11.4.8 exception was applied.",
+                                {"triggers": list(s16.exceptions)}))
             if "E_S1" in s16.exceptions:
-                warns.append("ASCE 7-16 11.4.8 exception 3 (class E, S1 >= 0.2) is valid only "
-                             "for T <= Ts with the ELF procedure: verify.")
+                notes.append(Notice("asce716_exception3",
+                                    "ASCE 7-16 11.4.8 exception 3 (class E, S1 >= 0.2) is valid "
+                                    "only for T <= Ts with the ELF procedure: verify."))
         a16 = {"parameters": s16.parameters(), "exceptions": list(s16.exceptions),
                "tl_source": "input" if tl_asce is not None else "NEC TL of the site class",
                "spectrum": _curve(PERIODS, s16.sa(PERIODS))}
@@ -306,4 +324,4 @@ def assess_site(
     zone = {**zn.to_dict(), "z_used": z_used, "region_used": region_used,
             "eta_used": float(nec_rock.eta)}
     return SiteAssessment(inputs, zone, classes, ss_s1, nec, nec_uhs, a16, a22, igepn,
-                          rock, site, comparison, warns)
+                          rock, site, comparison, [n.text for n in notes], notes)
