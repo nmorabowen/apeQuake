@@ -100,3 +100,42 @@ call. Treat those numbers as order-of-magnitude.
   hazard levels, essential structures, bridges, ports).
 * **Rock motion.** The curves are for rock, 5 % damping; apply site
   coefficients Fa, Fd, Fs separately.
+
+## Seismic zone factor Z by location
+
+`zone_at` reads Z from NEC-SE-DS Figura 1, digitized into a ~1.5 km raster
+(`scripts/digitize_nec_zone_map.py`). It also sets the region, and therefore η
+(§3.3.1), from the province that contains the point.
+
+```python
+from apeQuake.nec import zone_at
+from apeQuake.code_spectrum.codes.nec import NECSpectrum
+
+z = zone_at(-2.1347, -79.5872)          # Milagro
+z.z, z.zone, z.region, z.eta            # 0.30, 'III', 'costa', 1.80
+z.boundary_km, z.z_across_boundary      # ~3.4 km to the 0.35 zone
+z.nearest_listed                        # closest Tabla 19 town and its Z
+z.warnings                              # near-boundary / Tabla 19 disagreement
+
+NECSpectrum(z=z.z, site_class="D", region=z.region)
+```
+
+### Where the map and Tabla 19 disagree
+
+NEC asks you to use Tabla 19 for the towns it lists, and the nearest listed
+town when the map is hard to read. The digitized map gives the same Z as
+Tabla 19 for **91 %** of the 544 listed towns we could locate, measured at each
+parish's own coordinates. For **98 %**, the listed Z appears somewhere inside the
+parish. Nearly all the rest fall into two groups:
+
+- **Points within a few km of a zone edge.** `boundary_km` reports the
+  distance, and a warning is raised below 5 km.
+- **Places where the code contradicts itself.** Quevedo, Vinces and Milagro,
+  for example, are listed at 0.35 but lie inside the figure's 0.30 ellipse. Ten
+  parishes even appear in Tabla 19 twice with different Z.
+
+When the nearest listed town is within 10 km and its Z differs from the map,
+the result carries a warning. The design decision stays with the engineer.
+
+Galápagos does not appear on the main map. The figure's inset gives the whole
+province Z = 0.30 g.
