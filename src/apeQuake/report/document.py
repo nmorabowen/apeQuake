@@ -52,7 +52,7 @@ def esc(text: Any) -> str:
 
 
 def f(x: float | None, n: int = 2) -> str:
-    return "—" if x is None else f"{x:.{n}f}"
+    return "no aplica" if x is None else f"{x:.{n}f}"
 
 
 def _cmp(value: float, ref: float) -> str:
@@ -86,8 +86,10 @@ def _typ_str(s: str | None) -> str:
 
 
 def _front(meta: ReportMeta, abstract: str) -> str:
+    # the cover template reads name, email and affiliation of every author
     authors = ", ".join(
-        "(" + ", ".join(f"{k}: {_typ_str(v)}" for k, v in a.items()) + ",)" for a in meta.authors)
+        "(" + ", ".join(f"{k}: {_typ_str(a.get(k, ''))}" for k in ("name", "email", "affiliation")) + ",)"
+        for a in meta.authors)
     codes = ", ".join(_typ_str(c) for c in CODES)
     rev_rows = meta.revisions if meta.revisions is not None else [
         {"rev": meta.revision, "date": meta.date or "", "description": "Emisión inicial",
@@ -203,7 +205,7 @@ El alcance comprende la zonificación sísmica del sitio, la definición de los 
 
 == Organización
 
-El capítulo 2 compara los espectros en roca y para el perfil de suelo del proyecto.
+El capítulo 2 presenta la ubicación y la zonificación sísmica del sitio; el capítulo 3, los parámetros en roca $S_S$ y $S_1$; el capítulo 4, los espectros de la {NEC}; el capítulo 5, los espectros del ASCE/SEI 7; el capítulo 6, el peligro sísmico probabilístico del {IGEPN}; el capítulo 7, la comparación de los espectros. Las conclusiones y los supuestos y limitaciones cierran el informe.
 """
 
 
@@ -214,7 +216,7 @@ def comparison_section(d: dict[str, Any]) -> str:
     r2, r1 = by_t[0.2]["rock"], by_t[1.0]["rock"]
 
     def row(label, a, b, ra, rb):
-        cell = lambda v, ref: "—" if v is None else f(v / ref)
+        cell = lambda v, ref: "no aplica" if v is None else f(v / ref)
         return (f'([{label}], [{f(a)}], [{f(b)}], [{cell(a, ra)}], [{cell(b, rb)}])')
 
     rows_rock = [
@@ -285,8 +287,8 @@ def _governing(s: dict[str, Any]) -> str:
     return f"{n} con {f(v)} [g], {f(v / s['nec'])} veces la ordenada de la {NEC}"
 
 
-def _figure(path: str, label: str, caption: str) -> str:
-    return f'#figure(image("{path}", width: 100%), caption: [{caption}]) <{label}>'
+def _figure(path: str, label: str, caption: str, width: str = "100%") -> str:
+    return f'#figure(image("{path}", width: {width}), caption: [{caption}]) <{label}>'
 
 
 def _table(label: str, caption: str, rows: list[str]) -> str:
@@ -298,5 +300,11 @@ def _table(label: str, caption: str, rows: list[str]) -> str:
 
 def render(d: dict[str, Any], meta: ReportMeta) -> str:
     """Full Typst source for the assessment dict ``d`` (``SiteAssessment.to_dict()``)."""
-    return "\n".join([_front(meta, abstract(d, meta)), introduction(d, meta),
-                      comparison_section(d)])
+    from . import chapters as ch
+
+    return "\n".join([
+        _front(meta, abstract(d, meta)), introduction(d, meta),
+        ch.ubicacion(d, _where(d, meta)), ch.parametros_roca(d), ch.espectros_nec(d),
+        ch.espectros_asce(d), ch.peligro_igepn(d), comparison_section(d),
+        ch.conclusiones(d), ch.supuestos(d),
+    ])

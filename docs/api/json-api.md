@@ -17,6 +17,7 @@ dispatch({"api": "apeQuake/1", "command": "site.assess",
 | `api.describe` | The version, the commands, and their schemas. |
 | `zoning.at` | NEC Z, zone, province, region, η, distance to the nearest zone boundary, and the nearest Tabla 19 town. |
 | `map.layer` | One map layer: `necZones` (run-length encoded grid of Figura 1), `igepnHazard` (cell polygons with Sa for `tr` 475/2475, `period`, `stat`), `faults`, `sourceZones`, `capitals`, `provinces`. |
+| `report.build` | The Typst site report: PDF (base64), `.typ` source and SVG figures (needs the typst CLI and `@local/ape-informes`). |
 | `site.assess` | The NEC-SE-DS, ASCE 7-16, ASCE 7-22 (approximate) and IG-EPN comparison: parameters, spectra, the rock and site views, and warnings. |
 
 **Error codes:**
@@ -25,6 +26,7 @@ dispatch({"api": "apeQuake/1", "command": "site.assess",
 - `unknown_command`: no command by that name.
 - `out_of_area`: the point is outside Ecuador or the NEC zone map.
 - `value_error`: the domain refused a value.
+- `report_unavailable`: the typst CLI or the ape-informes package is not installed.
 - `internal_error`: a bug. The message carries only the exception type.
 
 **Units:** degrees (WGS-84), g, s, m/s for Vs30, and km.

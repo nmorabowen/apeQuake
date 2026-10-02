@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/report.build.result.json",
+  "title": "report.build result",
+  "type": "object",
+  "properties": {
+    "pdfBase64": {
+      "type": "string",
+      "description": "The PDF, base64."
+    },
+    "typ": {
+      "type": "string",
+      "description": "Typst source (main.typ), imports @local/ape-informes:0.1.0."
+    },
+    "figures": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Side files of main.typ: file name -> SVG text."
+    },
+    "fileName": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "pdfBase64",
+    "typ",
+    "figures",
+    "fileName"
+  ],
+  "additionalProperties": false
+}

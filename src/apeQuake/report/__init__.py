@@ -27,11 +27,16 @@ from typing import Any
 from . import figures
 from .document import ReportMeta, render
 
-__all__ = ["ReportMeta", "Report", "build_report", "compile_typst", "TypstError"]
+__all__ = ["ReportMeta", "Report", "build_report", "compile_typst", "TypstError",
+           "TypstCompileError"]
 
 
 class TypstError(RuntimeError):
-    """``typst compile`` is missing or failed."""
+    """The ``typst`` CLI or the ``@local/ape-informes`` package is not installed."""
+
+
+class TypstCompileError(RuntimeError):
+    """``typst compile`` ran and failed on the document (a bug in the report source)."""
 
 
 @dataclass
@@ -69,7 +74,11 @@ def compile_typst(typ: str, files: dict[str, str], *, timeout: float = 120.0) ->
         cmd += [str(root / "main.typ"), str(root / "main.pdf")]
         p = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
         if p.returncode != 0:
-            raise TypstError(p.stderr.strip()[-2000:] or "typst compile failed")
+            err = p.stderr.strip()
+            if "package" in err.lower() and "ape-informes" in err and ("not found" in err.lower()
+                                                                      or "failed to" in err.lower()):
+                raise TypstError("the @local/ape-informes:0.1.0 Typst package is not installed")
+            raise TypstCompileError(err[-2000:] or "typst compile failed")
         return (root / "main.pdf").read_bytes()
 
 
