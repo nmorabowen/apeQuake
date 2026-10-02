@@ -10,7 +10,7 @@ dispatch({"api": "apeQuake/1", "command": "zoning.at", "args": {"lat": -0.22, "l
 # {"api": "apeQuake/1", "ok": true, "result": {...}}  |  {"ok": false, "error": {"code", "message"}}
 ```
 
-- `API_VERSION = "1.0.0"`; additive changes bump the minor (`report.build` → 1.1.0).
+- `API_VERSION = "1.0.1"` (1.0.1: envelope branches titled Ok / Error, `py.typed`); additive changes bump the minor (`report.build` → 1.1.0).
 - Commands: `api.describe` (version, commands, schemas, `common`), `zoning.at` {lat, lon},
   `site.assess` {lat, lon, vs30 | siteClass, method?, ss?, s1?, z?, region?, tlAsce?}.
 - Error codes: `bad_request`, `unknown_command`, `out_of_area` (`OutsideEcuadorError`),

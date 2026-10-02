@@ -21,7 +21,8 @@
         "ok",
         "result"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "title": "Ok"
     },
     {
       "type": "object",
@@ -60,7 +61,8 @@
         "ok",
         "error"
       ],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "title": "Error"
     }
   ]
 }
