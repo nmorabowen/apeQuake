@@ -157,9 +157,10 @@ apeQuake/
 
 - [x] Significant duration
 - [x] Newmark response spectra
-- [ ] Arias Intensity
+- [x] Arias Intensity, PGA / PGV / PGD
 - [ ] Cumulative Absolute Velocity (CAV)
-- [ ] RotD50 response spectra
+- [x] RotD00 / RotD50 / RotD100 response spectra
+- [x] PEER `.AT2`, RENAC and text record readers; baseline correction
 - [ ] Batch processing utilities
 - [ ] PEER/NGA flatfile importer
 - [ ] PyPI package

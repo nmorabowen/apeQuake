@@ -115,6 +115,7 @@ nav:
   - API Reference:
       - Overview: api/index.md
       - Record: api/record.md
+      - Readers: api/readers.md
       - Filters: api/filters.md
       - Spectrum: api/spectrum.md
       - Spectrogram: api/spectrogram.md

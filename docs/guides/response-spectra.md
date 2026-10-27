@@ -74,3 +74,23 @@ out["displacement"], out["velocity"], out["total_acceleration"]
 ```
 
 See the [`ResponseSpectra` API](../api/response_spectra.md) for every option.
+
+## RotD00, RotD50, RotD100
+
+Orientation-independent spectra of two horizontal components (Boore, 2010):
+the oscillator responses are rotated through 0–180° and, per period, the
+pseudo-acceleration `ω² max|u_θ|` is reduced to percentiles over the angles.
+
+```python
+r = rec.response_spectra.rotd(T, components=("X", "Y"))   # angle_step=1 deg
+r["RotD50"], r["RotD100"], r["RotD00"]
+r["angle_RotD100"]       # orientation of the maximum per period
+r["Sa_angles"]           # (nT, n_angles) PSA at every angle
+
+rec.response_spectra.rotd(T, percentiles=(50, 84, 100))   # any percentiles
+rec.response_spectra.plot_rotd()                          # from the cached result
+```
+
+`rotd` uses the same input and filter-pipeline convention as `compute`
+(`df=`, `use_filters=`). It is exact: the oscillator is linear, so rotating its
+response equals rotating the input record.

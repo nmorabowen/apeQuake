@@ -154,6 +154,13 @@ class Spectrogram:
 
     # --------------------- common/base preprocessing --------------------- #
 
+
+    def apply_baseline_correction(self, order: int = 2) -> "Spectrogram":
+        self.df_spectrogram = self.filter.baseline_correction(df=self.df_spectrogram, order=order)
+        self._invalidate()
+        self._log(f"baseline_correction(order={order})")
+        return self
+
     def apply_base_filters(
         self,
         *,
