@@ -81,6 +81,21 @@ def _walls(rings, h, rgba, azim):
     return polys, cols, owner
 
 
+def _keep_order(z, axis=None):
+    """``Poly3DCollection._zsortfunc`` that leaves the faces in the order given.
+
+    Older matplotlib calls it once per face and sorts with a stable
+    ``sorted(..., reverse=True)``: equal keys keep the list order.  Newer
+    matplotlib (3.11) calls it once as ``f(pzs, axis=-1)`` on the (faces x
+    vertices) depths and draws ``argsort(keys)[::-1]``: strictly decreasing
+    keys make that the identity.  Equal keys would not: argsort is not stable,
+    and the reversal would turn the painter's order around.
+    """
+    if axis is None:
+        return 0.0
+    return np.ma.MaskedArray(-np.arange(np.shape(z)[0], dtype=float))
+
+
 def _need_3d(ax) -> None:
     if getattr(ax, "name", "") != "3d":
         raise ValueError("ax must be a 3D Axes (fig.add_subplot(projection='3d'))")
@@ -146,7 +161,7 @@ def plot_iso(hz: "EcuadorHazard", tr: float = 475, period: float = 0.0, stat: st
         polys.append([(*p, h[k]) for p in rings[k]])
         cols.append(tuple(rgba[k]))
     col = Poly3DCollection(polys, facecolors=cols, edgecolors=cols, linewidths=0.25)
-    col._zsortfunc = lambda z: 0.0        # keep the order above (stable sort, no re-sorting)
+    col._zsortfunc = _keep_order          # keep the order above, no depth re-sorting
     ax.add_collection3d(col, autolim=False)
 
     allp = np.concatenate(rings)
