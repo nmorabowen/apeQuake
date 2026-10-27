@@ -155,6 +155,35 @@ class CodeSpectrum:
         self._record_periods = T
         return self.record_Sa
 
+    def export(
+        self,
+        label: str,
+        path: str,
+        *,
+        format: str = "etabs",
+        **kwargs: Any,
+    ):
+        """Write the model *label* to *path* for an analysis program.
+
+        ``format`` is ``"etabs"``, ``"sap2000"``, ``"opensees"`` or ``"csv"``;
+        ``kwargs`` go to the writer in :mod:`apeQuake.code_spectrum.export`
+        (``periods``, ``t_max``, ``n``, ``units``; ``tag`` / ``style`` for
+        OpenSees).  Returns the written path.
+        """
+        from . import export
+
+        writers = {
+            "etabs": export.to_etabs,
+            "sap2000": export.to_sap2000,
+            "opensees": export.to_opensees,
+            "csv": export.to_csv,
+        }
+        if format not in writers:
+            raise ValueError(f"format must be one of {sorted(writers)}; got {format!r}")
+        if label not in self.models:
+            raise KeyError(f"No model labelled {label!r}; have {sorted(self.models)}")
+        return writers[format](self.models[label], path, **kwargs)
+
     def summary(self) -> pd.DataFrame:
         """One row per model: its code and defining parameters."""
         rows = {
