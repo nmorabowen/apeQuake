@@ -11,7 +11,10 @@ Ported from codeSpectra and checked against NEC-SE-DS (peligro sismico):
 * 6.3.5: ``Fx = wx hx^k V / sum(wi hi^k)`` with ``k = 1`` (``T <= 0.5``),
   ``0.75 + 0.50 T`` (``0.5 < T <= 2.5``), ``2`` (``T > 2.5``).
 
-Not implemented: the alternative ``Ct = 0.0055 / sqrt(Cw)`` for wall structures.
+* 6.3.3 a, alternatively for reinforced-concrete or masonry wall structures
+  (``alpha = 1``): ``Ct = 0.0062 / sqrt(Cw)``,
+  ``Cw = 100 / AB * sum((hn / hwi)^2 Awi / (1 + 0.83 (hwi / lwi)^2))``
+  (:func:`wall_period`; NEC-SE-DS p. 62).
 """
 from __future__ import annotations
 
@@ -36,6 +39,7 @@ __all__ = [
     "importance_factor",
     "limit_period_method_2",
     "vertical_distribution_exponent",
+    "wall_period",
 ]
 
 #: Tabla 6: importance coefficient I by category.
@@ -69,6 +73,28 @@ def approximate_period(hn: float, structure_type: str = "hormigon_porticos") -> 
                          f"got {structure_type!r}")
     ct, alpha = PERIOD_COEFFICIENTS[structure_type]
     return float(ct * hn**alpha)
+
+
+def wall_period(hn: float, base_area: float, walls: Iterable[tuple[float, float, float]]) -> float:
+    """Metodo 1 alternative for wall structures: ``T = Ct hn`` with ``Ct = 0.0062 / sqrt(Cw)``.
+
+    ``walls`` holds ``(Awi, lwi, hwi)`` per wall resisting the seismic forces in
+    the direction studied: minimum shear area at the first level [m^2], length
+    [m] and height from the base [m].  ``base_area`` is ``AB`` [m^2], ``hn`` [m].
+    """
+    hn = _positive("hn", hn)
+    ab = _positive("base_area", base_area)
+    total, count = 0.0, 0
+    for i, wall in enumerate(walls):
+        if len(wall) != 3:
+            raise ValueError(f"walls[{i}]: expected (Awi, lwi, hwi)")
+        aw, lw, hw = (_positive(f"walls[{i}] {n}", v) for n, v in zip(("Awi", "lwi", "hwi"), wall))
+        total += (hn / hw) ** 2 * aw / (1.0 + 0.83 * (hw / lw) ** 2)
+        count += 1
+    if count == 0:
+        raise ValueError("walls: give at least one wall")
+    cw = 100.0 / ab * total
+    return float(0.0062 / np.sqrt(cw) * hn)
 
 
 def limit_period_method_2(T_method_2: float, Ta_method_1: float) -> float:
@@ -130,20 +156,27 @@ def base_shear(
     structure_type: str = "hormigon_porticos",
     weights: Iterable[float] | None = None,
     heights: Iterable[float] | None = None,
+    ta: float | None = None,
 ) -> NECELFResult:
     """Design base shear ``V = I Sa(Ta) W / (R phiP phiE)`` (6.3.2).
 
     ``spectrum`` is the **elastic** horizontal :class:`NECSpectrum`; the
     reduction is applied here.  Give ``T`` (Metodo 2), ``hn`` (Metodo 1) or
     both (``T`` then capped at 1.30 x Metodo 1).  ``I`` is Tabla 6
-    (:func:`importance_factor`).
+    (:func:`importance_factor`).  ``ta`` is a Metodo 1 period from the wall
+    formula (:func:`wall_period`), used instead of ``Ct hn^alpha``.
     """
     if getattr(spectrum, "component", "horizontal") != "horizontal":
         raise ValueError("base_shear needs the horizontal NEC spectrum")
     W = _positive("W", W)
-    if T is None and hn is None:
-        raise ValueError("give the period T, the height hn, or both")
-    Ta1 = approximate_period(hn, structure_type) if hn is not None else None
+    if ta is not None and hn is not None:
+        raise ValueError("give hn (Ct hn^alpha) or ta (the wall formula), not both")
+    if T is None and hn is None and ta is None:
+        raise ValueError("give the period T, the height hn (or ta), or both")
+    if ta is not None:
+        Ta1: float | None = _positive("ta", ta)
+    else:
+        Ta1 = approximate_period(hn, structure_type) if hn is not None else None
     if T is None:
         Ta = float(Ta1)  # type: ignore[arg-type]
     else:

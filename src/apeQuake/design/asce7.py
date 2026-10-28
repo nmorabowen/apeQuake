@@ -16,9 +16,19 @@ where Exception 2 of Section 11.4.5 applies (two-period spectrum).  The floors
 apply to both.  7-10 and 7-16 have only the classical form.  Equation numbers
 in the results follow the edition.
 
-Not implemented: the alternative periods ``Ta = 0.1 N`` and the shear-wall
-``Cq / sqrt(Cw)`` formula, the Section 11.6 exception that assigns the SDC from
-Table 11.6-1 alone, and the optional ``SDS <= 1.0`` of Section 12.8.1.3.
+Section 12.8.2.1 also permits ``Ta = 0.1 N`` for moment frames of up to 12
+stories (:func:`approximate_period_stories`) and ``Ta = Cq hn / sqrt(Cw)`` for
+masonry or concrete shear-wall structures up to 120 ft (:func:`shear_wall_period`);
+pass either result to :func:`base_shear` as ``ta``.  ``max_sds_12_8_1_3`` applies
+the optional ``SDS = 1.0`` (not below 70 % of ``SDS``) of Section 12.8.1.3 in
+7-16 / 7-22, and ``table_11_6_1_only`` the Section 11.6 exception that assigns
+the SDC from Table 11.6-1 alone.  The conditions those provisions place on
+irregularity, redundancy and diaphragms cannot be checked from these inputs:
+passing the flag asserts them.
+
+``Cq``: 7-16 and 7-22 print ``0.0019 ft (0.00058 m)``.  ``0.0019 s/ft`` is
+``0.0062 s/m`` (the NEC-SE-DS value), so the printed SI figure is not used:
+heights are converted to ft and the ft coefficient applied.
 """
 from __future__ import annotations
 
@@ -36,10 +46,12 @@ __all__ = [
     "ELFResult",
     "SDCResult",
     "approximate_period",
+    "approximate_period_stories",
     "base_shear",
     "importance_factor",
     "seismic_design_category",
     "seismic_response_coefficient",
+    "shear_wall_period",
     "upper_limit_coefficient",
     "vertical_distribution",
     "vertical_distribution_exponent",
@@ -72,12 +84,22 @@ _SD1_BANDS: _Bands = ((0.067, "A", "A"), (0.133, "B", "C"), (0.20, "C", "D"), (n
 #: Equation numbers per edition (7-22 renumbered them when it added Method 1).
 _EQ = {
     "7-10": {"V": "12.8-1", "method1": None, "method2": "12.8-2", "cap": "12.8-3",
-             "cap_TL": "12.8-4", "min": "12.8-5", "min_S1": "12.8-6", "Ta": "12.8-7"},
+             "cap_TL": "12.8-4", "min": "12.8-5", "min_S1": "12.8-6", "Ta": "12.8-7",
+             "Ta_N": "12.8-8", "Ta_wall": "12.8-9", "Cw": "12.8-10"},
     "7-16": {"V": "12.8-1", "method1": None, "method2": "12.8-2", "cap": "12.8-3",
-             "cap_TL": "12.8-4", "min": "12.8-5", "min_S1": "12.8-6", "Ta": "12.8-7"},
+             "cap_TL": "12.8-4", "min": "12.8-5", "min_S1": "12.8-6", "Ta": "12.8-7",
+             "Ta_N": "12.8-8", "Ta_wall": "12.8-9", "Cw": "12.8-10"},
     "7-22": {"V": "12.8-1", "method1": "12.8-2", "method2": "12.8-3", "cap": "12.8-4",
-             "cap_TL": "12.8-5", "min": "12.8-6", "min_S1": "12.8-7", "Ta": "12.8-8"},
+             "cap_TL": "12.8-5", "min": "12.8-6", "min_S1": "12.8-7", "Ta": "12.8-8",
+             "Ta_N": "12.8-9", "Ta_wall": "12.8-10", "Cw": "12.8-11"},
 }
+
+#: Section 12.8.2.1: ``Ta = 0.1 N`` is for frames that are entirely moment frames.
+_MOMENT_FRAMES = ("steel_moment_frame", "concrete_moment_frame")
+#: Section 12.8.2.1: ``Cq`` [s/ft] of the shear-wall formula; limit hn <= 120 ft.
+_CQ_FT = 0.0019
+_FT = 0.3048
+_WALL_HN_MAX_FT = 120.0
 
 
 def _edition(edition: str) -> Edition:
@@ -117,13 +139,23 @@ class SDCResult:
     risk_category: str
     s1_override: bool | None
     """True if ``S1 >= 0.75`` set E/F; None if ``S1`` was not given (not checked)."""
+    table_11_6_1_only: bool = False
+    """True if the Section 11.6 exception set the SDC from Table 11.6-1 alone."""
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
 def seismic_design_category(
-    sds: float, sd1: float, *, s1: float | None, risk_category: str = "II"
+    sds: float,
+    sd1: float,
+    *,
+    s1: float | None,
+    risk_category: str = "II",
+    table_11_6_1_only: bool = False,
+    ta: float | None = None,
+    t_drift: float | None = None,
+    ts: float | None = None,
 ) -> SDCResult:
     """Seismic design category per Section 11.6 (7-10, 7-16 and 7-22 alike).
 
@@ -131,6 +163,14 @@ def seismic_design_category(
     more severe of Table 11.6-1 (``SDS``) and Table 11.6-2 (``SD1``).  ``s1`` is
     keyword-only and required: pass ``None`` only where it is truly unknown,
     and the result records that the ``S1`` override was not checked.
+
+    ``table_11_6_1_only=True`` applies the Section 11.6 exception (``S1 < 0.75``
+    only): the SDC comes from Table 11.6-1 alone.  ``ta`` (Section 12.8.2.1),
+    ``t_drift`` (the period used for story drift) and ``ts`` are then required
+    and checked against items 1 and 2 (``ta < 0.8 Ts``, ``t_drift < Ts``, the
+    larger of the two orthogonal directions).  Items 3 (``Cs`` by Eq. 12.8-2 of
+    the edition) and 4 (rigid diaphragms, or vertical elements at most 40 ft /
+    12.192 m apart) are asserted by passing the flag.
     """
     rc = _risk(risk_category)
     if not (sds >= 0.0 and sd1 >= 0.0):
@@ -143,7 +183,23 @@ def seismic_design_category(
         return SDCResult(worst, a, b, rc, None)
     if s1 >= 0.75:
         return SDCResult("F" if rc == "IV" else "E", a, b, rc, True)
+    if table_11_6_1_only:
+        _check_table_11_6_1_only(ta, t_drift, ts)
+        return SDCResult(a, a, b, rc, False, True)
     return SDCResult(worst, a, b, rc, False)
+
+
+def _check_table_11_6_1_only(ta: float | None, t_drift: float | None,
+                             ts: float | None) -> None:
+    if ta is None or t_drift is None or ts is None:
+        raise ValueError("table_11_6_1_only needs ta, t_drift and ts (Section 11.6 items 1-2)")
+    ta, t_drift, ts = _positive("ta", ta), _positive("t_drift", t_drift), _positive("ts", ts)
+    if not ta < 0.8 * ts:
+        raise ValueError(f"Section 11.6 item 1: Ta = {ta:g} s is not below 0.8 Ts = "
+                         f"{0.8 * ts:g} s")
+    if not t_drift < ts:
+        raise ValueError(f"Section 11.6 item 2: the drift period {t_drift:g} s is not "
+                         f"below Ts = {ts:g} s")
 
 
 def approximate_period(hn: float, structure_type: str = "other", *, metric: bool = True) -> float:
@@ -154,6 +210,74 @@ def approximate_period(hn: float, structure_type: str = "other", *, metric: bool
                          f"got {structure_type!r}")
     ct_m, ct_ft, x = STRUCTURE_TYPES[structure_type]
     return float((ct_m if metric else ct_ft) * hn**x)
+
+
+def approximate_period_stories(
+    n_stories: int,
+    structure_type: str = "concrete_moment_frame",
+    *,
+    average_story_height: float,
+    metric: bool = True,
+) -> float:
+    """``Ta = 0.1 N`` (Section 12.8.2.1; Eq. 12.8-8 in 7-10 / 7-16, 12.8-9 in 7-22).
+
+    Permitted only where the seismic force-resisting system is entirely concrete
+    or steel moment frames, ``N <= 12`` stories above the base and the average
+    story height is at least 3 m (10 ft); each condition is checked.
+    """
+    if structure_type not in _MOMENT_FRAMES:
+        raise ValueError("Ta = 0.1 N needs a system entirely of moment frames "
+                         f"({', '.join(_MOMENT_FRAMES)}); got {structure_type!r}")
+    if int(n_stories) != n_stories or not 1 <= n_stories <= 12:
+        raise ValueError(f"Ta = 0.1 N is for 1 to 12 stories above the base; got {n_stories!r}")
+    h = _positive("average_story_height", average_story_height)
+    if h < (3.0 if metric else 10.0):
+        raise ValueError(f"Ta = 0.1 N needs an average story height of at least "
+                         f"{'3 m' if metric else '10 ft'}; got {h:g}")
+    return 0.1 * int(n_stories)
+
+
+def shear_wall_period(
+    hn: float,
+    base_area: float,
+    walls: Iterable[tuple[float, ...]],
+    *,
+    edition: str = "7-16",
+    metric: bool = True,
+) -> float:
+    """``Ta = Cq hn / sqrt(Cw)`` for masonry or concrete shear-wall structures.
+
+    Section 12.8.2.1 (Eqs. 12.8-9 / 12.8-10 in 7-10 and 7-16, 12.8-10 / 12.8-11
+    in 7-22), for ``hn <= 120 ft (36.6 m)``.  ``walls`` holds, per shear wall
+    effective in the direction considered, ``(Ai, Di)``: web area and length.
+    ``base_area`` is ``AB``.  Lengths in m and areas in m^2 (``metric``), or ft
+    and ft^2.
+
+    ``Cw = 100 / AB * sum(Ai / (1 + 0.83 (h / Di)^2))`` with ``h = hn`` in 7-16 and
+    7-22.  7-10 prints ``h_i`` there without defining it; give each wall as
+    ``(Ai, Di, hi)`` to use its own height, otherwise ``hn`` is taken.
+    ``Cq = 0.0019 s/ft`` (see the module notes on the printed SI value).
+    """
+    ed = _edition(edition)
+    hn = _positive("hn", hn)
+    ab = _positive("base_area", base_area)
+    hn_ft = hn / _FT if metric else hn
+    if hn_ft > _WALL_HN_MAX_FT + 1e-9:
+        raise ValueError("the shear-wall period is for hn <= 120 ft (36.6 m); "
+                         f"got {hn:g} {'m' if metric else 'ft'}")
+    total, count = 0.0, 0
+    for i, wall in enumerate(walls):
+        if len(wall) not in (2, 3) or (len(wall) == 3 and ed != "7-10"):
+            raise ValueError(f"walls[{i}]: expected (Ai, Di)"
+                             + (" or (Ai, Di, hi)" if ed == "7-10" else ""))
+        ai, di = _positive(f"walls[{i}] Ai", wall[0]), _positive(f"walls[{i}] Di", wall[1])
+        h = _positive(f"walls[{i}] hi", wall[2]) if len(wall) == 3 else hn
+        total += ai / (1.0 + 0.83 * (h / di) ** 2)
+        count += 1
+    if count == 0:
+        raise ValueError("walls: give at least one shear wall")
+    cw = 100.0 / ab * total            # dimensionless: Ai / AB, h / Di
+    return float(_CQ_FT * hn_ft / np.sqrt(cw))
 
 
 def upper_limit_coefficient(sd1: float) -> float:
@@ -304,6 +428,10 @@ def base_shear(
     weights: Iterable[float] | None = None,
     heights: Iterable[float] | None = None,
     k_interpolate: bool = True,
+    ta: float | None = None,
+    max_sds_12_8_1_3: bool = False,
+    n_stories: int | None = None,
+    site_class: str | None = None,
 ) -> ELFResult:
     """Seismic base shear ``V = Cs W`` (Section 12.8.1) and, optionally, ``Fx`` / ``Vx``.
 
@@ -326,12 +454,28 @@ def base_shear(
         :class:`~apeQuake.code_spectrum.ASCE7_22MultiPeriodSpectrum`).
     weights, heights
         Story weights and heights above the base, for ``Fx`` and ``Vx``.
+    ta
+        An approximate period from another Section 12.8.2.1 formula
+        (:func:`approximate_period_stories`, :func:`shear_wall_period`), used
+        instead of ``Ct hn^x``; give ``ta`` or ``hn``, not both.
+    max_sds_12_8_1_3, n_stories, site_class
+        Section 12.8.1.3 (7-16, 7-22): ``Cs`` computed with ``SDS = 1.0`` but not
+        less than 0.7 ``SDS``.  Checked here: ``T <= 0.5 s``, ``n_stories <= 5``,
+        ``site_class`` not E or F, Risk Category I or II and, in 7-22,
+        ``R >= 3``.  The flag asserts the rest (no Section 12.3.2
+        irregularities; ``rho = 1.0`` permitted by Section 12.3.4.2).
     """
     W = _positive("W", W)
     Ie = importance_factor(risk_category) if Ie is None else _positive("Ie", Ie)
-    if T is None and hn is None:
-        raise ValueError("give the period T, the height hn, or both")
-    Ta = approximate_period(hn, structure_type, metric=metric) if hn is not None else None
+    if ta is not None and hn is not None:
+        raise ValueError("give hn (Ta = Ct hn^x) or ta (another Section 12.8.2.1 period), "
+                         "not both")
+    if T is None and hn is None and ta is None:
+        raise ValueError("give the period T, the height hn (or ta), or both")
+    if ta is not None:
+        Ta: float | None = _positive("ta", ta)
+    else:
+        Ta = approximate_period(hn, structure_type, metric=metric) if hn is not None else None
     Cu = upper_limit_coefficient(sd1) if Ta is not None else None
     if T is None:
         T_used = float(Ta)  # type: ignore[arg-type]
@@ -339,8 +483,15 @@ def base_shear(
         T_used = _positive("T", T)
         if Ta is not None and apply_upper_limit:
             T_used = min(T_used, Cu * Ta)  # type: ignore[operator]
-    Cs, bd = seismic_response_coefficient(sds=sds, sd1=sd1, s1=s1, T=T_used, tl=tl, R=R,
+    sds_cs = sds
+    if max_sds_12_8_1_3:
+        sds_cs = _sds_12_8_1_3(sds, T=T_used, R=R, edition=edition, spectrum=spectrum,
+                               n_stories=n_stories, site_class=site_class,
+                               risk_category=risk_category)
+    Cs, bd = seismic_response_coefficient(sds=sds_cs, sd1=sd1, s1=s1, T=T_used, tl=tl, R=R,
                                           Ie=Ie, edition=edition, spectrum=spectrum)
+    if max_sds_12_8_1_3:
+        bd["SDS_12.8.1.3"] = sds_cs
     V = Cs * W
     k = vertical_distribution_exponent(T_used, interpolate=k_interpolate)
     Fx = Vx = None
@@ -349,3 +500,31 @@ def base_shear(
     if weights is not None:
         Fx, Vx = vertical_distribution(V, weights, heights, k)  # type: ignore[arg-type]
     return ELFResult(bd["edition"], V, Cs, T_used, Ta, Cu, k, W, float(R), Ie, bd, Fx, Vx)
+
+
+def _sds_12_8_1_3(sds: float, *, T: float, R: float, edition: str,
+                  spectrum: CodeSpectrumModel | None, n_stories: int | None,
+                  site_class: str | None, risk_category: str) -> float:
+    """``SDS`` for ``Cs`` under Section 12.8.1.3, after checking its criteria."""
+    ed = _edition(edition)
+    if ed == "7-10":
+        raise ValueError("ASCE 7-10 Section 12.8.1.3 caps Ss at 1.5 (it changes SDS through "
+                         "Fa), not SDS; build the spectrum with Ss = 1.5 instead")
+    if spectrum is not None:
+        raise ValueError("Section 12.8.1.3 caps SDS in Method 2; it does not apply to Cs "
+                         "from a spectrum (Method 1)")
+    if n_stories is None or site_class is None:
+        raise ValueError("max_sds_12_8_1_3 needs n_stories and site_class")
+    checks = (
+        (T <= 0.5, f"item 3: T = {T:g} s exceeds 0.5 s"),
+        (int(n_stories) == n_stories and 1 <= n_stories <= 5,
+         f"item 2: {n_stories!r} stories (at most 5)"),
+        (str(site_class).strip().upper() not in ("E", "F"),
+         f"item 5: Site Class {site_class!r}"),
+        (_risk(risk_category) in ("I", "II"), f"item 6: Risk Category {risk_category!r}"),
+        (ed != "7-22" or R >= 3.0, f"item 7 (7-22): R = {R:g} is below 3"),
+    )
+    for ok, why in checks:
+        if not ok:
+            raise ValueError(f"Section 12.8.1.3 does not apply, {why}")
+    return min(sds, max(1.0, 0.7 * sds))
