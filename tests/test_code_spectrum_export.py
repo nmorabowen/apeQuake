@@ -34,8 +34,20 @@ def test_sampled_keeps_knees_and_unique_periods():
     T2, sa2 = sampled(ASCE16, [0.5, 0.5, 1.0, 0.1], units="cm/s2")
     np.testing.assert_allclose(T2, [0.1, 0.5, 1.0])
     np.testing.assert_allclose(sa2, ASCE16.sa(T2) * 100.0 * G)
-    with pytest.raises(ValueError, match="units"):
+    with pytest.raises(ValueError, match="acceleration unit"):
         sampled(ASCE16, units="ft/s2")
+
+
+def test_units_come_from_core_units(tmp_path):
+    from apeQuake.code_spectrum.base import G as G_base
+    from apeQuake.core.units import G as G_core
+
+    assert G_base is G_core
+    _, gal = sampled(ASCE16, [1.0], units="Gal")
+    _, cms2 = sampled(ASCE16, [1.0], units="cm/s2")
+    np.testing.assert_allclose(gal, cms2)
+    head = to_csv(ASCE16, tmp_path / "s.csv", [1.0], units="m/s^2").read_text().splitlines()[0]
+    assert head == "T [s],Sa [m/s2]"
 
 
 def test_csv(tmp_path):

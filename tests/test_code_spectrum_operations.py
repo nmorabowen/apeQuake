@@ -5,8 +5,8 @@ import pytest
 
 from apeQuake import Record
 from apeQuake.code_spectrum import DerivedSpectrum
-from apeQuake.code_spectrum.codes import ASCE7_16Spectrum, NECSpectrum
-from apeQuake.code_spectrum.codes.asce7_16 import ASCE7_16VerticalSpectrum, vertical_coefficient
+from apeQuake.code_spectrum.codes import ASCE7_16Spectrum, ASCE7_16VerticalSpectrum, NECSpectrum
+from apeQuake.code_spectrum.codes.asce7_16 import vertical_coefficient
 
 A = ASCE7_16Spectrum(1.5, 0.6, "C", 8.0)
 N = NECSpectrum(z=0.4, site_class="D", region="costa")

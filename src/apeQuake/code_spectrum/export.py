@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING, Literal
 
 import numpy as np
 
-from .base import G
+from ..core.units import AccelUnit, conversion_factor, normalize_unit
 
 if TYPE_CHECKING:
     import os
@@ -33,8 +33,8 @@ if TYPE_CHECKING:
 
 __all__ = ["sampled", "to_csv", "to_etabs", "to_opensees", "to_sap2000"]
 
-SpectrumUnit = Literal["g", "m/s2", "cm/s2"]
-_PER_G: dict[str, float] = {"g": 1.0, "m/s2": G, "cm/s2": 100.0 * G}
+#: Acceleration unit of the written ordinates (aliases such as ``"gal"`` accepted).
+SpectrumUnit = AccelUnit
 
 #: Decimal places written for periods and ordinates.
 PRECISION = 6
@@ -53,12 +53,11 @@ def sampled(
     ``periods=None`` uses ``model.default_periods(t_max, n)`` (knees included).
     ``Sa`` is converted from g to ``units``.
     """
-    if units not in _PER_G:
-        raise ValueError(f"units must be one of {sorted(_PER_G)}; got {units!r}")
+    factor = conversion_factor("g", units)
     T = model.default_periods(t_max, n) if periods is None else model._periods(periods)
     T = np.round(np.sort(T), PRECISION)
     T = T[np.concatenate(([True], np.diff(T) > 0.0))]
-    return T, model.sa(T) * _PER_G[units]
+    return T, model.sa(T) * factor
 
 
 def _title(model: CodeSpectrumModel) -> str:
@@ -83,6 +82,7 @@ def to_csv(
     units: SpectrumUnit = "g",
 ) -> Path:
     """Write ``T [s],Sa [units]`` rows with one header row."""
+    units = normalize_unit(units)
     T, sa = sampled(model, periods, t_max=t_max, n=n, units=units)
     return _write(path, [f"T [s],Sa [{units}]"] + [f"{t:.6f},{s:.6f}" for t, s in zip(T, sa)])
 
@@ -102,6 +102,7 @@ def to_etabs(
     vs Value*, *Header Lines to Skip* as stated on the first line, and the
     function's units set to ``units``.
     """
+    units = normalize_unit(units)
     T, sa = sampled(model, periods, t_max=t_max, n=n, units=units)
     params = model.parameters()
     info = [
@@ -152,6 +153,7 @@ def to_opensees(
     """
     if int(tag) != tag or tag < 1:
         raise ValueError(f"tag must be a positive integer, got {tag!r}")
+    units = normalize_unit(units)
     T, sa = sampled(model, periods, t_max=t_max, n=n, units=units)
     head = [f"# {_title(model)}", f"# period [s] vs Sa [{units}]; written by apeQuake"]
     if style == "tcl":
