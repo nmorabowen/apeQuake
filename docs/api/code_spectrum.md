@@ -7,6 +7,10 @@ and their comparison with a record's response spectrum, via `rec.code_spectrum`.
 
 ::: apeQuake.code_spectrum.base.CodeSpectrumModel
 
+::: apeQuake.code_spectrum.base.DerivedSpectrum
+
+::: apeQuake.code_spectrum.codes.asce7_16.ASCE7_16VerticalSpectrum
+
 ::: apeQuake.code_spectrum.base.AsceTwoPeriodSpectrum
 
 ::: apeQuake.code_spectrum.base.register_code

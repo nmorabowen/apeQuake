@@ -108,6 +108,29 @@ externally computed values (site-specific analysis, Chapter 21.4). It bypasses
 the tables and all 11.4.8 checks; you are responsible for the Chapter 21
 minimums (e.g. the 80 % floor of 21.3).
 
+## Vertical spectrum (11.9)
+
+`vertical()` returns the Section 11.9 vertical spectrum at the model's level:
+the design spectrum (11.9.3, 2/3 of MCE_R) or the MCE_R spectrum (11.9.2).
+
+```python
+v = ASCE7_16Spectrum(ss=1.5, s1=0.6, site_class="C", tl=8.0).vertical()
+v.cv                       # 1.2, Table 11.9-1 (Ss, site class group)
+v.sa([0.02, 0.1, 0.5, 2.0])
+```
+
+- MCE_R ordinates: `0.3 Cv SMS` up to 0.025 s, then a linear rise to
+  `0.8 Cv SMS` at 0.05 s, flat to 0.15 s, then `0.8 Cv SMS (0.15/Tv)^0.75`
+  (Eqs. 11.9-1 to 11.9-4).
+- Never below **one-half of the horizontal `Sa`** at the same period
+  (11.9.2). codeSpectra omitted this floor, and it governs much of the range on
+  stiff sites.
+- `Sa` is NaN beyond `Tv = 2 s`: 11.9.2 requires a site-specific procedure
+  there. The default grid stops at 2 s.
+- 11.9.1 restricts the procedure to SDC C to F.
+- For a model built with `from_sds_sd1`, pass `ss=` and `site_class=` so `Cv`
+  can be looked up.
+
 ## Limitations
 
 - Two-period spectrum only; no simplified-procedure `Fa` (12.14.8.1) and no

@@ -106,6 +106,8 @@ nav:
       - Response spectra: guides/response-spectra.md
       - Intensity measures: guides/intensity-measures.md
       - NEC hazard curves: guides/nec-hazard.md
+      - Design (Ie, SDC, ELF): guides/design.md
+      - Spectrum operations: guides/code-spectrum-operations.md
       - Code spectrum:
           - NEC-15: guides/code-spectrum-nec.md
           - ASCE 7-10: guides/code-spectrum-asce7-10.md
@@ -125,3 +127,4 @@ nav:
       - Code spectrum: api/code_spectrum.md
       - JSON API: api/json-api.md
       - IG-EPN hazard: api/hazard.md
+      - Design: api/design.md

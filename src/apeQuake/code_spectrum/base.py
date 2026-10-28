@@ -25,6 +25,7 @@ __all__ = [
     "G",
     "CodeSpectrumModel",
     "AsceTwoPeriodSpectrum",
+    "DerivedSpectrum",
     "register_code",
     "get_model_class",
     "available_codes",
@@ -110,6 +111,77 @@ class CodeSpectrumModel(ABC):
         T = self.default_periods() if T is None else self._periods(T)
         return pd.DataFrame({"T": T, "Sa": self.sa(T), "Sd": self.sd(T)})
 
+    # ------------------------------------------------------------------ #
+    # Operations: each returns a new model (a DerivedSpectrum), so results
+    # plot, export and combine like any code spectrum.  Sd of a derived
+    # spectrum is the generic Sa g (T / 2 pi)^2.
+    # ------------------------------------------------------------------ #
+    def scaled(self, factor: float, *, label: str | None = None) -> "DerivedSpectrum":
+        """Every ordinate times ``factor`` (> 0)."""
+        f = _positive_factor("factor", factor)
+        return DerivedSpectrum(label or f"{self.code} x {f:g}", lambda T: f * self.sa(T),
+                               (self,), {"scale_factor": f})
+
+    def reduced(
+        self,
+        R: float,
+        *,
+        Ie: float = 1.0,
+        phi_p: float = 1.0,
+        phi_e: float = 1.0,
+        label: str | None = None,
+    ) -> "DerivedSpectrum":
+        """Inelastic design ordinates ``Sa Ie / (R phiP phiE)``.
+
+        ASCE 7 uses ``R`` and ``Ie``; NEC-SE-DS uses ``R``, ``phiP``, ``phiE`` and
+        ``I`` (pass it as ``Ie``).  For NEC static design prefer
+        :meth:`NECSpectrum.reduced_sa`, which also drops the ascending branch.
+        """
+        vals = {n: _positive_factor(n, v) for n, v in
+                (("R", R), ("Ie", Ie), ("phi_p", phi_p), ("phi_e", phi_e))}
+        k = vals["Ie"] / (vals["R"] * vals["phi_p"] * vals["phi_e"])
+        return DerivedSpectrum(label or f"{self.code} / R={vals['R']:g}",
+                               lambda T: k * self.sa(T), (self,), vals)
+
+    def envelope(self, *others: "CodeSpectrumModel", label: str | None = None) -> "DerivedSpectrum":
+        """Point-wise maximum of this spectrum and ``others``."""
+        models = (self, *others)
+        if len(models) < 2:
+            raise ValueError("envelope needs at least one other spectrum")
+        return DerivedSpectrum(
+            label or "envelope(" + ", ".join(m.code for m in models) + ")",
+            lambda T: np.max([m.sa(T) for m in models], axis=0), models, {},
+        )
+
+    def floored_by(
+        self, other: "CodeSpectrumModel", ratio: float = 1.0, *, label: str | None = None
+    ) -> "DerivedSpectrum":
+        """``max(Sa, ratio x other.Sa)`` at every period.
+
+        E.g. the ASCE 7 Section 21.3 floor of a site-specific design spectrum at
+        80 % of the Section 11.4 one: ``site.floored_by(code, 0.8)``.
+        """
+        r = _positive_factor("ratio", ratio)
+        return DerivedSpectrum(label or f"{self.code} floored at {r:.0%} of {other.code}",
+                               lambda T: np.maximum(self.sa(T), r * other.sa(T)),
+                               (self, other), {"floor_ratio": r})
+
+    def capped_by(
+        self, other: "CodeSpectrumModel", ratio: float = 1.0, *, label: str | None = None
+    ) -> "DerivedSpectrum":
+        """``min(Sa, ratio x other.Sa)`` at every period."""
+        r = _positive_factor("ratio", ratio)
+        return DerivedSpectrum(label or f"{self.code} capped at {r:.0%} of {other.code}",
+                               lambda T: np.minimum(self.sa(T), r * other.sa(T)),
+                               (self, other), {"cap_ratio": r})
+
+    def peak(self, t_max: float = 4.0, n: int = 2000) -> tuple[float, float]:
+        """``(T, Sa)`` of the maximum ordinate on ``0..t_max`` (knees included)."""
+        T = np.unique(np.concatenate([np.linspace(0.0, t_max, n), self.default_periods(t_max, 10)]))
+        sa = self.sa(T)
+        i = int(np.nanargmax(sa))
+        return float(T[i]), float(sa[i])
+
     @staticmethod
     def _periods(T: float | Iterable[float]) -> np.ndarray:
         """Validate and return *T* as a 1-D float array (``>= 0``, finite)."""
@@ -175,3 +247,37 @@ class AsceTwoPeriodSpectrum(CodeSpectrumModel):
                     np.where(T <= tl, sd1 / T, sd1 * tl / T**2),
                 ),
             )
+
+
+def _positive_factor(name: str, value: float) -> float:
+    v = float(value)
+    if not (np.isfinite(v) and v > 0.0):
+        raise ValueError(f"{name} must be a finite value > 0, got {value!r}")
+    return v
+
+
+class DerivedSpectrum(CodeSpectrumModel):
+    """A spectrum computed from other models (scaled, reduced, envelope, floor, cap).
+
+    Its ``code`` is a descriptive label; ``parameters()`` holds the operation's
+    factors plus the parents' codes; ``knee_periods()`` is the union of the
+    parents' knees, so sampling grids keep every corner.
+    """
+
+    code = "derived"
+
+    def __init__(self, label: str, fn, parents: tuple[CodeSpectrumModel, ...],
+                 params: dict[str, Any]) -> None:
+        self.code = label  # type: ignore[misc]  (instance label overrides the ClassVar)
+        self._fn = fn
+        self.parents = tuple(parents)
+        self._params = {**params, "from": ", ".join(p.code for p in self.parents)}
+
+    def sa(self, T: float | Iterable[float]) -> np.ndarray:
+        return np.asarray(self._fn(self._periods(T)), dtype=float)
+
+    def parameters(self) -> dict[str, Any]:
+        return dict(self._params)
+
+    def knee_periods(self) -> tuple[float, ...]:
+        return tuple(sorted({k for p in self.parents for k in p.knee_periods()}))
