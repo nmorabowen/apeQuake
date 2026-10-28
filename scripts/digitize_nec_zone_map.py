@@ -157,8 +157,13 @@ def classify(rgb: np.ndarray, mask: np.ndarray) -> tuple[np.ndarray, float]:
     return k, frac
 
 
+#: The NEC PDF font maps three accented capitals to the wrong glyphs (Ñ -> Ð,
+#: Ú -> U+250C box corner, Ó -> Ë); the IG-EPN admin layer carries the Ñ quirk.
+_FONT_FIX = str.maketrans({"Ð": "Ñ", "┌": "Ú", "Ë": "Ó"})
+
+
 def _norm(s: str) -> str:
-    s = str(s).replace("Ð", "Ñ")   # the IG-EPN admin layer carries the same font quirk
+    s = str(s).translate(_FONT_FIX)
     s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode().upper()
     s = s.replace("STO.", "SANTO")
     s = re.sub(r"\(.*?\)|[^A-Z0-9 ]", " ", s)
@@ -200,8 +205,7 @@ def parse_table19(nec_dir: Path) -> pd.DataFrame:
                 if abs(zy[i] - yc) <= 20:
                     cells[i][col].append((w[1], w[0], w[4]))
             for zw, c in zip(zs, cells):
-                # the PDF font maps Ñ to the glyph Ð
-                text = [" ".join(t for *_, t in sorted(col)).replace("Ð", "Ñ") for col in c]
+                text = [" ".join(t for *_, t in sorted(col)).translate(_FONT_FIX) for col in c]
                 rows.append(dict(poblacion=text[0], parroquia=text[1], canton=text[2],
                                  provincia=text[3], z=float(zw[4])))
     return pd.DataFrame(rows)

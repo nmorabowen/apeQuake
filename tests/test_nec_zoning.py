@@ -124,3 +124,13 @@ def test_zone_notices_carry_params():
     t19 = next(n for n in r.notices if n.code == "table19_differs")
     assert (t19.params["zTable"], t19.params["zMap"]) == (0.35, 0.30)
     assert r.to_dict()["notices"][0]["code"] in {"near_boundary", "table19_differs"}
+
+
+def test_table19_names_free_of_pdf_font_glyphs():
+    # Regression: the NEC PDF font maps Ñ -> Ð, Ú -> U+250C and Ó -> Ë; two rows
+    # shipped as "SUC\u250cA" and "SIMËN BOLIVAR" (codeSpectra had them right).
+    t = table19()
+    text = "".join(t[c].astype(str).str.cat() for c in ("poblacion", "parroquia", "canton", "provincia"))
+    assert not set(text) & {"Ð", "\u250c", "Ë"}
+    names = set(t["poblacion"])
+    assert {"SUCÚA", "SIMÓN BOLIVAR", "CAÑAR"} <= names
