@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/design.sdc.result.json",
+  "title": "design.sdc result",
+  "type": "object",
+  "properties": {
+    "sdc": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ]
+    },
+    "fromSds": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ]
+    },
+    "fromSd1": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ]
+    },
+    "riskCategory": {
+      "enum": [
+        "I",
+        "II",
+        "III",
+        "IV"
+      ]
+    },
+    "s1Override": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "True if S1 >= 0.75 set E / F; null if S1 was not given."
+    },
+    "importanceFactor": {
+      "type": "number",
+      "description": "Ie, Table 1.5-2."
+    }
+  },
+  "required": [
+    "sdc",
+    "fromSds",
+    "fromSd1",
+    "riskCategory",
+    "s1Override",
+    "importanceFactor"
+  ],
+  "additionalProperties": false
+}

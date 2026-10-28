@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/spectrum.code.result.json",
+  "title": "spectrum.code result",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string"
+    },
+    "parameters": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "number",
+          "string",
+          "boolean",
+          "null",
+          "array"
+        ]
+      },
+      "description": "The model's parameters (camelCase), e.g. sds, sd1, t0, ts, tl."
+    },
+    "kneePeriods": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "Corner periods of the spectrum [s]."
+    },
+    "spectrum": {
+      "$ref": "common.json#/$defs/curve"
+    },
+    "export": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "type": "string"
+        },
+        "units": {
+          "type": "string"
+        },
+        "fileName": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "format",
+        "units",
+        "fileName",
+        "text"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "code",
+    "parameters",
+    "kneePeriods",
+    "spectrum"
+  ],
+  "additionalProperties": false
+}

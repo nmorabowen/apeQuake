@@ -1,0 +1,459 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/spectrum.code.args.json",
+  "title": "spectrum.code args",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "code": {
+          "const": "ASCE7-10"
+        },
+        "ss": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "description": "Mapped Ss [g]."
+        },
+        "s1": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "description": "Mapped S1 [g]."
+        },
+        "siteClass": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E"
+          ]
+        },
+        "tl": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 20,
+          "description": "Long-period transition TL [s]."
+        },
+        "level": {
+          "enum": [
+            "design",
+            "mcer"
+          ],
+          "description": "Design spectrum (default) or the MCE_R spectrum."
+        },
+        "tMax": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 20,
+          "description": "Longest period of the returned curve [s] (default 4)."
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 2000,
+          "description": "Number of periods (default 200); knee periods are always added."
+        },
+        "export": {
+          "type": "object",
+          "properties": {
+            "format": {
+              "enum": [
+                "csv",
+                "etabs",
+                "sap2000",
+                "opensees-tcl",
+                "opensees-python"
+              ]
+            },
+            "units": {
+              "enum": [
+                "g",
+                "m/s2",
+                "cm/s2"
+              ],
+              "description": "Ordinate units of the file (default g)."
+            }
+          },
+          "required": [
+            "format"
+          ],
+          "additionalProperties": false,
+          "description": "Also return the spectrum as file text for an analysis program."
+        }
+      },
+      "required": [
+        "code",
+        "ss",
+        "s1",
+        "siteClass",
+        "tl"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "code": {
+          "const": "ASCE7-16"
+        },
+        "ss": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "description": "Mapped Ss [g]."
+        },
+        "s1": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "description": "Mapped S1 [g]."
+        },
+        "siteClass": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E"
+          ]
+        },
+        "tl": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 20,
+          "description": "Long-period transition TL [s]."
+        },
+        "level": {
+          "enum": [
+            "design",
+            "mcer"
+          ],
+          "description": "Design spectrum (default) or the MCE_R spectrum."
+        },
+        "tMax": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 20,
+          "description": "Longest period of the returned curve [s] (default 4)."
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 2000,
+          "description": "Number of periods (default 200); knee periods are always added."
+        },
+        "export": {
+          "type": "object",
+          "properties": {
+            "format": {
+              "enum": [
+                "csv",
+                "etabs",
+                "sap2000",
+                "opensees-tcl",
+                "opensees-python"
+              ]
+            },
+            "units": {
+              "enum": [
+                "g",
+                "m/s2",
+                "cm/s2"
+              ],
+              "description": "Ordinate units of the file (default g)."
+            }
+          },
+          "required": [
+            "format"
+          ],
+          "additionalProperties": false,
+          "description": "Also return the spectrum as file text for an analysis program."
+        }
+      },
+      "required": [
+        "code",
+        "ss",
+        "s1",
+        "siteClass",
+        "tl"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "code": {
+          "const": "ASCE7-22"
+        },
+        "sms": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "description": "SMS [g]."
+        },
+        "sm1": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "description": "SM1 [g]."
+        },
+        "siteClass": {
+          "enum": [
+            "A",
+            "B",
+            "BC",
+            "C",
+            "CD",
+            "D",
+            "DE",
+            "E"
+          ]
+        },
+        "tl": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 20,
+          "description": "Long-period transition TL [s]."
+        },
+        "level": {
+          "enum": [
+            "design",
+            "mcer"
+          ],
+          "description": "Design spectrum (default) or the MCE_R spectrum."
+        },
+        "tMax": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 20,
+          "description": "Longest period of the returned curve [s] (default 4)."
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 2000,
+          "description": "Number of periods (default 200); knee periods are always added."
+        },
+        "export": {
+          "type": "object",
+          "properties": {
+            "format": {
+              "enum": [
+                "csv",
+                "etabs",
+                "sap2000",
+                "opensees-tcl",
+                "opensees-python"
+              ]
+            },
+            "units": {
+              "enum": [
+                "g",
+                "m/s2",
+                "cm/s2"
+              ],
+              "description": "Ordinate units of the file (default g)."
+            }
+          },
+          "required": [
+            "format"
+          ],
+          "additionalProperties": false,
+          "description": "Also return the spectrum as file text for an analysis program."
+        }
+      },
+      "required": [
+        "code",
+        "sms",
+        "sm1",
+        "siteClass",
+        "tl"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "code": {
+          "const": "ASCE7-22-MPRS"
+        },
+        "saMcer": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "minItems": 22,
+          "maxItems": 22,
+          "description": "MCE_R ordinates [g] at the 22 periods of Section 11.4.5.1 item 1 (USGS Seismic Design Geodatabase)."
+        },
+        "sms": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "description": "SMS [g] from the geodatabase; inferred by Section 21.4 if omitted."
+        },
+        "sm1": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "description": "SM1 [g]; give with sms."
+        },
+        "siteClass": {
+          "enum": [
+            "A",
+            "B",
+            "BC",
+            "C",
+            "CD",
+            "D",
+            "DE",
+            "E"
+          ]
+        },
+        "tl": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 20,
+          "description": "Long-period transition TL [s]."
+        },
+        "level": {
+          "enum": [
+            "design",
+            "mcer"
+          ],
+          "description": "Design spectrum (default) or the MCE_R spectrum."
+        },
+        "tMax": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 20,
+          "description": "Longest period of the returned curve [s] (default 4)."
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 2000,
+          "description": "Number of periods (default 200); knee periods are always added."
+        },
+        "export": {
+          "type": "object",
+          "properties": {
+            "format": {
+              "enum": [
+                "csv",
+                "etabs",
+                "sap2000",
+                "opensees-tcl",
+                "opensees-python"
+              ]
+            },
+            "units": {
+              "enum": [
+                "g",
+                "m/s2",
+                "cm/s2"
+              ],
+              "description": "Ordinate units of the file (default g)."
+            }
+          },
+          "required": [
+            "format"
+          ],
+          "additionalProperties": false,
+          "description": "Also return the spectrum as file text for an analysis program."
+        }
+      },
+      "required": [
+        "code",
+        "saMcer",
+        "siteClass",
+        "tl"
+      ],
+      "additionalProperties": false,
+      "dependentRequired": {
+        "sms": [
+          "sm1"
+        ],
+        "sm1": [
+          "sms"
+        ]
+      }
+    },
+    {
+      "type": "object",
+      "properties": {
+        "code": {
+          "const": "NEC-15"
+        },
+        "z": {
+          "type": "number",
+          "minimum": 0.15,
+          "maximum": 0.5,
+          "description": "Zone factor Z [g]."
+        },
+        "siteClass": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E"
+          ]
+        },
+        "region": {
+          "$ref": "common.json#/$defs/region"
+        },
+        "tMax": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 20,
+          "description": "Longest period of the returned curve [s] (default 4)."
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 2000,
+          "description": "Number of periods (default 200); knee periods are always added."
+        },
+        "export": {
+          "type": "object",
+          "properties": {
+            "format": {
+              "enum": [
+                "csv",
+                "etabs",
+                "sap2000",
+                "opensees-tcl",
+                "opensees-python"
+              ]
+            },
+            "units": {
+              "enum": [
+                "g",
+                "m/s2",
+                "cm/s2"
+              ],
+              "description": "Ordinate units of the file (default g)."
+            }
+          },
+          "required": [
+            "format"
+          ],
+          "additionalProperties": false,
+          "description": "Also return the spectrum as file text for an analysis program."
+        }
+      },
+      "required": [
+        "code",
+        "z",
+        "siteClass",
+        "region"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

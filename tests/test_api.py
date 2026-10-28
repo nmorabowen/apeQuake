@@ -19,6 +19,15 @@ jsonschema = pytest.importorskip("jsonschema")
 referencing = pytest.importorskip("referencing")
 
 QUITO = {"lat": -0.22, "lon": -78.51}
+ASCE16 = {"code": "ASCE7-16", "ss": 1.5, "s1": 0.6, "siteClass": "C", "tl": 8}
+MPRS = {"code": "ASCE7-22-MPRS", "siteClass": "D", "tl": 8,
+        "saMcer": [0.6, 0.6, 0.62, 0.7, 0.9, 1.1, 1.3, 1.45, 1.5, 1.5, 1.45, 1.35, 1.2,
+                   0.95, 0.8, 0.6, 0.48, 0.32, 0.23, 0.18, 0.11, 0.07]}
+NEC = {"z": 0.4, "siteClass": "D", "region": "sierra"}
+ELF_ASCE = {"code": "asce7", "w": 1000, "r": 8, "sds": 1.0, "sd1": 0.6, "s1": 0.6, "tl": 8}
+ELF_NEC = {"code": "nec", "w": 1000, "r": 8, **NEC}
+STORIES = [{"weight": 400, "height": 3.5}, {"weight": 400, "height": 7.0},
+           {"weight": 200, "height": 10.5}]
 
 
 def _has_report_toolchain() -> bool:
@@ -109,6 +118,23 @@ VALID = [
                                   "report": {"project": "Prueba", "siteName": "Quito",
                                              "authors": [{"name": "N. Mora"}]}},
                  marks=needs_typst),
+    ("spectrum.code", ASCE16),
+    ("spectrum.code", {**ASCE16, "code": "ASCE7-10", "level": "mcer", "tMax": 6, "n": 50}),
+    ("spectrum.code", {"code": "ASCE7-22", "sms": 1.8, "sm1": 1.2, "siteClass": "CD", "tl": 8}),
+    ("spectrum.code", MPRS),
+    ("spectrum.code", {**MPRS, "sms": 1.4, "sm1": 0.9}),
+    ("spectrum.code", {"code": "NEC-15", **NEC, "export": {"format": "etabs", "units": "m/s2"}}),
+    ("spectrum.code", {**ASCE16, "export": {"format": "opensees-python"}}),
+    ("spectrum.code", {**ASCE16, "export": {"format": "csv"}, "n": 10.0}),
+    ("design.sdc", {"sds": 1.0, "sd1": 0.6, "s1": 0.8, "riskCategory": "IV"}),
+    ("design.sdc", {"sds": 0.1, "sd1": 0.05}),
+    ("design.elf", {**ELF_ASCE, "hn": 30, "structureType": "concrete_moment_frame"}),
+    ("design.elf", {**ELF_ASCE, "edition": "7-22", "t": 1.2, "hn": 30, "stories": STORIES}),
+    ("design.elf", {**ELF_ASCE, "edition": "7-10", "t": 0.5, "riskCategory": "III",
+                    "applyUpperLimit": False}),
+    ("design.elf", {**ELF_NEC, "hn": 10.5, "stories": STORIES, "importance": "esencial",
+                    "phiP": 0.9, "phiE": 0.9}),
+    ("design.elf", {**ELF_NEC, "t": 0.8, "structureType": "hormigon_con_muros"}),
 ]
 
 
@@ -162,6 +188,33 @@ BAD_ARGS = [
     ("report.build", {**QUITO, "siteClass": "D", "report": {"projet": "x"}}),
     ("report.build", {**QUITO, "siteClass": "D", "report": {"authors": [{"email": "a@b"}]}}),
     ("report.build", {**QUITO, "siteClass": "D", "report": {"project": ""}}),
+    ("spectrum.code", {}),
+    ("spectrum.code", {**ASCE16, "code": "ASCE7-05"}),
+    ("spectrum.code", {k: v for k, v in ASCE16.items() if k != "tl"}),
+    ("spectrum.code", {**ASCE16, "siteClass": "F"}),
+    ("spectrum.code", {**ASCE16, "z": 0.4}),                                # other code's field
+    ("spectrum.code", {**ASCE16, "level": "service"}),
+    ("spectrum.code", {**ASCE16, "n": 1}),
+    ("spectrum.code", {**ASCE16, "n": 2.5}),
+    ("spectrum.code", {**ASCE16, "export": {"format": "xlsx"}}),
+    ("spectrum.code", {**ASCE16, "export": {"format": "csv", "units": "ft/s2"}}),
+    ("spectrum.code", {**MPRS, "saMcer": MPRS["saMcer"][:-1]}),
+    ("spectrum.code", {**MPRS, "sms": 1.4}),
+    ("spectrum.code", {"code": "ASCE7-22", "sms": 1.8, "sm1": 1.2, "siteClass": "F", "tl": 8}),
+    ("spectrum.code", {"code": "NEC-15", **NEC, "region": "amazonia"}),
+    ("design.sdc", {"sds": 1.0}),
+    ("design.sdc", {"sds": 1.0, "sd1": 0.6, "riskCategory": "V"}),
+    ("design.sdc", {"sds": -0.1, "sd1": 0.6}),
+    ("design.elf", {"w": 1000}),
+    ("design.elf", {**ELF_ASCE, "code": "nch433", "t": 1.0}),
+    ("design.elf", ELF_ASCE),                                               # no t / hn
+    ("design.elf", {**ELF_ASCE, "t": 1.0, "edition": "7-05"}),
+    ("design.elf", {**ELF_ASCE, "t": 1.0, "importance": "esencial"}),       # NEC field
+    ("design.elf", {**ELF_ASCE, "t": 1.0, "applyUpperLimit": 1}),
+    ("design.elf", {**ELF_ASCE, "t": 1.0, "stories": []}),
+    ("design.elf", {**ELF_ASCE, "t": 1.0, "stories": [{"weight": 1}]}),
+    ("design.elf", {**ELF_NEC, "t": 1.0, "phiP": 1.2}),
+    ("design.elf", {**ELF_NEC, "t": 1.0, "sds": 1.0}),                      # ASCE field
 ]
 
 
@@ -276,3 +329,86 @@ def test_report_pdf_is_a_pdf():
     r = dispatch(req("report.build", {**QUITO, "siteClass": "F"}))["result"]
     assert base64.b64decode(r["pdfBase64"])[:5] == b"%PDF-"
     assert "fig-sitio.svg" not in r["figures"] and r["typ"].startswith("#import")
+
+
+# ------------------------------------------------- spectra and design (1.4.0)
+def _result(command, args):
+    r = dispatch(req(command, args))
+    assert r["ok"], r
+    return r["result"]
+
+
+def test_spectrum_code_matches_the_library():
+    import numpy as np
+
+    from apeQuake.code_spectrum.codes import ASCE7_16Spectrum, ASCE7_22MultiPeriodSpectrum
+    from apeQuake.code_spectrum.codes.asce7_22_mprs import MPRS_PERIODS
+
+    r = _result("spectrum.code", {**ASCE16, "n": 40})
+    m = ASCE7_16Spectrum(1.5, 0.6, "C", 8.0)
+    np.testing.assert_allclose(r["spectrum"]["sa"], m.sa(r["spectrum"]["t"]))
+    assert r["parameters"]["sds"] == m.sds and r["parameters"]["siteClass"] == "C"
+    assert set(m.knee_periods()) <= set(r["kneePeriods"])
+    r = _result("spectrum.code", MPRS)
+    m = ASCE7_22MultiPeriodSpectrum(MPRS_PERIODS, MPRS["saMcer"], 8.0, "D")
+    np.testing.assert_allclose(r["spectrum"]["sa"], m.sa(r["spectrum"]["t"]))
+    assert r["parameters"]["smsSM1Source"].startswith("inferred")
+
+
+def test_spectrum_code_export_is_the_file_text(tmp_path):
+    from apeQuake.code_spectrum import to_etabs
+    from apeQuake.code_spectrum.codes import NECSpectrum
+
+    e = _result("spectrum.code", {"code": "NEC-15", **NEC,
+                                  "export": {"format": "etabs", "units": "cm/s2"}})["export"]
+    model = NECSpectrum(z=0.4, site_class="D", region="sierra")
+    ref = to_etabs(model, tmp_path / "x.txt", units="cm/s2").read_text(encoding="utf-8")
+    assert e["text"] == ref and e["fileName"].endswith(".txt") and e["units"] == "cm/s2"
+    py = _result("spectrum.code", {**ASCE16, "export": {"format": "opensees-python"}})["export"]
+    assert py["fileName"].endswith(".py") and "timeSeries('Path'" in py["text"]
+
+
+def test_design_sdc_matches_section_11_6():
+    r = _result("design.sdc", {"sds": 0.4, "sd1": 0.1, "s1": 0.2})
+    assert (r["sdc"], r["fromSds"], r["fromSd1"], r["s1Override"]) == ("C", "C", "B", False)
+    assert r["importanceFactor"] == 1.0
+    assert _result("design.sdc", {"sds": 0.4, "sd1": 0.1})["s1Override"] is None
+
+
+def test_design_elf_matches_the_library():
+    import numpy as np
+
+    from apeQuake.code_spectrum.codes import NECSpectrum
+    from apeQuake.design import asce7, nec
+
+    r = _result("design.elf", {**ELF_ASCE, "edition": "7-22", "t": 1.2, "hn": 30,
+                               "stories": STORIES})
+    ref = asce7.base_shear(W=1000, R=8, sds=1.0, sd1=0.6, s1=0.6, tl=8, T=1.2, hn=30,
+                           edition="7-22", weights=[400, 400, 200], heights=[3.5, 7.0, 10.5])
+    assert (r["v"], r["cs"], r["t"], r["k"], r["method"]) == (ref.V, ref.Cs, ref.T, ref.k, 2)
+    roles = {lim["role"] for lim in r["limits"]}
+    assert roles == {"base", "cap", "min", "minS1"}
+    assert r["governing"] in {lim["equation"] for lim in r["limits"]}
+    np.testing.assert_allclose([s["fx"] for s in r["stories"]], ref.Fx)
+    assert r["stories"][0]["vx"] == pytest.approx(r["v"])
+
+    r = _result("design.elf", {**ELF_NEC, "hn": 10.5, "importance": "esencial", "phiP": 0.9})
+    ref = nec.base_shear(NECSpectrum(z=0.4, site_class="D", region="sierra"), W=1000, R=8,
+                         I=1.5, phi_p=0.9, hn=10.5)
+    assert (r["v"], r["ta"], r["i"]) == (ref.V, ref.Ta, 1.5) and "stories" not in r
+
+
+def test_design_elf_cites_each_editions_equations():
+    for edition, cap in (("7-16", "12.8-3"), ("7-22", "12.8-4")):
+        r = _result("design.elf", {**ELF_ASCE, "edition": edition, "t": 1.0})
+        assert r["governing"] == cap
+
+
+@pytest.mark.parametrize("command, args", [
+    ("spectrum.code", {**ASCE16, "siteClass": "D"}),     # 11.4.8: S1 >= 0.2 needs site-specific
+    ("spectrum.code", {**MPRS, "saMcer": [0.0] * 22}),
+])
+def test_spectrum_domain_refusals_are_value_errors(command, args, registry):
+    assert validator(f"{command}.args", registry).is_valid(args)
+    r = dispatch(req(command, args))
+    assert r["ok"] is False and r["error"]["code"] == "value_error", r

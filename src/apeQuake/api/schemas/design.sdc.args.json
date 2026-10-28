@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/design.sdc.args.json",
+  "title": "design.sdc args",
+  "type": "object",
+  "properties": {
+    "sds": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10,
+      "description": "SDS [g]."
+    },
+    "sd1": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10,
+      "description": "SD1 [g]."
+    },
+    "s1": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10,
+      "description": "Mapped S1 [g]; omit only if unknown (the S1 >= 0.75 rule is then not checked)."
+    },
+    "riskCategory": {
+      "enum": [
+        "I",
+        "II",
+        "III",
+        "IV"
+      ],
+      "description": "Risk category (default II)."
+    }
+  },
+  "required": [
+    "sds",
+    "sd1"
+  ],
+  "additionalProperties": false
+}
