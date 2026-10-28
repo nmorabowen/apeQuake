@@ -21,6 +21,8 @@ from typing import Any, ClassVar, Iterable
 import numpy as np
 import pandas as pd
 
+from ..core.units import G  # standard gravity, turns Sa [g] into Sd [m]; re-exported
+
 __all__ = [
     "G",
     "CodeSpectrumModel",
@@ -31,8 +33,6 @@ __all__ = [
     "available_codes",
 ]
 
-#: Standard gravity [m/s^2], used to turn Sa [g] into Sd [m].
-G = 9.80665
 
 _REGISTRY: dict[str, type["CodeSpectrumModel"]] = {}
 

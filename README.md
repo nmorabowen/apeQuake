@@ -4,7 +4,7 @@
 
 # apeQuake
 
-**A modular Python toolkit for seismic ground-motion processing** — filtering, amplitude spectra, time–frequency spectrograms, Newmark response spectra, and engineering intensity measures.
+**A modular Python toolkit for seismic ground motion and code-based seismic design** — record I/O and processing, response spectra (incl. RotD), intensity measures, ASCE 7 / NEC code spectra with ETABS, SAP2000 and OpenSees export, ELF base shear, and Ecuador's seismic hazard.
 
 [![Docs](https://img.shields.io/badge/docs-nmorabowen.github.io%2FapeQuake-c0392b)](https://nmorabowen.github.io/apeQuake/)
 [![Python](https://img.shields.io/badge/python-3.10%2B-0b2540)](https://www.python.org/)
@@ -27,9 +27,12 @@ single, transparent **`Record`** object and a set of composable processors:
 | Filtering | `rec.filter` | Detrend, taper, band-pass / -stop, low/high-pass |
 | Amplitude spectrum | `rec.spectrum` | Single-sided FFT amplitude spectra |
 | Spectrogram | `rec.spectrogram` | Time–frequency power (dB) |
-| Response spectra | `rec.response_spectra` | Newmark SDOF Sd / Sv / Sa |
-| Intensity measures | `rec.intensity_measures` | Significant duration, Husid curve |
+| Response spectra | `rec.response_spectra` | Newmark SDOF Sd / Sv / Sa, RotD00 / 50 / 100 |
+| Intensity measures | `rec.intensity_measures` | PGA / PGV / PGD, Arias, destructiveness potential, significant duration, Husid |
+| Code spectra | `rec.code_spectrum` | ASCE 7-10 / 7-16 / 7-22 (incl. multi-period and 7-16 vertical), NEC-SE-DS; export to ETABS / SAP2000 / OpenSees |
 | Plotting | `rec.plot_record` | Time histories & band-pass comparisons |
+| Seismic design | `apeQuake.design` | Importance factor, SDC, approximate period, ELF base shear and Fx / Vx (ASCE 7, NEC) |
+| Readers | `apeQuake.readers` | PEER AT2, RENAC, plain text; `Record.from_files` |
 | Seismic hazard (Ecuador) | `apeQuake.hazard` | IG-EPN UHS at any TR, hazard curves, sources, catalogs |
 
 All operations use DataFrames, support multi-component (X/Y/Z) records, and
@@ -38,7 +41,9 @@ baseline time history is never mutated unless you ask.
 
 ## Features
 
-- **1–3 components** (X, Y, Z) on a uniform time grid.
+- **1–3 components** (X, Y, Z) on a uniform time grid, with optional `units`.
+- **Readers** for PEER NGA `.AT2`, RENAC (IG-EPN) and plain-text records.
+- **Baseline correction** and velocity / displacement integration.
 - **Automatic `dt` detection & interpolation** for irregular time steps.
 - **Composable filter pipelines** — declare detrend → taper → band-pass once,
   reuse across spectra, spectrograms, and response spectra.
@@ -46,8 +51,15 @@ baseline time history is never mutated unless you ask.
   Numba-accelerated with a pure-Python fallback; pseudo (ω²·Sd) or absolute
   (max|ü + a_g|) Sa.
 - **Spectra & spectrograms** with dual frequency↔period axes.
-- **Intensity measures** — significant duration (D5–75, D5–95, custom) and the
+- **RotD00 / RotD50 / RotD100** orientation-independent spectra (Boore 2010).
+- **Intensity measures** — PGA / PGV / PGD, Arias intensity, destructiveness
+  potential (Araya–Saragoni), significant duration (D5–75, D5–95, custom) and the
   normalized Husid curve.
+- **Code spectra** — ASCE 7-10, 7-16 (with the §11.9 vertical spectrum), 7-22
+  two-period and multi-period, NEC-SE-DS; scale, reduce, envelope, floor and cap
+  them; export to CSV, ETABS, SAP2000 and OpenSees.
+- **Seismic design** — importance factor, seismic design category, approximate
+  period, ELF base shear with vertical distribution (ASCE 7-10 / 7-16 / 7-22, NEC).
 
 ## Installation
 
@@ -141,12 +153,17 @@ modifies the original time history unless explicitly requested.
 ```
 apeQuake/
 ├── src/apeQuake/
-│   ├── core/                 # Record + types
+│   ├── core/                 # Record, units, integration
+│   ├── readers/              # AT2 / RENAC / text readers
 │   ├── filters/              # ObsPy-backed Filter toolbox
 │   ├── spectrum/             # amplitude spectra
 │   ├── spectrogram/          # time–frequency spectrograms
 │   ├── response_spectra/     # Newmark Sd / Sv / Sa
-│   ├── intensity_measures/   # duration, Husid
+│   ├── intensity_measures/   # PGA/PGV/PGD, Arias, PD, duration, Husid
+│   ├── code_spectrum/        # ASCE 7 / NEC spectra, operations, export
+│   ├── design/               # Ie, SDC, ELF (ASCE 7, NEC)
+│   ├── nec/                  # NEC zoning (Tabla 19)
+│   ├── hazard/               # IG-EPN hazard of Ecuador
 │   └── plot_record/          # time-history plotting
 ├── tests/                    # pytest suite (Newmark validated vs scipy)
 ├── docs/                     # MkDocs site
@@ -157,10 +174,12 @@ apeQuake/
 
 - [x] Significant duration
 - [x] Newmark response spectra
-- [x] Arias Intensity, PGA / PGV / PGD
+- [x] Arias intensity, destructiveness potential, PGA / PGV / PGD
 - [ ] Cumulative Absolute Velocity (CAV)
 - [x] RotD00 / RotD50 / RotD100 response spectra
 - [x] PEER `.AT2`, RENAC and text record readers; baseline correction
+- [x] ASCE 7 / NEC code spectra, multi-period and vertical; ETABS / SAP2000 / OpenSees export
+- [x] ELF base shear, seismic design category, importance factor (ASCE 7, NEC)
 - [ ] Batch processing utilities
 - [ ] PEER/NGA flatfile importer
 - [ ] PyPI package

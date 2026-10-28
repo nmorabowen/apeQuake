@@ -20,7 +20,7 @@ rec.code_spectrum.export("NEC-15", "nec.txt", format="etabs", units="cm/s2")
 |---|---|
 | `periods` | Periods to write. Default: `model.default_periods(t_max, n)`, a grid that contains every knee period (`T0`, `Ts`, `TL`, the multi-period nodes) |
 | `t_max`, `n` | Range and density of the default grid (default 4 s, 200 points) |
-| `units` | `"g"` (default), `"m/s2"` or `"cm/s2"` |
+| `units` | `"g"` (default), `"m/s2"` or `"cm/s2"`; the aliases of `apeQuake.core.units` (`"m/s^2"`, `"gal"`, ...) also work and are written under their canonical name |
 | `tag`, `style` | OpenSees only: time-series tag, `"tcl"` or `"python"` |
 
 Periods are written with 6 decimals, and periods that are equal at that
