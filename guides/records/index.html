@@ -313,6 +313,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -457,6 +461,17 @@
     <span class="md-ellipsis">
       
         Construction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reading-record-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading record files
       
     </span>
   </a>
@@ -651,8 +666,68 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design (Ie, SDC, ELF)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-spectrum-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spectrum operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
+      
+        
+      
+        
       
         
       
@@ -672,10 +747,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10" >
         
           
-          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_10" id="__nav_2_10_label" tabindex="0">
             
   
   
@@ -693,8 +768,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_8">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -802,7 +877,63 @@
   <span class="md-ellipsis">
     
   
-    ASCE 7-22
+    ASCE 7-22 two-period
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-spectrum-asce7-22-mprs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ASCE 7-22 multi-period
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-spectrum-export/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exporting (ETABS, SAP2000, OpenSees)
   
 
     
@@ -870,6 +1001,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -963,6 +1098,34 @@
     
   
     Record
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/readers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Readers
   
 
     
@@ -1256,6 +1419,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1294,6 +1485,17 @@
     <span class="md-ellipsis">
       
         Construction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reading-record-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading record files
       
     </span>
   </a>
@@ -1394,8 +1596,72 @@ the present components included) and attaches every processor as a composite.</p
 <td><code>name</code></td>
 <td>Optional label, used in <code>repr</code> and plot titles.</td>
 </tr>
+<tr>
+<td><code>units</code></td>
+<td>Optional acceleration unit label: <code>"g"</code>, <code>"m/s2"</code> or <code>"cm/s2"</code> (aliases <code>"m/s^2"</code>, <code>"cm/s^2"</code>, <code>"gal"</code>). Never rescales the data; read by unit-dependent measures such as Arias intensity.</td>
+</tr>
 </tbody>
 </table>
+<h2 id="reading-record-files">Reading record files<a class="headerlink" href="#reading-record-files" title="Permanent link">&para;</a></h2>
+<p><code>Record.from_files</code> reads one file per component and checks that they share
+the time step:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># PEER NGA (.AT2, units of g)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">rec</span> <span class="o">=</span> <span class="n">Record</span><span class="o">.</span><span class="n">from_files</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">"RSN1_HELENA.A_A-HMC180.AT2"</span><span class="p">,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>                        <span class="n">y</span><span class="o">=</span><span class="s2">"RSN1_HELENA.A_A-HMC270.AT2"</span><span class="p">,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>                        <span class="n">z</span><span class="o">=</span><span class="s2">"RSN1_HELENA.A_A-HMCDWN.AT2"</span><span class="p">)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># RENAC, IG-EPN Ecuador (.txt, cm/s^2): map E/N/Z to X/Y/Z yourself</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">rec</span> <span class="o">=</span> <span class="n">Record</span><span class="o">.</span><span class="n">from_files</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">"ACH1_201604162359_E_100.txt"</span><span class="p">,</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>                        <span class="n">y</span><span class="o">=</span><span class="s2">"ACH1_201604162359_N_100.txt"</span><span class="p">,</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>                        <span class="n">z</span><span class="o">=</span><span class="s2">"ACH1_201604162359_Z_100.txt"</span><span class="p">)</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="n">rec</span><span class="o">.</span><span class="n">units</span>          <span class="c1"># 'cm/s2', from the file header</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="n">rec</span><span class="o">.</span><span class="n">source_files</span>   <span class="c1"># {'X': ..., 'Y': ..., 'Z': ...}</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Detected by</th>
+<th>Time step</th>
+<th>Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"at2"</code></td>
+<td><code>.AT2</code> extension, <code>PEER</code> or <code>NPTS=</code> header</td>
+<td><code>DT=</code> on header line 4 (new or old layout)</td>
+<td><code>IN UNITS OF G</code> line</td>
+</tr>
+<tr>
+<td><code>"renac"</code></td>
+<td><code>RENAC</code> or <code>Frecuencia de muestreo</code> header</td>
+<td><code>1 / Frecuencia de muestreo (Hz)</code></td>
+<td><code>Unidades:</code> line</td>
+</tr>
+<tr>
+<td><code>"txt"</code></td>
+<td>anything else</td>
+<td>a header line with <code>DT</code> (<code>DT = 0.005</code>), or <code>dt=</code></td>
+<td>a header line with <code>Units</code> / <code>Unidades</code>, if any</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><code>units=</code> converts every file to one unit (<code>Record.from_files(..., units="cm/s2")</code>);
+  without it, files that declare a unit must agree, and mixing files with and
+  without a declared unit raises.</li>
+<li>Components of different length are padded with trailing zeros to the
+  longest; padding and conversions are listed in <code>rec.init_logs</code>.</li>
+<li>A non-numeric line inside the data block raises <code>ValueError</code> with its line
+  number: gaps are never filled silently.</li>
+<li>The readers are also available on their own, see <a href="../../api/readers/">Readers</a>:</li>
+</ul>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">apeQuake.readers</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_record_file</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">f</span> <span class="o">=</span> <span class="n">read_record_file</span><span class="p">(</span><span class="s2">"RSN1_HELENA.A_A-HMC180.AT2"</span><span class="p">)</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">units</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">metadata</span>
+</span></code></pre></div>
 <h2 id="dt-detection-interpolation">dt detection &amp; interpolation<a class="headerlink" href="#dt-detection-interpolation" title="Permanent link">&para;</a></h2>
 <p>The constructor resolves the effective <code>dt</code> and decides whether to resample:</p>
 <ul>
@@ -1407,8 +1673,8 @@ the present components included) and attaches every processor as a composite.</p
   used as-is; otherwise the record is interpolated onto the requested <code>dt</code>.</li>
 </ul>
 <p>Whether interpolation happened is recorded:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">_interpolation_flag</span>   <span class="c1"># True if the components were resampled</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">init_logs</span>             <span class="c1"># human-readable log of the construction decisions</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">_interpolation_flag</span>   <span class="c1"># True if the components were resampled</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">init_logs</span>             <span class="c1"># human-readable log of the construction decisions</span>
 </span></code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Uniform grids from <code>np.arange</code> / <code>np.linspace</code></p>
@@ -1416,22 +1682,22 @@ the present components included) and attaches every processor as a composite.</p
 grid is treated as uniform and <strong>not</strong> resampled.</p>
 </div>
 <h2 id="accessing-the-data">Accessing the data<a class="headerlink" href="#accessing-the-data" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">time</span>          <span class="c1"># 1D time vector</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">data</span>          <span class="c1"># (npts, ncomp) array of present components</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">rec</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">rec</span><span class="o">.</span><span class="n">z</span>   <span class="c1"># individual components (AttributeError if absent)</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">rec</span><span class="o">.</span><span class="n">components</span>    <span class="c1"># e.g. ('X', 'Y')</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">rec</span><span class="o">.</span><span class="n">dt</span>            <span class="c1"># effective time step</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">rec</span><span class="o">.</span><span class="n">df</span>            <span class="c1"># the canonical DataFrame (do not mutate)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">time</span>          <span class="c1"># 1D time vector</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">data</span>          <span class="c1"># (npts, ncomp) array of present components</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">rec</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">rec</span><span class="o">.</span><span class="n">z</span>   <span class="c1"># individual components (AttributeError if absent)</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">rec</span><span class="o">.</span><span class="n">components</span>    <span class="c1"># e.g. ('X', 'Y')</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">rec</span><span class="o">.</span><span class="n">dt</span>            <span class="c1"># effective time step</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">rec</span><span class="o">.</span><span class="n">df</span>            <span class="c1"># the canonical DataFrame (do not mutate)</span>
 </span></code></pre></div>
 <h2 id="the-composites">The composites<a class="headerlink" href="#the-composites" title="Permanent link">&para;</a></h2>
 <p>Each <code>Record</code> exposes six processors. They read from <code>rec.df</code> (or a DataFrame
 you pass explicitly) and never mutate the baseline:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">filter</span>             <span class="c1"># signal filtering          → guides/filtering.md</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrum</span>           <span class="c1"># FFT amplitude spectra      → guides/spectra.md</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span>        <span class="c1"># time–frequency analysis    → guides/spectra.md</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span>   <span class="c1"># Newmark Sd / Sv / Sa       → guides/response-spectra.md</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">rec</span><span class="o">.</span><span class="n">intensity_measures</span> <span class="c1"># duration, Husid            → guides/intensity-measures.md</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">rec</span><span class="o">.</span><span class="n">plot_record</span>        <span class="c1"># time-history plotting</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">rec</span><span class="o">.</span><span class="n">filter</span>             <span class="c1"># signal filtering          → guides/filtering.md</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrum</span>           <span class="c1"># FFT amplitude spectra      → guides/spectra.md</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">rec</span><span class="o">.</span><span class="n">spectrogram</span>        <span class="c1"># time–frequency analysis    → guides/spectra.md</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span>   <span class="c1"># Newmark Sd / Sv / Sa, RotD → guides/response-spectra.md</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">rec</span><span class="o">.</span><span class="n">intensity_measures</span> <span class="c1"># peaks, Arias, duration     → guides/intensity-measures.md</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="n">rec</span><span class="o">.</span><span class="n">plot_record</span>        <span class="c1"># time-history plotting</span>
 </span></code></pre></div>
 <p>See the <a href="../../api/record/"><code>Record</code> API</a> for the full signature.</p>
 

@@ -311,6 +311,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -558,8 +562,68 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../guides/design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design (Ie, SDC, ELF)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/code-spectrum-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spectrum operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
+      
+        
+      
+        
       
         
       
@@ -579,10 +643,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10" >
         
           
-          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_10" id="__nav_2_10_label" tabindex="0">
             
   
   
@@ -600,8 +664,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_8">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -709,7 +773,63 @@
   <span class="md-ellipsis">
     
   
-    ASCE 7-22
+    ASCE 7-22 two-period
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/code-spectrum-asce7-22-mprs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ASCE 7-22 multi-period
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/code-spectrum-export/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exporting (ETABS, SAP2000, OpenSees)
   
 
     
@@ -803,6 +923,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -872,6 +996,34 @@
     
   
     Record
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="readers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Readers
   
 
     
@@ -1165,6 +1317,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1229,9 +1409,14 @@ and docstrings below are generated directly from the source.</p>
 <td>Multi-component ground-motion container</td>
 </tr>
 <tr>
+<td><a href="readers/">Readers</a></td>
+<td><code>Record.from_files</code></td>
+<td>PEER <code>.AT2</code>, RENAC and text record files</td>
+</tr>
+<tr>
 <td><a href="filters/"><code>Filter</code></a></td>
 <td><code>rec.filter</code></td>
-<td>Detrend, taper, band-pass / -stop, low/high-pass</td>
+<td>Detrend, taper, baseline correction, band-pass / -stop, low/high-pass</td>
 </tr>
 <tr>
 <td><a href="spectrum/"><code>Spectrum</code></a></td>
@@ -1246,12 +1431,12 @@ and docstrings below are generated directly from the source.</p>
 <tr>
 <td><a href="response_spectra/"><code>ResponseSpectra</code></a></td>
 <td><code>rec.response_spectra</code></td>
-<td>Newmark SDOF Sd / Sv / Sa</td>
+<td>Newmark SDOF Sd / Sv / Sa, RotD00/50/100</td>
 </tr>
 <tr>
 <td><a href="intensity_measures/"><code>IntensityMeasures</code></a></td>
 <td><code>rec.intensity_measures</code></td>
-<td>Significant duration, Husid</td>
+<td>PGA / PGV / PGD, Arias intensity, significant duration, Husid</td>
 </tr>
 <tr>
 <td><a href="plot_record/"><code>PlotRecord</code></a></td>

@@ -16,7 +16,7 @@
         <link rel="prev" href="../code-spectrum-asce7-16/">
       
       
-        <link rel="next" href="../seismic-hazard/">
+        <link rel="next" href="../code-spectrum-asce7-22-mprs/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>ASCE 7-22 - apeQuake</title>
+        <title>ASCE 7-22 two-period - apeQuake</title>
       
     
     
@@ -117,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ASCE 7-22
+              ASCE 7-22 two-period
             
           </span>
         </div>
@@ -294,6 +294,10 @@
   
     
     
+      
+        
+      
+        
       
         
       
@@ -558,12 +562,72 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design (Ie, SDC, ELF)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-spectrum-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spectrum operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
   
     
     
+      
+        
+      
+        
       
         
       
@@ -583,10 +647,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10" checked>
         
           
-          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_10" id="__nav_2_10_label" tabindex="0">
             
   
   
@@ -604,8 +668,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2_8">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -722,7 +786,7 @@
   <span class="md-ellipsis">
     
   
-    ASCE 7-22
+    ASCE 7-22 two-period
   
 
     
@@ -740,7 +804,7 @@
   <span class="md-ellipsis">
     
   
-    ASCE 7-22
+    ASCE 7-22 two-period
   
 
     
@@ -829,6 +893,62 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-spectrum-asce7-22-mprs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ASCE 7-22 multi-period
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-spectrum-export/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exporting (ETABS, SAP2000, OpenSees)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -883,6 +1003,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -976,6 +1100,34 @@
     
   
     Record
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/readers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Readers
   
 
     
@@ -1269,6 +1421,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1449,7 +1629,8 @@ site-class label, so Site Class F studies (Section 21.4 values) can be entered.<
 USGS geodatabase ordinates, linear interpolation) the default; the two-period
 spectrum is the fallback when multi-period values are unavailable (Section
 11.4.5, Exception 2). The two can differ materially, especially at long periods.
-This class does not implement the multi-period spectrum.</p>
+The multi-period spectrum is
+<a href="../code-spectrum-asce7-22-mprs/"><code>ASCE7_22MultiPeriodSpectrum</code></a>.</p>
 <h2 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h2>
 <ul>
 <li>The <code>SMS</code> / <code>SM1</code> values are not computed here; obtain them from the USGS

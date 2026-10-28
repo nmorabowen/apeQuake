@@ -313,6 +313,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -558,12 +562,72 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design (Ie, SDC, ELF)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-spectrum-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spectrum operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
   
     
     
+      
+        
+      
+        
       
         
       
@@ -583,10 +647,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10" checked>
         
           
-          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_10" id="__nav_2_10_label" tabindex="0">
             
   
   
@@ -604,8 +668,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2_8">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -782,6 +846,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#vertical-spectrum-119" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vertical spectrum (11.9)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#limitations" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -815,7 +890,63 @@
   <span class="md-ellipsis">
     
   
-    ASCE 7-22
+    ASCE 7-22 two-period
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-spectrum-asce7-22-mprs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ASCE 7-22 multi-period
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-spectrum-export/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exporting (ETABS, SAP2000, OpenSees)
   
 
     
@@ -883,6 +1014,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -976,6 +1111,34 @@
     
   
     Record
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/readers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Readers
   
 
     
@@ -1269,6 +1432,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1340,6 +1531,17 @@
     <span class="md-ellipsis">
       
         Site-specific study rules (11.4.8)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#vertical-spectrum-119" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Vertical spectrum (11.9)
       
     </span>
   </a>
@@ -1621,6 +1823,26 @@ structures with damping systems.</p>
 externally computed values (site-specific analysis, Chapter 21.4). It bypasses
 the tables and all 11.4.8 checks; you are responsible for the Chapter 21
 minimums (e.g. the 80 % floor of 21.3).</p>
+<h2 id="vertical-spectrum-119">Vertical spectrum (11.9)<a class="headerlink" href="#vertical-spectrum-119" title="Permanent link">&para;</a></h2>
+<p><code>vertical()</code> returns the Section 11.9 vertical spectrum at the model's level:
+the design spectrum (11.9.3, 2/3 of MCE_R) or the MCE_R spectrum (11.9.2).</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">v</span> <span class="o">=</span> <span class="n">ASCE7_16Spectrum</span><span class="p">(</span><span class="n">ss</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">s1</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">site_class</span><span class="o">=</span><span class="s2">"C"</span><span class="p">,</span> <span class="n">tl</span><span class="o">=</span><span class="mf">8.0</span><span class="p">)</span><span class="o">.</span><span class="n">vertical</span><span class="p">()</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">v</span><span class="o">.</span><span class="n">cv</span>                       <span class="c1"># 1.2, Table 11.9-1 (Ss, site class group)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">v</span><span class="o">.</span><span class="n">sa</span><span class="p">([</span><span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+</span></code></pre></div>
+<ul>
+<li>MCE_R ordinates: <code>0.3 Cv SMS</code> up to 0.025 s, then a linear rise to
+  <code>0.8 Cv SMS</code> at 0.05 s, flat to 0.15 s, then <code>0.8 Cv SMS (0.15/Tv)^0.75</code>
+  (Eqs. 11.9-1 to 11.9-4).</li>
+<li>Never below <strong>one-half of the horizontal <code>Sa</code></strong> at the same period
+  (11.9.2). codeSpectra omitted this floor, and it governs much of the range on
+  stiff sites.</li>
+<li><code>Sa</code> is NaN beyond <code>Tv = 2 s</code>: 11.9.2 requires a site-specific procedure
+  there. The default grid stops at 2 s.</li>
+<li>11.9.1 restricts the procedure to SDC C to F.</li>
+<li>For a model built with <code>from_sds_sd1</code>, pass <code>ss=</code> and <code>site_class=</code> so <code>Cv</code>
+  can be looked up.</li>
+</ul>
 <h2 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Two-period spectrum only; no simplified-procedure <code>Fa</code> (12.14.8.1) and no

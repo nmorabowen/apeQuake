@@ -13,7 +13,7 @@
         <link rel="canonical" href="https://nmorabowen.github.io/apeQuake/api/filters/">
       
       
-        <link rel="prev" href="../record/">
+        <link rel="prev" href="../readers/">
       
       
         <link rel="next" href="../spectrum/">
@@ -311,6 +311,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -558,8 +562,68 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../guides/design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design (Ie, SDC, ELF)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/code-spectrum-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spectrum operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
+      
+        
+      
+        
       
         
       
@@ -579,10 +643,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10" >
         
           
-          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_10" id="__nav_2_10_label" tabindex="0">
             
   
   
@@ -600,8 +664,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_8">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -709,7 +773,63 @@
   <span class="md-ellipsis">
     
   
-    ASCE 7-22
+    ASCE 7-22 two-period
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/code-spectrum-asce7-22-mprs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ASCE 7-22 multi-period
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/code-spectrum-export/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exporting (ETABS, SAP2000, OpenSees)
   
 
     
@@ -803,6 +923,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -872,6 +996,34 @@
     
   
     Record
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../readers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Readers
   
 
     
@@ -1012,6 +1164,17 @@
     <span class="md-ellipsis">
       
         detrend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apeQuake.filters.filters.Filter.baseline_correction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        baseline_correction
       
     </span>
   </a>
@@ -1295,6 +1458,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1389,6 +1580,17 @@
     <span class="md-ellipsis">
       
         detrend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apeQuake.filters.filters.Filter.baseline_correction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        baseline_correction
       
     </span>
   </a>
@@ -1859,6 +2061,95 @@ freqmax = 1 / Tc_low</p>
 <div class="doc doc-object doc-function">
 
 
+<h3 id="apeQuake.filters.filters.Filter.baseline_correction" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">baseline_correction</span>
+
+
+<a href="#apeQuake.filters.filters.Filter.baseline_correction" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">baseline_correction</span><span class="p">(</span><span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Least-squares polynomial baseline correction of every component.</p>
+<p>Integrates acceleration to velocity, fits a drift <code>sum c_k t^(k+1)</code>
+(k = 0..order) to the velocity and removes its derivative (a
+degree-<code>order</code> polynomial) from the acceleration.  <code>order=2</code> is
+EarthquakeSignal's <code>BaselineCorrection</code>.
+See :func:<code>apeQuake.core.integration.baseline_correct</code>; velocity and
+displacement of the result are in <code>rec.intensity_measures</code>.</p>
+
+
+            <details class="mkdocstrings-source">
+              <summary>Source code in <code>src/apeQuake/filters/filters.py</code></summary>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-228">228</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-229">229</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-230">230</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-231">231</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-232">232</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-233">233</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-234">234</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-235">235</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-236">236</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-237">237</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-238">238</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-239">239</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-240">240</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-241">241</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-242">242</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-243">243</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-244">244</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-245">245</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-246">246</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-247">247</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-248">248</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-249">249</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-250">250</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-251">251</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-252">252</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-253">253</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-254">254</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-255">255</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-256">256</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-257">257</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-228"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-228" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-228"></a><span class="k">def</span><span class="w"> </span><span class="nf">baseline_correction</span><span class="p">(</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-229"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-229" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-229"></a>    <span class="bp">self</span><span class="p">,</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-230"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-230" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-230"></a>    <span class="n">order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-231"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-231" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-231"></a>    <span class="o">*</span><span class="p">,</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-232"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-232" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-232"></a>    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-233"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-233" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-233"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-234"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-234" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-234"></a><span class="w">    </span><span class="sd">"""</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-235"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-235" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-235"></a><span class="sd">    Least-squares polynomial baseline correction of every component.</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-236"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-236" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-236"></a>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-237"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-237" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-237"></a><span class="sd">    Integrates acceleration to velocity, fits a drift ``sum c_k t^(k+1)``</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-238"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-238" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-238"></a><span class="sd">    (k = 0..order) to the velocity and removes its derivative (a</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-239"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-239" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-239"></a><span class="sd">    degree-``order`` polynomial) from the acceleration.  ``order=2`` is</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-240"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-240" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-240"></a><span class="sd">    EarthquakeSignal's ``BaselineCorrection``.</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-241"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-241" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-241"></a><span class="sd">    See :func:`apeQuake.core.integration.baseline_correct`; velocity and</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-242"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-242" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-242"></a><span class="sd">    displacement of the result are in ``rec.intensity_measures``.</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-243"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-243" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-243"></a><span class="sd">    """</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-244"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-244" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-244"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">..core.integration</span><span class="w"> </span><span class="kn">import</span> <span class="n">baseline_correct</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-245"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-245" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-245"></a>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-246"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-246" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-246"></a>    <span class="n">in_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_df</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-247"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-247" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-247"></a>    <span class="n">rec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-248"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-248" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-248"></a>    <span class="k">if</span> <span class="n">rec</span><span class="o">.</span><span class="n">dt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-249"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-249" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-249"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Record.dt is None; cannot apply baseline correction."</span><span class="p">)</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-250"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-250" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-250"></a>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-251"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-251" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-251"></a>    <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">"time"</span><span class="p">:</span> <span class="n">in_df</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)})</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-252"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-252" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-252"></a>    <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">rec</span><span class="o">.</span><span class="n">components</span><span class="p">:</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-253"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-253" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-253"></a>        <span class="k">if</span> <span class="n">comp</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">in_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-254"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-254" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-254"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"DataFrame missing component '</span><span class="si">{</span><span class="n">comp</span><span class="si">}</span><span class="s2">' required by Record."</span><span class="p">)</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-255"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-255" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-255"></a>        <span class="n">acc</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">baseline_correct</span><span class="p">(</span><span class="n">in_df</span><span class="p">[</span><span class="n">comp</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">rec</span><span class="o">.</span><span class="n">dt</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-256"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-256" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-256"></a>        <span class="n">out</span><span class="p">[</span><span class="n">comp</span><span class="p">]</span> <span class="o">=</span> <span class="n">acc</span>
+</span><span id="apeQuake.filters.filters.Filter.baseline_correction--source--__span-0-257"><a id="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-257" name="apeQuake.filters.filters.Filter.baseline_correction--source--__codelineno-0-257"></a>    <span class="k">return</span> <span class="n">out</span>
+</span></code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
 <h3 id="apeQuake.filters.filters.Filter.taper" class="doc doc-heading">
             <span class="doc doc-object-name doc-function-name">taper</span>
 
@@ -1874,37 +2165,37 @@ freqmax = 1 / Tc_low</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/apeQuake/filters/filters.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-228">228</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-229">229</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-230">230</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-231">231</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-232">232</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-233">233</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-234">234</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-235">235</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-236">236</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-237">237</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-238">238</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-239">239</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-240">240</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-241">241</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-242">242</a></span>
-<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-243">243</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-228"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-228" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-228"></a><span class="k">def</span><span class="w"> </span><span class="nf">taper</span><span class="p">(</span>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-229"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-229" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-229"></a>    <span class="bp">self</span><span class="p">,</span>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-230"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-230" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-230"></a>    <span class="n">max_percentage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-231"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-231" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-231"></a>    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"cosine"</span><span class="p">,</span>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-232"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-232" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-232"></a>    <span class="o">*</span><span class="p">,</span>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-233"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-233" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-233"></a>    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-234"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-234" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-234"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-235"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-235" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-235"></a><span class="w">    </span><span class="sd">"""</span>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-236"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-236" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-236"></a><span class="sd">    Apply a taper to all components.</span>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-237"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-237" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-237"></a><span class="sd">    """</span>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-238"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-238" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-238"></a>    <span class="n">in_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_df</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-239"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-239" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-239"></a>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-240"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-240" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-240"></a>    <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_to_stream</span><span class="p">(</span><span class="n">in_df</span><span class="p">)</span>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-241"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-241" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-241"></a>    <span class="n">st</span><span class="o">.</span><span class="n">taper</span><span class="p">(</span><span class="n">max_percentage</span><span class="o">=</span><span class="n">max_percentage</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">)</span>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-242"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-242" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-242"></a>
-</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-243"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-243" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-243"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream_to_df</span><span class="p">(</span><span class="n">st</span><span class="p">)</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-259">259</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-260">260</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-261">261</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-262">262</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-263">263</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-264">264</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-265">265</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-266">266</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-267">267</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-268">268</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-269">269</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-270">270</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-271">271</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-272">272</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-273">273</a></span>
+<span class="normal"><a href="#apeQuake.filters.filters.Filter.taper--source--__codelineno-0-274">274</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-259"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-259" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-259"></a><span class="k">def</span><span class="w"> </span><span class="nf">taper</span><span class="p">(</span>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-260"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-260" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-260"></a>    <span class="bp">self</span><span class="p">,</span>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-261"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-261" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-261"></a>    <span class="n">max_percentage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-262"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-262" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-262"></a>    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"cosine"</span><span class="p">,</span>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-263"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-263" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-263"></a>    <span class="o">*</span><span class="p">,</span>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-264"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-264" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-264"></a>    <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-265"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-265" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-265"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-266"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-266" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-266"></a><span class="w">    </span><span class="sd">"""</span>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-267"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-267" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-267"></a><span class="sd">    Apply a taper to all components.</span>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-268"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-268" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-268"></a><span class="sd">    """</span>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-269"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-269" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-269"></a>    <span class="n">in_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_df</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-270"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-270" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-270"></a>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-271"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-271" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-271"></a>    <span class="n">st</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_to_stream</span><span class="p">(</span><span class="n">in_df</span><span class="p">)</span>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-272"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-272" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-272"></a>    <span class="n">st</span><span class="o">.</span><span class="n">taper</span><span class="p">(</span><span class="n">max_percentage</span><span class="o">=</span><span class="n">max_percentage</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">)</span>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-273"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-273" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-273"></a>
+</span><span id="apeQuake.filters.filters.Filter.taper--source--__span-0-274"><a id="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-274" name="apeQuake.filters.filters.Filter.taper--source--__codelineno-0-274"></a>    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream_to_df</span><span class="p">(</span><span class="n">st</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>

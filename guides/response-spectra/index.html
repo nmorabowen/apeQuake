@@ -313,6 +313,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -580,6 +584,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#rotd00-rotd50-rotd100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RotD00, RotD50, RotD100
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -651,8 +666,68 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design (Ie, SDC, ELF)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-spectrum-operations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spectrum operations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     
     
+      
+        
+      
+        
       
         
       
@@ -672,10 +747,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10" >
         
           
-          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_2_10" id="__nav_2_10_label" tabindex="0">
             
   
   
@@ -693,8 +768,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_8">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -802,7 +877,63 @@
   <span class="md-ellipsis">
     
   
-    ASCE 7-22
+    ASCE 7-22 two-period
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-spectrum-asce7-22-mprs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ASCE 7-22 multi-period
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../code-spectrum-export/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exporting (ETABS, SAP2000, OpenSees)
   
 
     
@@ -870,6 +1001,10 @@
       
         
           
+        
+      
+        
+      
         
       
         
@@ -963,6 +1098,34 @@
     
   
     Record
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/readers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Readers
   
 
     
@@ -1256,6 +1419,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/design/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Design
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1327,6 +1518,17 @@
     <span class="md-ellipsis">
       
         A single SDOF history
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rotd00-rotd50-rotd100" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        RotD00, RotD50, RotD100
       
     </span>
   </a>
@@ -1424,6 +1626,21 @@ kernel when Numba is available, with an identical pure-Python fallback.</p>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">out</span><span class="p">[</span><span class="s2">"displacement"</span><span class="p">],</span> <span class="n">out</span><span class="p">[</span><span class="s2">"velocity"</span><span class="p">],</span> <span class="n">out</span><span class="p">[</span><span class="s2">"total_acceleration"</span><span class="p">]</span>
 </span></code></pre></div>
 <p>See the <a href="../../api/response_spectra/"><code>ResponseSpectra</code> API</a> for every option.</p>
+<h2 id="rotd00-rotd50-rotd100">RotD00, RotD50, RotD100<a class="headerlink" href="#rotd00-rotd50-rotd100" title="Permanent link">&para;</a></h2>
+<p>Orientation-independent spectra of two horizontal components (Boore, 2010):
+the oscillator responses are rotated through 0–180° and, per period, the
+pseudo-acceleration <code>ω² max|u_θ|</code> is reduced to percentiles over the angles.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">r</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">rotd</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="p">(</span><span class="s2">"X"</span><span class="p">,</span> <span class="s2">"Y"</span><span class="p">))</span>   <span class="c1"># angle_step=1 deg</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">r</span><span class="p">[</span><span class="s2">"RotD50"</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s2">"RotD100"</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="s2">"RotD00"</span><span class="p">]</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">r</span><span class="p">[</span><span class="s2">"angle_RotD100"</span><span class="p">]</span>       <span class="c1"># orientation of the maximum per period</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">r</span><span class="p">[</span><span class="s2">"Sa_angles"</span><span class="p">]</span>           <span class="c1"># (nT, n_angles) PSA at every angle</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">rotd</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">percentiles</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>   <span class="c1"># any percentiles</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">rec</span><span class="o">.</span><span class="n">response_spectra</span><span class="o">.</span><span class="n">plot_rotd</span><span class="p">()</span>                          <span class="c1"># from the cached result</span>
+</span></code></pre></div>
+<p><code>rotd</code> uses the same input and filter-pipeline convention as <code>compute</code>
+(<code>df=</code>, <code>use_filters=</code>). It is exact: the oscillator is linear, so rotating its
+response equals rotating the input record.</p>
 
 
 
