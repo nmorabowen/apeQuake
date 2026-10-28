@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
     
     
       
@@ -31,10 +31,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -1361,33 +1361,33 @@ failure as <code>internal_error</code> carrying only the exception type.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/apeQuake/api/dispatcher.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-125">125</a></span>
-<span class="normal"><a href="#__codelineno-0-126">126</a></span>
-<span class="normal"><a href="#__codelineno-0-127">127</a></span>
-<span class="normal"><a href="#__codelineno-0-128">128</a></span>
-<span class="normal"><a href="#__codelineno-0-129">129</a></span>
-<span class="normal"><a href="#__codelineno-0-130">130</a></span>
-<span class="normal"><a href="#__codelineno-0-131">131</a></span>
-<span class="normal"><a href="#__codelineno-0-132">132</a></span>
-<span class="normal"><a href="#__codelineno-0-133">133</a></span>
-<span class="normal"><a href="#__codelineno-0-134">134</a></span>
-<span class="normal"><a href="#__codelineno-0-135">135</a></span>
-<span class="normal"><a href="#__codelineno-0-136">136</a></span>
-<span class="normal"><a href="#__codelineno-0-137">137</a></span>
-<span class="normal"><a href="#__codelineno-0-138">138</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-125"><a id="__codelineno-0-125" name="__codelineno-0-125"></a><span class="k">def</span><span class="w"> </span><span class="nf">dispatch</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="__span-0-126"><a id="__codelineno-0-126" name="__codelineno-0-126"></a><span class="w">    </span><span class="sd">"""Run one request and return its response.  Never raises.</span>
-</span><span id="__span-0-127"><a id="__codelineno-0-127" name="__codelineno-0-127"></a>
-</span><span id="__span-0-128"><a id="__codelineno-0-128" name="__codelineno-0-128"></a><span class="sd">    A domain error comes back as ``ok: false`` with a stable ``code``; an unexpected</span>
-</span><span id="__span-0-129"><a id="__codelineno-0-129" name="__codelineno-0-129"></a><span class="sd">    failure as ``internal_error`` carrying only the exception type.</span>
-</span><span id="__span-0-130"><a id="__codelineno-0-130" name="__codelineno-0-130"></a><span class="sd">    """</span>
-</span><span id="__span-0-131"><a id="__codelineno-0-131" name="__codelineno-0-131"></a>    <span class="k">try</span><span class="p">:</span>
-</span><span id="__span-0-132"><a id="__codelineno-0-132" name="__codelineno-0-132"></a>        <span class="k">return</span> <span class="n">_run</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
-</span><span id="__span-0-133"><a id="__codelineno-0-133" name="__codelineno-0-133"></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># the contract: dispatch never raises</span>
-</span><span id="__span-0-134"><a id="__codelineno-0-134" name="__codelineno-0-134"></a>        <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">_ERROR_MAP</span><span class="p">:</span>
-</span><span id="__span-0-135"><a id="__codelineno-0-135" name="__codelineno-0-135"></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="n">kind</span><span class="p">):</span>
-</span><span id="__span-0-136"><a id="__codelineno-0-136" name="__codelineno-0-136"></a>                <span class="k">return</span> <span class="n">error</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
-</span><span id="__span-0-137"><a id="__codelineno-0-137" name="__codelineno-0-137"></a>        <span class="k">return</span> <span class="n">error</span><span class="p">(</span><span class="s2">"internal_error"</span><span class="p">,</span>
-</span><span id="__span-0-138"><a id="__codelineno-0-138" name="__codelineno-0-138"></a>                     <span class="sa">f</span><span class="s2">"internal error (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">); report the request that caused it"</span><span class="p">)</span>
+              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#apeQuake.api.dispatch--source--__codelineno-0-125">125</a></span>
+<span class="normal"><a href="#apeQuake.api.dispatch--source--__codelineno-0-126">126</a></span>
+<span class="normal"><a href="#apeQuake.api.dispatch--source--__codelineno-0-127">127</a></span>
+<span class="normal"><a href="#apeQuake.api.dispatch--source--__codelineno-0-128">128</a></span>
+<span class="normal"><a href="#apeQuake.api.dispatch--source--__codelineno-0-129">129</a></span>
+<span class="normal"><a href="#apeQuake.api.dispatch--source--__codelineno-0-130">130</a></span>
+<span class="normal"><a href="#apeQuake.api.dispatch--source--__codelineno-0-131">131</a></span>
+<span class="normal"><a href="#apeQuake.api.dispatch--source--__codelineno-0-132">132</a></span>
+<span class="normal"><a href="#apeQuake.api.dispatch--source--__codelineno-0-133">133</a></span>
+<span class="normal"><a href="#apeQuake.api.dispatch--source--__codelineno-0-134">134</a></span>
+<span class="normal"><a href="#apeQuake.api.dispatch--source--__codelineno-0-135">135</a></span>
+<span class="normal"><a href="#apeQuake.api.dispatch--source--__codelineno-0-136">136</a></span>
+<span class="normal"><a href="#apeQuake.api.dispatch--source--__codelineno-0-137">137</a></span>
+<span class="normal"><a href="#apeQuake.api.dispatch--source--__codelineno-0-138">138</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="apeQuake.api.dispatch--source--__span-0-125"><a id="apeQuake.api.dispatch--source--__codelineno-0-125" name="apeQuake.api.dispatch--source--__codelineno-0-125"></a><span class="k">def</span><span class="w"> </span><span class="nf">dispatch</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="apeQuake.api.dispatch--source--__span-0-126"><a id="apeQuake.api.dispatch--source--__codelineno-0-126" name="apeQuake.api.dispatch--source--__codelineno-0-126"></a><span class="w">    </span><span class="sd">"""Run one request and return its response.  Never raises.</span>
+</span><span id="apeQuake.api.dispatch--source--__span-0-127"><a id="apeQuake.api.dispatch--source--__codelineno-0-127" name="apeQuake.api.dispatch--source--__codelineno-0-127"></a>
+</span><span id="apeQuake.api.dispatch--source--__span-0-128"><a id="apeQuake.api.dispatch--source--__codelineno-0-128" name="apeQuake.api.dispatch--source--__codelineno-0-128"></a><span class="sd">    A domain error comes back as ``ok: false`` with a stable ``code``; an unexpected</span>
+</span><span id="apeQuake.api.dispatch--source--__span-0-129"><a id="apeQuake.api.dispatch--source--__codelineno-0-129" name="apeQuake.api.dispatch--source--__codelineno-0-129"></a><span class="sd">    failure as ``internal_error`` carrying only the exception type.</span>
+</span><span id="apeQuake.api.dispatch--source--__span-0-130"><a id="apeQuake.api.dispatch--source--__codelineno-0-130" name="apeQuake.api.dispatch--source--__codelineno-0-130"></a><span class="sd">    """</span>
+</span><span id="apeQuake.api.dispatch--source--__span-0-131"><a id="apeQuake.api.dispatch--source--__codelineno-0-131" name="apeQuake.api.dispatch--source--__codelineno-0-131"></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="apeQuake.api.dispatch--source--__span-0-132"><a id="apeQuake.api.dispatch--source--__codelineno-0-132" name="apeQuake.api.dispatch--source--__codelineno-0-132"></a>        <span class="k">return</span> <span class="n">_run</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+</span><span id="apeQuake.api.dispatch--source--__span-0-133"><a id="apeQuake.api.dispatch--source--__codelineno-0-133" name="apeQuake.api.dispatch--source--__codelineno-0-133"></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># the contract: dispatch never raises</span>
+</span><span id="apeQuake.api.dispatch--source--__span-0-134"><a id="apeQuake.api.dispatch--source--__codelineno-0-134" name="apeQuake.api.dispatch--source--__codelineno-0-134"></a>        <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">_ERROR_MAP</span><span class="p">:</span>
+</span><span id="apeQuake.api.dispatch--source--__span-0-135"><a id="apeQuake.api.dispatch--source--__codelineno-0-135" name="apeQuake.api.dispatch--source--__codelineno-0-135"></a>            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exc</span><span class="p">,</span> <span class="n">kind</span><span class="p">):</span>
+</span><span id="apeQuake.api.dispatch--source--__span-0-136"><a id="apeQuake.api.dispatch--source--__codelineno-0-136" name="apeQuake.api.dispatch--source--__codelineno-0-136"></a>                <span class="k">return</span> <span class="n">error</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">))</span>
+</span><span id="apeQuake.api.dispatch--source--__span-0-137"><a id="apeQuake.api.dispatch--source--__codelineno-0-137" name="apeQuake.api.dispatch--source--__codelineno-0-137"></a>        <span class="k">return</span> <span class="n">error</span><span class="p">(</span><span class="s2">"internal_error"</span><span class="p">,</span>
+</span><span id="apeQuake.api.dispatch--source--__span-0-138"><a id="apeQuake.api.dispatch--source--__codelineno-0-138" name="apeQuake.api.dispatch--source--__codelineno-0-138"></a>                     <span class="sa">f</span><span class="s2">"internal error (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">); report the request that caused it"</span><span class="p">)</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -1448,10 +1448,10 @@ failure as <code>internal_error</code> carrying only the exception type.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.top", "navigation.indexes", "toc.follow", "content.code.copy", "content.code.annotate", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.top", "navigation.indexes", "toc.follow", "content.code.copy", "content.code.annotate", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>
