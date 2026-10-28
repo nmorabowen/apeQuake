@@ -23,6 +23,19 @@ The SDC follows Section 11.6. If `S1 ≥ 0.75` it is E (Risk Category I–III) o
 (`SD1`). `s1` is required. Pass `None` only if it is unknown, and the result
 then reports `s1_override=None` (the override was not checked).
 
+Where `S1 < 0.75`, Section 11.6 lets the SDC come from **Table 11.6-1 alone**
+when four conditions hold. Pass `table_11_6_1_only=True` with `ta`, `t_drift`
+(the period used for story drift) and `ts`. Items 1 (`Ta < 0.8 Ts`) and 2
+(`t_drift < Ts`) are checked; use the larger value of the two orthogonal
+directions. Passing the flag asserts items 3 (`Cs` from Eq. 12.8-2 of the
+edition) and 4 (rigid diaphragms, or vertical elements at most 40 ft apart).
+
+```python
+asce7.seismic_design_category(0.4, 0.25, s1=0.3, table_11_6_1_only=True,
+                              ta=0.3, t_drift=0.5, ts=0.6)
+# SDCResult(sdc='C', ..., table_11_6_1_only=True)      # 'D' without the exception
+```
+
 ## ASCE 7: equivalent lateral force (Section 12.8)
 
 ```python
@@ -66,9 +79,47 @@ not allowed where Exception 2 of Section 11.4.5 applies, i.e. with the
 two-period spectrum. Equation numbers in `breakdown` follow the edition: 7-22
 renumbered them to 12.8-2 … 12.8-8.
 
-Not implemented: `Ta = 0.1 N`, the shear-wall `Cq/√Cw` period, the Section
-11.6 exception that assigns the SDC from Table 11.6-1 alone, and the optional
-`SDS = 1.0` of Section 12.8.1.3.
+### Alternative approximate periods (Section 12.8.2.1)
+
+Section 12.8.2.1 permits two other formulas for `Ta`. Compute one and pass it
+as `ta` instead of `hn`:
+
+```python
+ta = asce7.approximate_period_stories(8, "concrete_moment_frame", average_story_height=3.2)
+ta = asce7.shear_wall_period(hn=20.0, base_area=400.0,
+                             walls=[(2.0, 5.0), (2.0, 5.0)])   # (Ai m², Di m) per wall
+r = asce7.base_shear(W=..., R=5.0, sds=..., sd1=..., s1=..., tl=8.0, ta=ta, T=0.9)
+```
+
+- `Ta = 0.1 N` (Eq. 12.8-8; 12.8-9 in 7-22) only for systems made entirely of
+  moment frames, up to 12 stories, with an average story height of at least 3 m
+  (10 ft). Each condition is checked.
+- `Ta = Cq hn / √Cw` (Eqs. 12.8-9 and 12.8-10; 12.8-10 and 12.8-11 in 7-22) for
+  masonry or concrete shear-wall structures with `hn ≤ 120 ft (36.6 m)`, where
+  `Cw = 100/AB Σ Ai / (1 + 0.83 (hn/Di)²)`.
+- **`Cq`:** 7-16 and 7-22 print `0.0019 ft (0.00058 m)`. `0.0019 s/ft` is
+  `0.0062 s/m`, the value NEC-SE-DS uses, so the printed SI figure is about ten
+  times too small. apeQuake converts heights to ft and uses `0.0019`.
+- 7-10 prints `hi/Di` in Eq. 12.8-10 without defining `hi`. To use each wall's
+  own height, give the wall as `(Ai, Di, hi)`. Otherwise `hn` is used, as in
+  7-16.
+
+### Maximum SDS for Cs (Section 12.8.1.3)
+
+In 7-16 and 7-22, `Cs` may be computed with `SDS = 1.0`, but not less than 70 %
+of `SDS`, for short regular structures:
+
+```python
+r = asce7.base_shear(W=..., R=6.0, sds=1.5, sd1=0.6, s1=0.6, tl=8.0, T=0.3,
+                     max_sds_12_8_1_3=True, n_stories=3, site_class="D")
+r.breakdown["SDS_12.8.1.3"]      # 1.05 = max(1.0, 0.7 × 1.5)
+```
+
+Checked: `T ≤ 0.5 s`, at most 5 stories, Site Class not E or F, Risk Category I
+or II, and in 7-22 `R ≥ 3`. Passing the flag asserts the other conditions: no
+Section 12.3.2 irregularities, and ρ = 1.0 permitted by Section 12.3.4.2. ASCE 7-10's
+Section 12.8.1.3 caps `Ss` at 1.5 instead, which changes `SDS` through `Fa`: build
+the spectrum with `ss=1.5` there. The flag refuses 7-10.
 
 ## NEC-SE-DS: base shear (6.3)
 
@@ -93,4 +144,13 @@ r.V, r.Sa_Ta, r.Ta, r.shear_coefficient, r.Fx, r.Vx
 Pass the **elastic horizontal** spectrum: the reduction is applied inside
 `base_shear`.
 
-Not implemented: the alternative `Ct = 0.0055/√Cw` for wall structures.
+For reinforced-concrete or masonry wall structures, 6.3.3 a also gives
+`T = Ct hn` with `Ct = 0.0062/√Cw` and
+`Cw = 100/AB Σ (hn/hwi)² Awi / (1 + 0.83 (hwi/lwi)²)` (α = 1, NEC-SE-DS p. 62).
+Pass the result as `ta`:
+
+```python
+ta = nec.wall_period(hn=20.0, base_area=400.0,
+                     walls=[(2.0, 5.0, 20.0), (1.5, 4.0, 14.0)])   # (Awi, lwi, hwi)
+r = nec.base_shear(sp, W=50_000, R=5.0, ta=ta, T=0.8)               # T ≤ 1.3 ta
+```
