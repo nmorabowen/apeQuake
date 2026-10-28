@@ -8,6 +8,10 @@ import pytest
     "module, name",
     [
         ("apeQuake", "Record"),
+        ("apeQuake.design", "asce7"),
+        ("apeQuake.design.asce7", "base_shear"),
+        ("apeQuake.design.nec", "base_shear"),
+        ("apeQuake.code_spectrum", "DerivedSpectrum"),
         ("apeQuake.core", "Record"),
         ("apeQuake.filters", "Filter"),
         ("apeQuake.spectrum", "Spectrum"),
@@ -30,6 +34,9 @@ def test_public_symbol_importable(module, name):
 @pytest.mark.parametrize(
     "module",
     [
+        "apeQuake.design",
+        "apeQuake.design.asce7",
+        "apeQuake.design.nec",
         "apeQuake.filters",
         "apeQuake.spectrum",
         "apeQuake.spectrogram",

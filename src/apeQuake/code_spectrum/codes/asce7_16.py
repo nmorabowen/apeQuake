@@ -9,6 +9,8 @@ Section, table and equation numbers are those printed in ASCE/SEI 7-16:
 * 11.4.7: MCE_R response spectrum = 1.5 x design response spectrum.
 * 11.4.8: when a site-specific ground motion study (Chapter 21) is required, and
   its three exceptions.
+* 11.9, Table 11.9-1, Eqs. 11.9-1 to 11.9-4: vertical response spectrum
+  (:meth:`ASCE7_16Spectrum.vertical`).
 """
 from __future__ import annotations
 
@@ -16,7 +18,7 @@ from typing import Any, Iterable
 
 import numpy as np
 
-from ..base import AsceTwoPeriodSpectrum, register_code
+from ..base import AsceTwoPeriodSpectrum, CodeSpectrumModel, register_code
 
 #: Mapped-Ss columns of Table 11.4-1 (``<= 0.25`` ... ``>= 1.5``).
 SS_COLUMNS = (0.25, 0.50, 0.75, 1.00, 1.25, 1.50)
@@ -347,4 +349,99 @@ class ASCE7_16Spectrum(AsceTwoPeriodSpectrum):
             "TL": self.tl,
             "exception_applied": "; ".join(_APPLIED_TEXT[e] for e in self.exceptions)
             or "none",
+        }
+
+    def vertical(self, *, ss: float | None = None, site_class: str | None = None
+                 ) -> "ASCE7_16VerticalSpectrum":
+        """The Section 11.9 vertical spectrum at this model's level (design or MCE_R).
+
+        ``ss`` / ``site_class`` (for ``Cv``, Table 11.9-1) default to this model's;
+        give them for a model built with :meth:`from_sds_sd1`.
+        """
+        return ASCE7_16VerticalSpectrum(self, ss=ss, site_class=site_class)
+
+
+#: Table 11.9-1 (ASCE/SEI 7-16 p. 87): Cv by mapped Ss, for site-class groups.
+CV_SS = (0.2, 0.3, 0.6, 1.0, 2.0)
+CV_TABLE: dict[str, tuple[float, ...]] = {
+    "AB": (0.7, 0.8, 0.9, 0.9, 0.9),
+    "C": (0.7, 0.8, 1.0, 1.1, 1.3),
+    "DEF": (0.7, 0.9, 1.1, 1.3, 1.5),
+}
+#: 11.9.2: beyond Tv = 2.0 s the vertical spectrum must come from a site-specific study.
+TV_MAX = 2.0
+
+
+def vertical_coefficient(ss: float, site_class: str) -> float:
+    """``Cv`` of Table 11.9-1, linear in ``Ss`` and clamped at 0.2 / 2.0."""
+    sc = str(site_class).strip().upper()
+    groups = {"A": "AB", "B": "AB", "C": "C", "D": "DEF", "E": "DEF", "F": "DEF"}
+    if sc not in groups:
+        raise ValueError(f"site_class must be A-F for Table 11.9-1; got {site_class!r}")
+    if not (np.isfinite(ss) and ss > 0.0):
+        raise ValueError(f"ss must be a finite value > 0, got {ss!r}")
+    return float(np.interp(ss, CV_SS, CV_TABLE[groups[sc]]))
+
+
+class ASCE7_16VerticalSpectrum(CodeSpectrumModel):
+    """ASCE 7-16 Section 11.9 vertical response spectrum (``Sa`` in g vs ``Tv``).
+
+    MCE_R (11.9.2), with ``SMS`` of the horizontal model:
+
+    =========================  ==========================================
+    ``Tv <= 0.025 s``          ``0.3 Cv SMS`` (Eq. 11.9-1)
+    ``0.025 < Tv <= 0.05 s``   ``20 Cv SMS (Tv - 0.025) + 0.3 Cv SMS`` (11.9-2)
+    ``0.05 < Tv <= 0.15 s``    ``0.8 Cv SMS`` (Eq. 11.9-3)
+    ``0.15 < Tv <= 2.0 s``     ``0.8 Cv SMS (0.15 / Tv)^0.75`` (Eq. 11.9-4)
+    =========================  ==========================================
+
+    and not less than one-half of the horizontal ``SaM`` at the same period.
+    The design spectrum (11.9.3) is 2/3 of it, so its floor is one-half of the
+    horizontal design ``Sa``.  ``Sa`` is NaN beyond ``Tv = 2 s``: 11.9.2 requires
+    a site-specific procedure there.  11.9.1 applies it to SDC C to F only.
+    """
+
+    code = "ASCE7-16-vertical"
+
+    def __init__(self, horizontal: "ASCE7_16Spectrum", *, ss: float | None = None,
+                 site_class: str | None = None) -> None:
+        ss = horizontal.ss if ss is None else ss
+        sc = horizontal.site_class if site_class is None else site_class
+        if not np.isfinite(ss):
+            raise ValueError("Cv needs the mapped Ss: pass ss= (the horizontal model has none)")
+        self.horizontal = horizontal
+        self.level = horizontal.level
+        self.ss = float(ss)
+        self.site_class = str(sc).strip().upper()
+        self.cv = vertical_coefficient(self.ss, self.site_class)
+        self.sms = horizontal.sms
+        self._factor = 1.0 if self.level == "mcer" else 2.0 / 3.0   # 11.9.3
+
+    def sa(self, T: float | Iterable[float]) -> np.ndarray:
+        Tv = self._periods(T)
+        a = self.cv * self.sms
+        with np.errstate(divide="ignore", invalid="ignore"):
+            mce = np.where(
+                Tv <= 0.025, 0.3 * a,
+                np.where(Tv <= 0.05, 20.0 * a * (Tv - 0.025) + 0.3 * a,
+                         np.where(Tv <= 0.15, 0.8 * a, 0.8 * a * (0.15 / Tv) ** 0.75)),
+            )
+        out = np.maximum(self._factor * mce, 0.5 * self.horizontal.sa(Tv))
+        return np.where(Tv <= TV_MAX, out, np.nan)
+
+    def default_periods(self, t_max: float = 4.0, n: int = 400) -> np.ndarray:
+        return super().default_periods(min(t_max, TV_MAX), n)
+
+    def knee_periods(self) -> tuple[float, ...]:
+        return (0.025, 0.05, 0.15, TV_MAX)
+
+    def parameters(self) -> dict[str, Any]:
+        return {
+            "Cv": self.cv,
+            "ss": self.ss,
+            "site_class": self.site_class,
+            "SMS": self.sms,
+            "level": self.level,
+            "Tv_max": TV_MAX,
+            "floor": "0.5 x horizontal Sa (11.9.2)",
         }
