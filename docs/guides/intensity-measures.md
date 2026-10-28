@@ -8,9 +8,9 @@ as the other processors.
 
 ```python
 rec.intensity_measures.summary()
-#              PGA     PGV     PGD  D5-75  D5-95      Ia
+#              PGA     PGV     PGD  D5-75  D5-95      Ia       PD
 # component
-# X          0.161  0.0060  0.0014   1.20   2.41  0.0696
+# X          0.161  0.0060  0.0014   1.20   2.41  0.0696  0.00051
 ```
 
 One row per component. `Ia` (m/s) is included when the units are known
@@ -64,6 +64,22 @@ rec.intensity_measures.arias_intensity("X")                 # m/s
 
 Record(x=acc_g, dt=0.01).intensity_measures.arias_intensity("X", units="g")
 ```
+
+## Destructiveness potential
+
+Araya & Saragoni (1984): $P_D = I_a /
+u_0^2$, where $
+u_0$ is the number of
+zero crossings of the acceleration per second. With $I_a$ in m/s the result is
+in m·s; multiply by 100 for the cm·s of the original paper.
+
+```python
+rec.intensity_measures.zero_crossing_rate("X")          # crossings per second
+rec.intensity_measures.destructiveness_potential("X")   # m s, needs the units
+```
+
+Exact zeros, such as trailing padding, are skipped rather than counted as
+crossings. `summary()` adds a `PD` column whenever it adds `Ia`.
 
 ## Husid curve
 

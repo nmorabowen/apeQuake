@@ -127,5 +127,20 @@ def test_summary_table():
     s = rec.intensity_measures.summary()
     assert list(s.index) == ["X", "Y"]
     assert list(s.columns) == ["PGA", "PGV", "PGD", "D5-75", "D5-95"]
-    assert "Ia" in rec.intensity_measures.summary(units="m/s2").columns
+    assert {"Ia", "PD"} <= set(rec.intensity_measures.summary(units="m/s2").columns)
     assert np.isclose(s.loc["Y", "PGA"], 0.5 * s.loc["X", "PGA"])
+
+
+def test_zero_crossing_rate_and_destructiveness_potential():
+    # A sine at F Hz crosses zero 2F times per second; exact zeros are skipped.
+    rec = Record(x=SINE, dt=DT, units="m/s2")
+    im = rec.intensity_measures
+    n_ref = (2 * F * T_END - 1) / T_END          # interior crossings over [0, T_END]
+    assert np.isclose(im.zero_crossing_rate("X"), n_ref, rtol=1e-12)
+    ia = im.arias_intensity("X")
+    assert np.isclose(im.destructiveness_potential("X"), ia / n_ref**2)
+    padded = Record(x=np.r_[SINE, np.zeros(400)], dt=DT, units="m/s2").intensity_measures
+    crossings = padded.zero_crossing_rate("X") * (T_END + 400 * DT)
+    assert np.isclose(crossings, 2 * F * T_END - 1)     # padding adds no crossings
+    assert np.isnan(Record(x=np.ones(50), dt=DT, units="g")
+                    .intensity_measures.destructiveness_potential("X"))

@@ -338,6 +338,39 @@ class IntensityMeasures:
         integral = dt * (np.sum(a * a) - 0.5 * (a[0] ** 2 + a[-1] ** 2)) if a.size > 1 else 0.0
         return float(np.pi / (2.0 * G) * integral)
 
+    def zero_crossing_rate(
+        self, component: ComponentName, *, df: pd.DataFrame | None = None
+    ) -> float:
+        """Zero crossings of the acceleration per second, ``nu0``.
+
+        Counts sign changes between consecutive non-zero samples (exact zeros,
+        e.g. trailing padding, are skipped rather than counted) over the record
+        duration.
+        """
+        time, acc = self._component(component, df)
+        nz = acc[acc != 0.0]
+        crossings = int(np.count_nonzero(np.signbit(nz[1:]) != np.signbit(nz[:-1])))
+        duration = float(time[-1] - time[0])
+        return crossings / duration if duration > 0.0 else 0.0
+
+    def destructiveness_potential(
+        self,
+        component: ComponentName,
+        *,
+        units: str | None = None,
+        df: pd.DataFrame | None = None,
+    ) -> float:
+        """Araya & Saragoni (1984) destructiveness potential ``PD = Ia / nu0^2``.
+
+        ``Ia`` in m/s (:meth:`arias_intensity`, so units are required) and
+        ``nu0`` in crossings/s (:meth:`zero_crossing_rate`): ``PD`` in m s.
+        Multiply by 100 for the cm s of the original paper.  NaN if the record
+        never crosses zero.
+        """
+        ia = self.arias_intensity(component, units=units, df=df)
+        nu0 = self.zero_crossing_rate(component, df=df)
+        return ia / nu0**2 if nu0 > 0.0 else float("nan")
+
     def summary(
         self,
         *,
@@ -347,7 +380,8 @@ class IntensityMeasures:
     ) -> pd.DataFrame:
         """
         One row per component: PGA, PGV, PGD, D5-75, D5-95 and, when units are
-        known (``units=`` or ``Record.units``), Arias intensity ``Ia`` [m/s].
+        known (``units=`` or ``Record.units``), Arias intensity ``Ia`` [m/s] and
+        destructiveness potential ``PD`` [m s].
 
         PGA/PGV/PGD are in record units, x s, x s^2.
         """
@@ -365,6 +399,7 @@ class IntensityMeasures:
             }
             if has_units:
                 row["Ia"] = self.arias_intensity(c, units=units, df=df)
+                row["PD"] = self.destructiveness_potential(c, units=units, df=df)
             rows[c] = row
         out = pd.DataFrame.from_dict(rows, orient="index")
         out.index.name = "component"
