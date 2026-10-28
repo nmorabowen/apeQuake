@@ -285,3 +285,25 @@ def test_export_iso_periods_and_bad_extension(hz, tmp_path):
         with pytest.raises(ValueError, match="extension"):
             fn(tmp_path / "bad.gif")
     assert not (tmp_path / "bad.gif").exists()
+
+
+def test_keep_order_zsort_preserves_painter_order():
+    # Regression: matplotlib 3.11 calls _zsortfunc(pzs, axis=-1) once and draws
+    # argsort(keys)[::-1]; the old per-face lambda broke and equal keys would
+    # scramble the far-to-near order built by plot_iso.
+    import matplotlib.pyplot as plt
+    from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
+    from apeQuake.hazard.iso import _keep_order
+
+    # Near face first, so a real depth sort would move it.
+    faces = [[(0, 0, z), (1, 0, z), (1, 1, z)] for z in (3.0, 2.0, 1.0, 0.0)]
+    colors = [(1, 0, 0, 1), (0, 1, 0, 1), (0, 0, 1, 1), (1, 1, 0, 1)]
+    fig = plt.figure()
+    ax = fig.add_subplot(projection="3d")
+    col = Poly3DCollection(faces, facecolors=colors)
+    col._zsortfunc = _keep_order
+    ax.add_collection3d(col, autolim=False)
+    fig.canvas.draw()
+    np.testing.assert_allclose(col.get_facecolor(), colors)
+    plt.close(fig)
