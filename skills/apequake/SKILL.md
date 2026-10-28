@@ -67,6 +67,14 @@ Same through the API: `dispatch({"api": "apeQuake/1", "command": "site.assess", 
   A-F class for all codes. F -> rock view only.
 - **TL for ASCE** defaults to the NEC TL of the site class (no ASCE TL map for Ecuador).
 
+## Transcribing code values from the PDFs
+
+Every table, coefficient and equation comes from the standard's PDF, checked
+edition by edition. Read [pdf-extraction.md](references/pdf-extraction.md) before
+adding or changing one: where the PDFs live, how to grep a clause, the
+misaligned-table and font-glyph traps, the validation checklist, and
+`scripts/extract_code_table.py`.
+
 ## Gotchas
 
 - ASCE 7-16 §11.4.8 fires for most of Ecuador (class D with S1 ≥ 0.2): `assess_site` applies the
