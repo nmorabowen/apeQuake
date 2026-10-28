@@ -10,7 +10,7 @@ dispatch({"api": "apeQuake/1", "command": "zoning.at", "args": {"lat": -0.22, "l
 # {"api": "apeQuake/1", "ok": true, "result": {...}}  |  {"ok": false, "error": {"code", "message"}}
 ```
 
-- `API_VERSION = "1.3.0"`. History: 1.0.1 envelope branches titled Ok / Error and `py.typed`; 1.0.2 every `$ref` names its file (`common.json#/...`, even inside common.json, for json-schema-ref-parser); 1.1.0 `map.layer`; 1.2.0 `notices` (structured warnings); 1.3.0 `report.build` and error code `report_unavailable`.
+- `API_VERSION = "1.4.0"`. History: 1.0.1 envelope branches titled Ok / Error and `py.typed`; 1.0.2 every `$ref` names its file (`common.json#/...`, even inside common.json, for json-schema-ref-parser); 1.1.0 `map.layer`; 1.2.0 `notices` (structured warnings); 1.3.0 `report.build` and error code `report_unavailable`; 1.4.0 `spectrum.code`, `design.sdc`, `design.elf`.
 - Commands: `api.describe` (version, commands, schemas, `common`), `zoning.at` {lat, lon},
   `site.assess` {lat, lon, vs30 | siteClass, method?, ss?, s1?, z?, region?, tlAsce?},
   `map.layer` {layer: necZones | igepnHazard | faults | sourceZones | capitals | provinces;
@@ -18,6 +18,13 @@ dispatch({"api": "apeQuake/1", "command": "zoning.at", "args": {"lat": -0.22, "l
   lon0/dlon/lat0/dlat, nx/ny, `rows` of [code, count] runs north→south, `classes`), `geojson`
   (FeatureCollection; hazard properties {cellId, sa}, plus min/max), `points` (capitals).
   Layer builders live in `api/layers.py`; `nec.zone_grid()` is the public raster accessor.
+- `spectrum.code` {code: ASCE7-10 | ASCE7-16 | ASCE7-22 | ASCE7-22-MPRS | NEC-15, the
+  code's fields, level?, tMax?, n?, export? {format, units?}}: `oneOf` on `code` (const);
+  `parameters` is the model's `parameters()` with keys camelCased by `api.design.camel`.
+  `export.text` is what `code_spectrum.export` writes (via a temp file; no path on the wire).
+- `design.sdc` {sds, sd1, s1?, riskCategory?}; `design.elf` {code: asce7 | nec, w, r, t | hn,
+  stories? [{weight, height}], ...}. Handlers in `api/design.py`. Forces in w's unit, hn in m.
+  7-22 Method 1 (spectrum input) is not on the wire yet.
 - Error codes: `bad_request`, `unknown_command`, `out_of_area` (`OutsideEcuadorError`),
   `value_error`, `report_unavailable` (`TypstError`), `internal_error` (message = exception type only).
 - `notices` (in `zoning.at`, `site.assess` and its `zone`): `{code, params, text}` per warning,
@@ -35,6 +42,6 @@ dispatch({"api": "apeQuake/1", "command": "zoning.at", "args": {"lat": -0.22, "l
 
 ## Adding a command
 
-Handler in `handlers.py` + registry entry in `dispatcher.py` + `<cmd>.args.json` /
+Handler in `handlers.py` (or a sibling module such as `design.py`) + registry entry in `dispatcher.py` + `<cmd>.args.json` /
 `<cmd>.result.json` + valid fixtures, shape-error fixtures and domain-error fixtures in
 `tests/test_api.py` (schema and dispatch must agree on each) + bump `API_VERSION`.

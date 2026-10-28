@@ -5,6 +5,7 @@ import json
 from typing import Any, Literal, get_args
 
 from . import checks as c
+from . import design as d
 from . import handlers as h
 from .schema_files import COMMON, ENVELOPE, load_schema
 from ..nec.zoning import OutsideEcuadorError
@@ -13,7 +14,7 @@ from ..report import TypstError
 API = "apeQuake/1"
 """Contract identifier carried by every request and response."""
 
-API_VERSION = "1.3.0"
+API_VERSION = "1.4.0"
 """Semantic version of the ``apeQuake/1`` contract (additive changes bump the minor)."""
 
 ErrorCode = Literal["bad_request", "unknown_command", "out_of_area", "value_error",
@@ -65,6 +66,16 @@ REGISTRY: dict[str, h.Command] = {
                   "Typst report of site.assess on @local/ape-informes: PDF (base64), the .typ "
                   "source and the SVG figures. Needs the typst CLI on the host.",
                   h.report_build),
+        h.Command("spectrum.code",
+                  "A code design spectrum (ASCE 7-10 / 7-16 / 7-22 two-period or multi-period, "
+                  "NEC-SE-DS): parameters, knee periods, Sa(T), and optionally the file text "
+                  "for ETABS, SAP2000, OpenSees or CSV.", d.spectrum_code),
+        h.Command("design.sdc",
+                  "ASCE 7 seismic design category (Section 11.6) and importance factor "
+                  "(Table 1.5-2).", d.design_sdc),
+        h.Command("design.elf",
+                  "Equivalent lateral force base shear and story forces: ASCE 7-10 / 7-16 / "
+                  "7-22 Section 12.8 or NEC-SE-DS 6.3.", d.design_elf),
     )
 }
 

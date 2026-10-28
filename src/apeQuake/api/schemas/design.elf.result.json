@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nmorabowen.github.io/apeQuake/schemas/apeQuake-1/design.elf.result.json",
+  "title": "design.elf result",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "code": {
+          "const": "asce7"
+        },
+        "edition": {
+          "enum": [
+            "7-10",
+            "7-16",
+            "7-22"
+          ]
+        },
+        "v": {
+          "type": "number",
+          "description": "Base shear V = Cs W."
+        },
+        "cs": {
+          "type": "number",
+          "description": "Seismic response coefficient Cs."
+        },
+        "t": {
+          "type": "number",
+          "description": "Period used [s]."
+        },
+        "ta": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Approximate period Ta [s]."
+        },
+        "cu": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Cu, Table 12.8-1."
+        },
+        "k": {
+          "type": "number",
+          "description": "Vertical distribution exponent k."
+        },
+        "w": {
+          "type": "number"
+        },
+        "r": {
+          "type": "number"
+        },
+        "ie": {
+          "type": "number"
+        },
+        "method": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "7-22 Method (1 or 2); null before 7-22."
+        },
+        "governing": {
+          "type": "string",
+          "description": "Equation that sets Cs."
+        },
+        "limits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "equation": {
+                "type": "string",
+                "description": "Equation number, this edition."
+              },
+              "role": {
+                "enum": [
+                  "method1",
+                  "base",
+                  "cap",
+                  "capTL",
+                  "min",
+                  "minS1"
+                ]
+              },
+              "cs": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "equation",
+              "role",
+              "cs"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "stories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "weight": {
+                "type": "number"
+              },
+              "height": {
+                "type": "number"
+              },
+              "fx": {
+                "type": "number",
+                "description": "Lateral force at the level."
+              },
+              "vx": {
+                "type": "number",
+                "description": "Story shear below the level."
+              }
+            },
+            "required": [
+              "weight",
+              "height",
+              "fx",
+              "vx"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "code",
+        "edition",
+        "v",
+        "cs",
+        "t",
+        "ta",
+        "cu",
+        "k",
+        "w",
+        "r",
+        "ie",
+        "method",
+        "governing",
+        "limits"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "code": {
+          "const": "nec"
+        },
+        "v": {
+          "type": "number",
+          "description": "Base shear V."
+        },
+        "cs": {
+          "type": "number",
+          "description": "V / W."
+        },
+        "saTa": {
+          "type": "number",
+          "description": "Elastic Sa(Ta) [g]."
+        },
+        "ta": {
+          "type": "number",
+          "description": "Period used [s]."
+        },
+        "taMethod1": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Metodo 1 period Ct hn^alpha [s]."
+        },
+        "k": {
+          "type": "number"
+        },
+        "w": {
+          "type": "number"
+        },
+        "r": {
+          "type": "number"
+        },
+        "phiP": {
+          "type": "number"
+        },
+        "phiE": {
+          "type": "number"
+        },
+        "importance": {
+          "enum": [
+            "esencial",
+            "especial",
+            "otra"
+          ]
+        },
+        "i": {
+          "type": "number",
+          "description": "Importance I, Tabla 6."
+        },
+        "stories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "weight": {
+                "type": "number"
+              },
+              "height": {
+                "type": "number"
+              },
+              "fx": {
+                "type": "number",
+                "description": "Lateral force at the level."
+              },
+              "vx": {
+                "type": "number",
+                "description": "Story shear below the level."
+              }
+            },
+            "required": [
+              "weight",
+              "height",
+              "fx",
+              "vx"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "code",
+        "v",
+        "cs",
+        "saTa",
+        "ta",
+        "taMethod1",
+        "k",
+        "w",
+        "r",
+        "phiP",
+        "phiE",
+        "importance",
+        "i"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}
