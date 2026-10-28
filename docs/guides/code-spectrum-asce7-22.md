@@ -61,7 +61,8 @@ ASCE 7-22 makes the 22-point **multi-period** design spectrum (Section 11.4.5.1,
 USGS geodatabase ordinates, linear interpolation) the default; the two-period
 spectrum is the fallback when multi-period values are unavailable (Section
 11.4.5, Exception 2). The two can differ materially, especially at long periods.
-This class does not implement the multi-period spectrum.
+The multi-period spectrum is
+[`ASCE7_22MultiPeriodSpectrum`](code-spectrum-asce7-22-mprs.md).
 
 ## Limitations
 
