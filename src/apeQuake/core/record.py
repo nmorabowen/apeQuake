@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+from pathlib import Path
 from typing import TYPE_CHECKING, List, Tuple
 import numpy as np
 import pandas as pd
@@ -36,6 +38,7 @@ class Record:
         time_array: np.ndarray | None = None,
         dt: float | None = None,
         name: str | None = None,
+        units: str | None = None,
     ) -> None:
         """
         Initialize a Record from arrays (df input removed).
@@ -53,11 +56,20 @@ class Record:
             - If time_array is provided:
                 * if dt is provided -> enforce/validate it; interpolate if needed.
                 * if dt is None -> infer dt; interpolate if time_array is not uniform.
+        units
+            Optional acceleration unit of the components: ``"g"``, ``"m/s2"`` or
+            ``"cm/s2"`` (aliases ``"m/s^2"``, ``"cm/s^2"``, ``"gal"``).  Only a
+            label: the data are never rescaled.  Measures that need physical
+            units (Arias intensity) read it.
         """
+        from .units import normalize_unit
+
         self._interpolation_flag: bool = False
         self.dt: float | None = dt
         self.init_logs: list[str] = []
         self.name: str | None = name
+        self.units: str | None = None if units is None else normalize_unit(units)
+        self.source_files: dict[str, str] = {}
 
         self._init_from_arrays(x=x, y=y, z=z, time_array=time_array, dt=dt)
 
@@ -77,6 +89,110 @@ class Record:
         self.intensity_measures: IntensityMeasures = IntensityMeasures(self)
         self.code_spectrum: CodeSpectrum = CodeSpectrum(self)
         self.plot_record: PlotRecord = PlotRecord(self)
+
+    # -------------------------------------------------------------- #
+    # Construction from files
+    # -------------------------------------------------------------- #
+
+    @classmethod
+    def from_files(
+        cls,
+        x: str | os.PathLike[str] | None = None,
+        y: str | os.PathLike[str] | None = None,
+        z: str | os.PathLike[str] | None = None,
+        *,
+        format: str = "auto",
+        dt: float | None = None,
+        units: str | None = None,
+        name: str | None = None,
+    ) -> "Record":
+        """
+        Build a Record from one file per component (PEER ``.AT2``, RENAC
+        ``.txt`` or generic text; see :mod:`apeQuake.readers`).
+
+        Parameters
+        ----------
+        x, y, z
+            Paths of the component files (at least one).  Map the file
+            components yourself, e.g. ``x=..._E_100.txt, y=..._N_100.txt,
+            z=..._Z_100.txt`` for RENAC.
+        format
+            ``"auto"`` (default: by extension and header), ``"at2"``,
+            ``"renac"`` or ``"txt"``; applies to every file.
+        dt
+            Time step for ``"txt"`` files whose header gives none.
+        units
+            Target unit (``"g"``, ``"m/s2"``, ``"cm/s2"``).  Files declaring
+            another unit are converted to it; files declaring none are taken
+            to be in it already.  If omitted, all files that declare a unit
+            must agree, and that unit becomes ``Record.units``.
+
+        Notes
+        -----
+        All files must share the same time step.  Components of different
+        length are padded with trailing zeros to the longest (logged in
+        ``init_logs``).
+        """
+        from ..readers import read_record_file
+        from .units import conversion_factor, normalize_unit
+
+        paths = {c: p for c, p in (("X", x), ("Y", y), ("Z", z)) if p is not None}
+        if not paths:
+            raise ValueError("At least one component file (x, y, or z) must be given.")
+        files = {c: read_record_file(p, format=format, dt=dt) for c, p in paths.items()}  # type: ignore[arg-type]
+
+        dts = {c: f.dt for c, f in files.items()}
+        dt0 = next(iter(dts.values()))
+        if any(not np.isclose(d, dt0, rtol=1e-6) for d in dts.values()):
+            raise ValueError(f"Component files have different time steps: {dts}.")
+
+        logs: list[str] = []
+        declared = {c: f.units for c, f in files.items()}
+        if units is None:
+            known = {u for u in declared.values() if u is not None}
+            if len(known) > 1:
+                raise ValueError(
+                    f"Component files declare different units {declared}; pass units= "
+                    "to convert them to one."
+                )
+            if known and None in declared.values():
+                raise ValueError(
+                    f"Some component files declare no unit {declared}; pass units= "
+                    "to state it."
+                )
+            target = next(iter(known), None)
+            arrays = {c: f.data for c, f in files.items()}
+        else:
+            target = normalize_unit(units)
+            arrays = {}
+            for c, f in files.items():
+                if f.units is None or f.units == target:
+                    arrays[c] = f.data
+                else:
+                    arrays[c] = f.data * conversion_factor(f.units, target)
+                    logs.append(f"{c}: converted {f.units} -> {target}.")
+
+        n = max(a.size for a in arrays.values())
+        for c, a in arrays.items():
+            if a.size < n:
+                arrays[c] = np.concatenate([a, np.zeros(n - a.size)])
+                logs.append(f"{c}: padded with {n - a.size} trailing zeros to {n} samples.")
+
+        if name is None:
+            first = files[next(iter(files))]
+            meta = first.metadata
+            if "station" in meta:
+                name = " ".join(v for v in (meta.get("station"), meta.get("event")) if v)
+            else:
+                name = meta.get("title") or Path(first.path).stem
+
+        rec = cls(
+            x=arrays.get("X"), y=arrays.get("Y"), z=arrays.get("Z"),
+            dt=dt0, name=name, units=target,
+        )
+        rec.source_files = {c: f.path for c, f in files.items()}
+        rec.init_logs[:0] = [f"{c}: read {f.format} file {f.path}" for c, f in files.items()] + logs
+        return rec
 
     # -------------------------------------------------------------- #
     # Initialization

@@ -117,6 +117,61 @@ def _newmark_spectra_kernel(
     return Sd, Sv, Sa
 
 
+@njit(cache=True, fastmath=True, parallel=True)
+def _newmark_disp_kernel(
+    ag: np.ndarray,
+    dt: float,
+    periods: np.ndarray,
+    damping: float,
+    gamma: float,
+    beta: float,
+) -> np.ndarray:
+    """Relative-displacement histories U[j, i] for each period (parallel over periods).
+
+    Same recurrence as ``_newmark_spectra_kernel``, keeping u(t) instead of peaks.
+    """
+    nT = len(periods)
+    n = len(ag)
+    U = np.zeros((nT, n), dtype=np.float64)
+
+    for j in prange(nT):
+        w = 2.0 * np.pi / periods[j]
+        k = w * w
+        c = 2.0 * damping * w
+
+        a0 = 1.0 / (beta * dt * dt)
+        a1 = gamma / (beta * dt)
+        a2 = 1.0 / (beta * dt)
+        a3 = 1.0 / (2.0 * beta) - 1.0
+        a4 = gamma / beta - 1.0
+        a5 = dt * (gamma / (2.0 * beta) - 1.0)
+
+        k_hat = k + a0 + a1 * c
+
+        u = 0.0
+        v = 0.0
+        a = -ag[0]
+        for i in range(n - 1):
+            p_eff = (
+                -ag[i + 1]
+                + a0 * u
+                + a2 * v
+                + a3 * a
+                + a1 * c * u
+                + a4 * c * v
+                + a5 * c * a
+            )
+            u_new = p_eff / k_hat
+            a_new = a0 * (u_new - u) - a2 * v - a3 * a
+            v_new = v + dt * ((1.0 - gamma) * a + gamma * a_new)
+            U[j, i + 1] = u_new
+            u = u_new
+            v = v_new
+            a = a_new
+
+    return U
+
+
 class ResponseSpectra:
     """
     Response spectra composite for a multicomponent Record.
@@ -143,6 +198,7 @@ class ResponseSpectra:
         self.Sv: dict[ComponentName, np.ndarray] = {}
         self.Sa: dict[ComponentName, np.ndarray] = {}  # pseudo-acceleration
         self._df_used: pd.DataFrame | None = None
+        self.rotd_result: dict[str, np.ndarray] | None = None
 
     # ---------------------------------------------------------- #
     # Filter pipeline
@@ -176,6 +232,23 @@ class ResponseSpectra:
             args = ", ".join(f"{k}={v!r}" for k, v in params.items())
             parts.append(f"{name}({args})")
         return " → ".join(parts)
+
+    def _select_df(self, df: pd.DataFrame | None, use_filters: bool | None) -> pd.DataFrame:
+        """
+        Working copy of the input with the pipeline applied per the convention:
+        df=None -> record.df, filters on unless use_filters=False;
+        caller df -> copied, filters off unless use_filters=True.
+        """
+        if df is None:
+            df_work = self._record.df.copy()
+            effective_use_filters = True if use_filters is None else use_filters
+        else:
+            df_work = df.copy()
+            effective_use_filters = True if use_filters is True else False
+
+        if effective_use_filters and self._filter_steps:
+            df_work = self._apply_filters(df_work, use_filters=True)
+        return df_work
 
     def _apply_filters(self, df: pd.DataFrame, use_filters: bool | None) -> pd.DataFrame:
         """
@@ -346,18 +419,7 @@ class ResponseSpectra:
         if rec.dt is None:
             raise ValueError("Record.dt is None; cannot compute response spectra.")
 
-        # --- Base df selection and filter logic ---
-        if df is None:
-            df_work = rec.df.copy()
-            # default: if user doesn't say anything, apply filters
-            effective_use_filters = True if use_filters is None else use_filters
-        else:
-            df_work = df.copy()
-            # default: if user passes df, do NOT apply filters unless explicit
-            effective_use_filters = True if use_filters is True else False
-
-        if effective_use_filters and self._filter_steps:
-            df_work = self._apply_filters(df_work, use_filters=True)
+        df_work = self._select_df(df, use_filters)
 
         # --- Components selection ---
         if components is None:
@@ -469,15 +531,7 @@ class ResponseSpectra:
         if T <= 0.0:
             raise ValueError("T must be > 0.")
 
-        if df is None:
-            df_work = rec.df.copy()
-            effective_use_filters = True if use_filters is None else use_filters
-        else:
-            df_work = df.copy()
-            effective_use_filters = True if use_filters is True else False
-
-        if effective_use_filters and self._filter_steps:
-            df_work = self._apply_filters(df_work, use_filters=True)
+        df_work = self._select_df(df, use_filters)
 
         available = [c for c in ("X", "Y", "Z") if c in df_work.columns]
         if not available:
@@ -840,3 +894,163 @@ class ResponseSpectra:
 
     def plot_separate(self, quantity: RSQuantity = "Sa", **kwargs):
         return self.plot(quantity=quantity, combined=False, **kwargs)
+
+    # ---------------------------------------------------------- #
+    # Orientation-independent spectra (RotDnn)
+    # ---------------------------------------------------------- #
+
+    def _disp_histories(
+        self, ag: np.ndarray, periods: np.ndarray, damping: float, gamma: float,
+        beta: float, parallel: bool,
+    ) -> np.ndarray:
+        dt = float(self._record.dt)  # type: ignore[arg-type]
+        if parallel and _NUMBA_AVAILABLE:
+            return _newmark_disp_kernel(
+                np.ascontiguousarray(ag, dtype=np.float64), dt,
+                np.ascontiguousarray(periods, dtype=np.float64),
+                float(damping), float(gamma), float(beta),
+            )
+        return np.array([
+            self._newmark_sdof(ag=ag, dt=dt, T=T, damping=damping, gamma=gamma, beta=beta)[0]
+            for T in periods
+        ])
+
+    def rotd(
+        self,
+        periods: Sequence[float],
+        *,
+        components: tuple[ComponentName, ComponentName] = ("X", "Y"),
+        df: pd.DataFrame | None = None,
+        use_filters: bool | None = None,
+        damping: float = 0.05,
+        gamma: float = 0.5,
+        beta: float = 0.25,
+        angle_step: float = 1.0,
+        percentiles: Sequence[float] = (0, 50, 100),
+        parallel: bool = True,
+        chunk: int = 32,
+    ) -> dict:
+        """
+        RotDnn pseudo-acceleration spectra of two horizontal components
+        (Boore, 2010, BSSA 100(4)).
+
+        For each period the oscillator responses to both components are rotated
+        through ``0 <= theta < 180`` deg, ``u_theta = cos(theta) u_1 + sin(theta) u_2``
+        (exact: the oscillator is linear, so rotating its response equals rotating
+        the input), and ``PSA_theta = w^2 max|u_theta|``.  ``RotDnn`` is the nn-th
+        percentile over the angles: RotD00 the minimum, RotD50 the median,
+        RotD100 the maximum.
+
+        Parameters
+        ----------
+        periods
+            Oscillator periods [s], all > 0.
+        components
+            The two orthogonal horizontal components (default ``("X", "Y")``).
+        df, use_filters
+            Input selection and filter pipeline, same convention as :meth:`compute`.
+        damping, gamma, beta
+            Damping ratio and Newmark parameters, as in :meth:`compute`.
+        angle_step
+            Angle increment [deg]; must divide 180.  Default 1 deg.
+        percentiles
+            Percentiles to report; key ``f"RotD{p:02g}"`` (``RotD00``, ``RotD50``...).
+        parallel
+            Use the Numba kernel when available.
+        chunk
+            Periods integrated per batch (bounds memory to chunk x npts floats).
+
+        Returns
+        -------
+        dict
+            ``"T"``, one ``"RotDnn"`` array per percentile, ``"angles"`` [deg],
+            ``"Sa_angles"`` (nT x n_angles), ``"angle_RotD100"`` (angle of the
+            maximum per period), ``"components"`` and ``"units"``.  Also stored
+            in ``rotd_result``.
+        """
+        rec = self._record
+        if rec.dt is None:
+            raise ValueError("Record.dt is None; cannot compute RotD spectra.")
+        if len(components) != 2 or components[0] == components[1]:
+            raise ValueError(f"components must be two different components, got {components!r}.")
+        n_ang = 180.0 / angle_step if angle_step > 0.0 else 0.0
+        if n_ang < 1.0 or abs(n_ang - round(n_ang)) > 1e-9:
+            raise ValueError(f"angle_step must be > 0 and divide 180, got {angle_step}.")
+        pcts = [float(p) for p in percentiles]
+        if any(not 0.0 <= p <= 100.0 for p in pcts):
+            raise ValueError("percentiles must be in [0, 100].")
+
+        df_work = self._select_df(df, use_filters)
+        for c in components:
+            if c not in df_work.columns:
+                raise ValueError(f"Component '{c}' not found in the selected DataFrame.")
+
+        T = np.asarray(periods, dtype=float)
+        if T.ndim != 1 or T.size == 0 or np.any(T <= 0.0):
+            raise ValueError("periods must be a non-empty 1D sequence of values > 0.")
+
+        a1 = df_work[components[0]].to_numpy(dtype=float)
+        a2 = df_work[components[1]].to_numpy(dtype=float)
+        angles = np.arange(int(round(n_ang))) * float(angle_step)
+        th = np.radians(angles)
+        cos_t, sin_t = np.cos(th)[:, None], np.sin(th)[:, None]
+
+        step = max(1, int(chunk))
+        sa_ang = np.empty((T.size, angles.size))
+        for start in range(0, T.size, step):
+            Tc = T[start:start + step]
+            U1 = self._disp_histories(a1, Tc, damping, gamma, beta, parallel)
+            U2 = self._disp_histories(a2, Tc, damping, gamma, beta, parallel)
+            for j, Tj in enumerate(Tc):
+                sd = np.max(np.abs(cos_t * U1[j] + sin_t * U2[j]), axis=1)
+                sa_ang[start + j] = (2.0 * np.pi / Tj) ** 2 * sd
+
+        out: dict = {"T": T.copy()}
+        for p in pcts:
+            out[f"RotD{p:02g}"] = np.percentile(sa_ang, p, axis=1)
+        out["angles"] = angles
+        out["Sa_angles"] = sa_ang
+        out["angle_RotD100"] = angles[np.argmax(sa_ang, axis=1)]
+        out["components"] = np.array(components)
+        out["units"] = {"T": "s", "RotD": "accel-units (pseudo, w^2 Sd)", "angles": "deg"}
+        self.rotd_result = out
+        return out
+
+    def plot_rotd(
+        self,
+        *,
+        representation: RSRepresentation = "loglog",
+        show_components: bool = True,
+        fig=None,
+        ax=None,
+        **plot_kwargs,
+    ):
+        """
+        Plot the cached :meth:`rotd` result: the RotDnn curves and, with
+        ``show_components``, the PSA of the two as-recorded components (the
+        theta = 0 and 90 deg columns of ``Sa_angles``).
+        """
+        import matplotlib.pyplot as plt
+
+        if self.rotd_result is None:
+            raise RuntimeError("ResponseSpectra.rotd() has not been called yet.")
+        r = self.rotd_result
+        if fig is None or ax is None:
+            fig, ax = plt.subplots(figsize=(7, 5))
+        fn = {"linear": ax.plot, "semilogx": ax.semilogx, "loglog": ax.loglog}.get(representation)
+        if fn is None:
+            raise ValueError("representation must be one of 'linear','semilogx','loglog'")
+        T = r["T"]
+        if show_components:
+            i90 = int(np.argmin(np.abs(r["angles"] - 90.0)))
+            c1, c2 = (str(c) for c in r["components"])
+            fn(T, r["Sa_angles"][:, 0], color="0.6", lw=0.8, label=f"Comp {c1}")
+            fn(T, r["Sa_angles"][:, i90], color="0.6", lw=0.8, ls="--", label=f"Comp {c2}")
+        for key in [k for k in r if k.startswith("RotD")]:
+            fn(T, r[key], label=key, **plot_kwargs)
+        ax.set_xlabel("Period T [s]")
+        ax.set_ylabel("Pseudo-Acceleration (Sa)")
+        ax.grid(True, which="both", ls="-", alpha=0.5)
+        ax.legend()
+        fig.tight_layout()
+        return fig, ax

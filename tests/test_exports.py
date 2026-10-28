@@ -18,6 +18,8 @@ import pytest
         ("apeQuake.plot_record", "PlotRecord"),
         ("apeQuake.hazard", "EcuadorHazard"),
         ("apeQuake.hazard", "HazardSite"),
+        ("apeQuake.readers", "RecordFile"),
+        ("apeQuake.readers", "read_record_file"),
     ],
 )
 def test_public_symbol_importable(module, name):
@@ -36,6 +38,7 @@ def test_public_symbol_importable(module, name):
         "apeQuake.code_spectrum",
         "apeQuake.plot_record",
         "apeQuake.hazard",
+        "apeQuake.readers",
     ],
 )
 def test_all_entries_actually_exist(module):

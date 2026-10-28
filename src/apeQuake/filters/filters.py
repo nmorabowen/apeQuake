@@ -225,6 +225,37 @@ class Filter:
 
         return self._stream_to_df(st)
 
+    def baseline_correction(
+        self,
+        order: int = 2,
+        *,
+        df: pd.DataFrame | None = None,
+    ) -> pd.DataFrame:
+        """
+        Least-squares polynomial baseline correction of every component.
+
+        Integrates acceleration to velocity, fits a drift ``sum c_k t^(k+1)``
+        (k = 0..order) to the velocity and removes its derivative (a
+        degree-``order`` polynomial) from the acceleration.  ``order=2`` is
+        EarthquakeSignal's ``BaselineCorrection``.
+        See :func:`apeQuake.core.integration.baseline_correct`; velocity and
+        displacement of the result are in ``rec.intensity_measures``.
+        """
+        from ..core.integration import baseline_correct
+
+        in_df = self._input_df(df)
+        rec = self._record
+        if rec.dt is None:
+            raise ValueError("Record.dt is None; cannot apply baseline correction.")
+
+        out = pd.DataFrame({"time": in_df["time"].to_numpy(dtype=float)})
+        for comp in rec.components:
+            if comp not in in_df.columns:
+                raise ValueError(f"DataFrame missing component '{comp}' required by Record.")
+            acc, _, _ = baseline_correct(in_df[comp].to_numpy(dtype=float), rec.dt, order=order)
+            out[comp] = acc
+        return out
+
     def taper(
         self,
         max_percentage: float = 0.05,
